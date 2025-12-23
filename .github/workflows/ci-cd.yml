@@ -37,21 +37,18 @@ jobs:
         run: |
           npm install
           DISABLE_ESLINT_PLUGIN=true npm run build
-          mv build ../build/default
 
       - name: Build berry theme
         working-directory: ./web/berry
         run: |
           npm install
           DISABLE_ESLINT_PLUGIN=true npm run build
-          mv build ../build/berry
 
       - name: Build air theme
         working-directory: ./web/air
         run: |
           npm install
           DISABLE_ESLINT_PLUGIN=true npm run build
-          mv build ../build/air
       
       # Build Go backend
       - name: Download Go dependencies
