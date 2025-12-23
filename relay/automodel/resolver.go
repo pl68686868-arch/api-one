@@ -370,16 +370,16 @@ func containsGroup(groupStr string, target string) bool {
 
 // getChannelModels gets all models for a channel
 func getChannelModels(channel *model.Channel) []string {
-	if channel.Models == nil || *channel.Models == "" {
+	if channel.Models == "" {
 		return nil
 	}
 	
-	parts := strings.Split(*channel.Models, ",")
+	parts := strings.Split(channel.Models, ",")
 	var models []string
 	for _, p := range parts {
-		model := strings.TrimSpace(p)
-		if model != "" {
-			models = append(models, model)
+		m := strings.TrimSpace(p)
+		if m != "" {
+			models = append(models, m)
 		}
 	}
 	return models
