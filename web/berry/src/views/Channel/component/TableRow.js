@@ -11,7 +11,6 @@ import {
   MenuItem,
   TableCell,
   IconButton,
-  TextField,
   Dialog,
   DialogActions,
   DialogContent,
@@ -19,16 +18,30 @@ import {
   DialogTitle,
   Tooltip,
   Button,
+  Box,
+  Avatar,
+  Stack,
+  Typography,
 } from "@mui/material";
 
 import Label from "ui-component/Label";
-import TableSwitch from "ui-component/Switch";
+import StatusLabel from "ui-component/StatusLabel";
+import ResponseTimeBar from "ui-component/ResponseTimeBar";
+import PriorityStars from "ui-component/PriorityStars";
 
-import ResponseTimeLabel from "./ResponseTimeLabel";
 import GroupLabel from "./GroupLabel";
-import NameLabel from "./NameLabel";
 
-import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconEdit, IconTrash, IconBrandOpenai } from "@tabler/icons-react";
+
+// Provider icons mapping
+const providerIcons = {
+  1: { icon: '🤖', name: 'OpenAI' },
+  3: { icon: '☁️', name: 'Azure' },
+  14: { icon: '🧠', name: 'Anthropic' },
+  24: { icon: '💎', name: 'Google' },
+  36: { icon: '🌊', name: 'DeepSeek' },
+  44: { icon: '⚡', name: 'SiliconFlow' },
+};
 
 export default function ChannelTableRow({
   item,
@@ -39,7 +52,7 @@ export default function ChannelTableRow({
   const [open, setOpen] = useState(null);
   const [openDelete, setOpenDelete] = useState(false);
   const [statusSwitch, setStatusSwitch] = useState(item.status);
-  const [priorityValve, setPriority] = useState(item.priority);
+  const [priorityValue, setPriority] = useState(item.priority);
   const [responseTimeData, setResponseTimeData] = useState({
     test_time: item.test_time,
     response_time: item.response_time,
@@ -63,27 +76,18 @@ export default function ChannelTableRow({
     setOpen(null);
   };
 
-  const handleStatus = async () => {
-    const switchVlue = statusSwitch === 1 ? 2 : 1;
-    const { success } = await manageChannel(item.id, "status", switchVlue);
+  const handleStatusToggle = async () => {
+    const switchValue = statusSwitch === 1 ? 2 : 1;
+    const { success } = await manageChannel(item.id, "status", switchValue);
     if (success) {
-      setStatusSwitch(switchVlue);
+      setStatusSwitch(switchValue);
     }
   };
 
-  const handlePriority = async (event) => {
-    const currentValue = parseInt(event.target.value);
-    if (isNaN(currentValue) || currentValue === priorityValve) {
-      return;
-    }
-
-    if (currentValue < 0) {
-      showError("优先级不能小于 0");
-      return;
-    }
-
-    await manageChannel(item.id, "priority", currentValue);
-    setPriority(currentValue);
+  const handlePriorityChange = async (newPriority) => {
+    if (newPriority === priorityValue) return;
+    await manageChannel(item.id, "priority", newPriority);
+    setPriority(newPriority);
   };
 
   const handleResponseTime = async () => {
@@ -102,7 +106,6 @@ export default function ChannelTableRow({
     const { success, message, balance } = res.data;
     if (success) {
       setItemBalance(balance);
-
       showInfo(`余额更新成功！`);
     } else {
       showError(message);
@@ -114,95 +117,159 @@ export default function ChannelTableRow({
     await manageChannel(item.id, "delete", "");
   };
 
+  const providerInfo = providerIcons[item.type] || { icon: '🔌', name: 'Custom' };
+
   return (
     <>
-      <TableRow tabIndex={item.id}>
-        <TableCell>{item.id}</TableCell>
-
+      <TableRow
+        tabIndex={item.id}
+        sx={{
+          '&:hover': {
+            bgcolor: 'action.hover',
+          },
+          transition: 'background-color 0.2s ease'
+        }}
+      >
+        {/* ID with gradient accent */}
         <TableCell>
-          <NameLabel name={item.name} models={item.models} />
+          <Box
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 32,
+              height: 32,
+              borderRadius: 1,
+              bgcolor: 'primary.lighter',
+              color: 'primary.main',
+              fontWeight: 600,
+              fontSize: '0.875rem'
+            }}
+          >
+            {item.id}
+          </Box>
         </TableCell>
 
+        {/* Name with provider icon */}
+        <TableCell>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Tooltip title={providerInfo.name}>
+              <Box
+                sx={{
+                  fontSize: '1.25rem',
+                  width: 32,
+                  height: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 1,
+                  bgcolor: 'background.neutral'
+                }}
+              >
+                {providerInfo.icon}
+              </Box>
+            </Tooltip>
+            <Box>
+              <Typography variant="subtitle2" noWrap sx={{ fontWeight: 600 }}>
+                {item.name}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" noWrap>
+                {item.models?.split(',').slice(0, 2).join(', ')}
+                {item.models?.split(',').length > 2 && ` +${item.models.split(',').length - 2}`}
+              </Typography>
+            </Box>
+          </Stack>
+        </TableCell>
+
+        {/* Group */}
         <TableCell>
           <GroupLabel group={item.group} />
         </TableCell>
 
+        {/* Type */}
         <TableCell>
           {!CHANNEL_OPTIONS[item.type] ? (
-            <Label color="error" variant="outlined">
+            <Label color="error" variant="soft">
               未知
             </Label>
           ) : (
-            <Label color={CHANNEL_OPTIONS[item.type].color} variant="outlined">
+            <Label color={CHANNEL_OPTIONS[item.type].color} variant="soft">
               {CHANNEL_OPTIONS[item.type].text}
             </Label>
           )}
         </TableCell>
 
+        {/* Status - New StatusLabel component */}
         <TableCell>
-          <Tooltip
-            title={(() => {
-              switch (statusSwitch) {
-                case 1:
-                  return "已启用";
-                case 2:
-                  return "本渠道被手动禁用";
-                case 3:
-                  return "本渠道被程序自动禁用";
-                default:
-                  return "未知";
-              }
-            })()}
-            placement="top"
-          >
-            <TableSwitch
-              id={`switch-${item.id}`}
-              checked={statusSwitch === 1}
-              onChange={handleStatus}
-            />
-          </Tooltip>
-        </TableCell>
-
-        <TableCell>
-          <ResponseTimeLabel
-            test_time={responseTimeData.test_time}
-            response_time={responseTimeData.response_time}
-            handle_action={handleResponseTime}
-          />
-        </TableCell>
-        <TableCell>{renderNumber(item.used_quota)}</TableCell>
-        <TableCell>
-          <Tooltip
-            title={"点击更新余额"}
-            placement="top"
-            onClick={updateChannelBalance}
-          >
-            {renderBalance(item.type, itemBalance)}
-          </Tooltip>
-        </TableCell>
-        <TableCell>
-          <TextField
-            id={`priority-${item.id}`}
-            onBlur={handlePriority}
-            type="number"
-            label="优先级"
-            variant="standard"
-            defaultValue={item.priority}
-            inputProps={{ min: "0" }}
-            sx={{ width: 80 }}
+          <StatusLabel
+            status={statusSwitch}
+            onClick={handleStatusToggle}
           />
         </TableCell>
 
+        {/* Response Time - New visual bar */}
+        <TableCell>
+          <ResponseTimeBar
+            responseTime={responseTimeData.response_time}
+            testTime={responseTimeData.test_time}
+            onClick={handleResponseTime}
+          />
+        </TableCell>
+
+        {/* Used Quota */}
+        <TableCell>
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {renderNumber(item.used_quota)}
+          </Typography>
+        </TableCell>
+
+        {/* Balance */}
+        <TableCell>
+          <Tooltip title="点击更新余额" placement="top">
+            <Box
+              onClick={updateChannelBalance}
+              sx={{
+                cursor: 'pointer',
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                display: 'inline-block',
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  bgcolor: 'action.hover'
+                }
+              }}
+            >
+              {renderBalance(item.type, itemBalance)}
+            </Box>
+          </Tooltip>
+        </TableCell>
+
+        {/* Priority - New Stars component */}
+        <TableCell>
+          <PriorityStars
+            priority={priorityValue}
+            onChange={handlePriorityChange}
+          />
+        </TableCell>
+
+        {/* Actions */}
         <TableCell>
           <IconButton
             onClick={handleOpenMenu}
-            sx={{ color: "rgb(99, 115, 129)" }}
+            sx={{
+              color: "rgb(99, 115, 129)",
+              '&:hover': {
+                bgcolor: 'action.hover'
+              }
+            }}
           >
-            <IconDotsVertical />
+            <IconDotsVertical size={20} />
           </IconButton>
         </TableCell>
       </TableRow>
 
+      {/* Action Menu */}
       <Popover
         open={!!open}
         anchorEl={open}
@@ -210,7 +277,11 @@ export default function ChannelTableRow({
         anchorOrigin={{ vertical: "top", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
         PaperProps={{
-          sx: { width: 140 },
+          sx: {
+            width: 140,
+            boxShadow: (theme) => theme.shadows[8],
+            borderRadius: 1.5
+          },
         }}
       >
         <MenuItem
@@ -219,25 +290,45 @@ export default function ChannelTableRow({
             handleOpenModal();
             setModalChannelId(item.id);
           }}
+          sx={{ py: 1.5 }}
         >
-          <IconEdit style={{ marginRight: "16px" }} />
+          <IconEdit size={18} style={{ marginRight: 12 }} />
           编辑
         </MenuItem>
-        <MenuItem onClick={handleDeleteOpen} sx={{ color: "error.main" }}>
-          <IconTrash style={{ marginRight: "16px" }} />
+        <MenuItem
+          onClick={handleDeleteOpen}
+          sx={{ color: "error.main", py: 1.5 }}
+        >
+          <IconTrash size={18} style={{ marginRight: 12 }} />
           删除
         </MenuItem>
       </Popover>
 
-      <Dialog open={openDelete} onClose={handleDeleteClose}>
-        <DialogTitle>删除渠道</DialogTitle>
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={openDelete}
+        onClose={handleDeleteClose}
+        PaperProps={{
+          sx: { borderRadius: 2 }
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 600 }}>删除渠道</DialogTitle>
         <DialogContent>
-          <DialogContentText>是否删除渠道 {item.name}？</DialogContentText>
+          <DialogContentText>
+            确定要删除渠道 <strong>{item.name}</strong> 吗？此操作无法撤销。
+          </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteClose}>关闭</Button>
-          <Button onClick={handleDelete} sx={{ color: "error.main" }} autoFocus>
-            删除
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={handleDeleteClose} variant="outlined">
+            取消
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            autoFocus
+          >
+            确认删除
           </Button>
         </DialogActions>
       </Dialog>
@@ -253,26 +344,31 @@ ChannelTableRow.propTypes = {
 };
 
 function renderBalance(type, balance) {
+  const balanceStyles = {
+    fontWeight: 600,
+    fontSize: '0.875rem'
+  };
+
   switch (type) {
     case 1: // OpenAI
-      return <span>${balance.toFixed(2)}</span>;
+      return <Typography sx={{ ...balanceStyles, color: 'success.main' }}>${balance.toFixed(2)}</Typography>;
     case 4: // CloseAI
-      return <span>¥{balance.toFixed(2)}</span>;
+      return <Typography sx={{ ...balanceStyles, color: 'warning.main' }}>¥{balance.toFixed(2)}</Typography>;
     case 8: // 自定义
-      return <span>${balance.toFixed(2)}</span>;
+      return <Typography sx={{ ...balanceStyles, color: 'success.main' }}>${balance.toFixed(2)}</Typography>;
     case 5: // OpenAI-SB
-      return <span>¥{(balance / 10000).toFixed(2)}</span>;
+      return <Typography sx={{ ...balanceStyles, color: 'warning.main' }}>¥{(balance / 10000).toFixed(2)}</Typography>;
     case 10: // AI Proxy
-      return <span>{renderNumber(balance)}</span>;
+      return <Typography sx={balanceStyles}>{renderNumber(balance)}</Typography>;
     case 12: // API2GPT
-      return <span>¥{balance.toFixed(2)}</span>;
+      return <Typography sx={{ ...balanceStyles, color: 'warning.main' }}>¥{balance.toFixed(2)}</Typography>;
     case 13: // AIGC2D
-      return <span>{renderNumber(balance)}</span>;
+      return <Typography sx={balanceStyles}>{renderNumber(balance)}</Typography>;
     case 36: // DeepSeek
-      return <span>¥{balance.toFixed(2)}</span>;
+      return <Typography sx={{ ...balanceStyles, color: 'info.main' }}>¥{balance.toFixed(2)}</Typography>;
     case 44: // SiliconFlow
-      return <span>¥{balance.toFixed(2)}</span>;
+      return <Typography sx={{ ...balanceStyles, color: 'info.main' }}>¥{balance.toFixed(2)}</Typography>;
     default:
-      return <span>不支持</span>;
+      return <Typography sx={{ ...balanceStyles, color: 'text.secondary' }}>--</Typography>;
   }
 }

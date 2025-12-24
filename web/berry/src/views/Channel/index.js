@@ -8,26 +8,49 @@ import TableContainer from '@mui/material/TableContainer';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import TablePagination from '@mui/material/TablePagination';
 import LinearProgress from '@mui/material/LinearProgress';
-import ButtonGroup from '@mui/material/ButtonGroup';
 import Toolbar from '@mui/material/Toolbar';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { Button, IconButton, Card, Box, Stack, Container, Typography, Divider } from '@mui/material';
+import {
+  Button,
+  IconButton,
+  Card,
+  Box,
+  Stack,
+  Container,
+  Typography,
+  Divider,
+  Tooltip,
+  Chip,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon
+} from '@mui/material';
 import ChannelTableRow from './component/TableRow';
 import ChannelTableHead from './component/TableHead';
+import ChannelTableSkeleton from './component/ChannelTableSkeleton';
+import ChannelHealthOverview from './component/ChannelHealthOverview';
 import TableToolBar from 'ui-component/TableToolBar';
 import { API } from 'utils/api';
 import { ITEMS_PER_PAGE } from 'constants';
-import { IconRefresh, IconHttpDelete, IconPlus, IconBrandSpeedtest, IconCoinYuan } from '@tabler/icons-react';
+import {
+  IconRefresh,
+  IconTrash,
+  IconPlus,
+  IconTestPipe,
+  IconCoin
+} from '@tabler/icons-react';
 import EditeModal from './component/EditModal';
 
 // ----------------------------------------------------------------------
-// CHANNEL_OPTIONS,
+
 export default function ChannelPage() {
   const [channels, setChannels] = useState([]);
   const [activePage, setActivePage] = useState(0);
   const [searching, setSearching] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [testProgress, setTestProgress] = useState({ running: false, current: 0, total: 0 });
   const theme = useTheme();
   const matchUpMd = useMediaQuery(theme.breakpoints.up('sm'));
   const [openModal, setOpenModal] = useState(false);
@@ -49,12 +72,12 @@ export default function ChannelPage() {
       showError(message);
     }
     setSearching(false);
+    setInitialLoading(false);
   };
 
   const onPaginationChange = (event, activePage) => {
     (async () => {
       if (activePage === Math.ceil(channels.length / ITEMS_PER_PAGE)) {
-        // In this case we have to load more data and then append them.
         await loadChannels(activePage);
       }
       setActivePage(activePage);
@@ -124,24 +147,34 @@ export default function ChannelPage() {
     return res.data;
   };
 
-  // 处理刷新
   const handleRefresh = async () => {
     await loadChannels(activePage);
   };
 
-  // 处理测试所有启用渠道
   const testAllChannels = async () => {
+    setTestProgress({ running: true, current: 0, total: channels.filter(c => c.status === 1).length });
     const res = await API.get(`/api/channel/test`);
     const { success, message } = res.data;
     if (success) {
-      showInfo('已成功开始测试所有渠道，请刷新页面查看结果。');
+      showInfo('已成功开始测试所有渠道，请稍后刷新页面查看结果。');
     } else {
       showError(message);
     }
+    // Simulate progress (since backend doesn't provide real-time progress)
+    setTimeout(() => {
+      setTestProgress({ running: false, current: 0, total: 0 });
+    }, 3000);
   };
 
-  // 处理删除所有禁用渠道
   const deleteAllDisabledChannels = async () => {
+    const disabledCount = channels.filter(c => c.status !== 1).length;
+    if (disabledCount === 0) {
+      showInfo('没有禁用的渠道可删除');
+      return;
+    }
+    if (!window.confirm(`确定要删除 ${disabledCount} 个禁用的渠道吗？`)) {
+      return;
+    }
     const res = await API.delete(`/api/channel/disabled`);
     const { success, message, data } = res.data;
     if (success) {
@@ -152,13 +185,13 @@ export default function ChannelPage() {
     }
   };
 
-  // 处理更新所有启用渠道余额
   const updateAllChannelsBalance = async () => {
     setSearching(true);
     const res = await API.get(`/api/channel/update_balance`);
     const { success, message } = res.data;
     if (success) {
       showInfo('已更新完毕所有已启用渠道余额！');
+      await handleRefresh();
     } else {
       showError(message);
     }
@@ -191,86 +224,163 @@ export default function ChannelPage() {
     loadChannelModels().then();
   }, []);
 
+  const activeCount = channels.filter(c => c.status === 1).length;
+  const disabledCount = channels.filter(c => c.status !== 1).length;
+
   return (
     <>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2.5}>
-        <Typography variant="h4">渠道</Typography>
-        <Button variant="contained" color="primary" startIcon={<IconPlus />} onClick={() => handleOpenModal(0)}>
+      {/* Header */}
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>渠道管理</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            管理您的 AI 服务渠道
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<IconPlus size={18} />}
+          onClick={() => handleOpenModal(0)}
+          sx={{
+            px: 2.5,
+            py: 1,
+            borderRadius: 2,
+            boxShadow: 2,
+            '&:hover': {
+              boxShadow: 4
+            }
+          }}
+        >
           新建渠道
         </Button>
       </Stack>
-      <Card>
-        <Box component="form" onSubmit={searchChannels} noValidate sx={{ marginTop: 2 }}>
-          <TableToolBar filterName={searchKeyword} handleFilterName={handleSearchKeyword} placeholder={'搜索渠道的 ID，名称和密钥 ...'} />
+
+      {/* Health Overview */}
+      <ChannelHealthOverview channels={channels} isLoading={initialLoading} />
+
+      {/* Main Card */}
+      <Card sx={{ borderRadius: 2, boxShadow: 2 }}>
+        {/* Search Bar */}
+        <Box component="form" onSubmit={searchChannels} noValidate sx={{ px: 2, pt: 2 }}>
+          <TableToolBar
+            filterName={searchKeyword}
+            handleFilterName={handleSearchKeyword}
+            placeholder={'搜索渠道 ID、名称或密钥...'}
+          />
         </Box>
+
+        {/* Action Toolbar */}
         <Toolbar
           sx={{
-            textAlign: 'right',
-            height: 50,
+            height: 56,
             display: 'flex',
             justifyContent: 'space-between',
-            p: (theme) => theme.spacing(0, 1, 0, 3)
+            alignItems: 'center',
+            px: 2,
+            borderBottom: 1,
+            borderColor: 'divider'
           }}
         >
-          <Container>
-            {matchUpMd ? (
-              <ButtonGroup variant="outlined" aria-label="outlined small primary button group" sx={{ marginBottom: 2 }}>
-                <Button onClick={handleRefresh} startIcon={<IconRefresh width={'18px'} />}>
-                  刷新
-                </Button>
-                <Button onClick={testAllChannels} startIcon={<IconBrandSpeedtest width={'18px'} />}>
-                  测试启用渠道
-                </Button>
-                {/*<Button onClick={updateAllChannelsBalance} startIcon={<IconCoinYuan width={'18px'} />}>*/}
-                {/*  更新启用余额*/}
-                {/*</Button>*/}
-                <Button onClick={deleteAllDisabledChannels} startIcon={<IconHttpDelete width={'18px'} />}>
-                  删除禁用渠道
-                </Button>
-              </ButtonGroup>
-            ) : (
-              <Stack
-                direction="row"
-                spacing={1}
-                divider={<Divider orientation="vertical" flexItem />}
-                justifyContent="space-around"
-                alignItems="center"
-              >
-                <IconButton onClick={handleRefresh} size="large">
-                  <IconRefresh />
-                </IconButton>
-                <IconButton onClick={testAllChannels} size="large">
-                  <IconBrandSpeedtest />
-                </IconButton>
-                <IconButton onClick={updateAllChannelsBalance} size="large">
-                  <IconCoinYuan />
-                </IconButton>
-                <IconButton onClick={deleteAllDisabledChannels} size="large">
-                  <IconHttpDelete />
-                </IconButton>
-              </Stack>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Chip
+              label={`${activeCount} 活跃`}
+              color="success"
+              size="small"
+              variant="outlined"
+            />
+            {disabledCount > 0 && (
+              <Chip
+                label={`${disabledCount} 禁用`}
+                color="warning"
+                size="small"
+                variant="outlined"
+              />
             )}
-          </Container>
+          </Stack>
+
+          {matchUpMd ? (
+            <Stack direction="row" spacing={1}>
+              <Tooltip title="刷新列表">
+                <IconButton onClick={handleRefresh} size="small" sx={{ bgcolor: 'action.hover' }}>
+                  <IconRefresh size={18} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="测试所有启用渠道">
+                <IconButton
+                  onClick={testAllChannels}
+                  size="small"
+                  sx={{ bgcolor: 'action.hover' }}
+                  disabled={testProgress.running}
+                >
+                  <IconTestPipe size={18} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="更新所有余额">
+                <IconButton onClick={updateAllChannelsBalance} size="small" sx={{ bgcolor: 'action.hover' }}>
+                  <IconCoin size={18} />
+                </IconButton>
+              </Tooltip>
+              {disabledCount > 0 && (
+                <Tooltip title={`删除 ${disabledCount} 个禁用渠道`}>
+                  <IconButton
+                    onClick={deleteAllDisabledChannels}
+                    size="small"
+                    sx={{ bgcolor: 'error.lighter', color: 'error.main' }}
+                  >
+                    <IconTrash size={18} />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Stack>
+          ) : (
+            <SpeedDial
+              ariaLabel="Channel actions"
+              sx={{ position: 'relative' }}
+              icon={<SpeedDialIcon />}
+              direction="left"
+              FabProps={{ size: 'small' }}
+            >
+              <SpeedDialAction icon={<IconRefresh size={18} />} tooltipTitle="刷新" onClick={handleRefresh} />
+              <SpeedDialAction icon={<IconTestPipe size={18} />} tooltipTitle="测试" onClick={testAllChannels} />
+              <SpeedDialAction icon={<IconCoin size={18} />} tooltipTitle="更新余额" onClick={updateAllChannelsBalance} />
+            </SpeedDial>
+          )}
         </Toolbar>
-        {searching && <LinearProgress />}
+
+        {/* Progress Indicators */}
+        {(searching || testProgress.running) && (
+          <LinearProgress
+            color={testProgress.running ? 'info' : 'primary'}
+            variant={testProgress.running ? 'indeterminate' : 'indeterminate'}
+          />
+        )}
+
+        {/* Table */}
         <PerfectScrollbar component="div">
           <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
+            <Table sx={{ minWidth: 900 }}>
               <ChannelTableHead />
               <TableBody>
-                {channels.slice(activePage * ITEMS_PER_PAGE, (activePage + 1) * ITEMS_PER_PAGE).map((row) => (
-                  <ChannelTableRow
-                    item={row}
-                    manageChannel={manageChannel}
-                    key={row.id}
-                    handleOpenModal={handleOpenModal}
-                    setModalChannelId={setEditChannelId}
-                  />
-                ))}
+                {initialLoading ? (
+                  <ChannelTableSkeleton rows={5} />
+                ) : (
+                  channels.slice(activePage * ITEMS_PER_PAGE, (activePage + 1) * ITEMS_PER_PAGE).map((row) => (
+                    <ChannelTableRow
+                      item={row}
+                      manageChannel={manageChannel}
+                      key={row.id}
+                      handleOpenModal={handleOpenModal}
+                      setModalChannelId={setEditChannelId}
+                    />
+                  ))
+                )}
               </TableBody>
             </Table>
           </TableContainer>
         </PerfectScrollbar>
+
+        {/* Pagination */}
         <TablePagination
           page={activePage}
           component="div"
@@ -278,8 +388,14 @@ export default function ChannelPage() {
           rowsPerPage={ITEMS_PER_PAGE}
           onPageChange={onPaginationChange}
           rowsPerPageOptions={[ITEMS_PER_PAGE]}
+          sx={{
+            borderTop: 1,
+            borderColor: 'divider'
+          }}
         />
       </Card>
+
+      {/* Edit Modal */}
       <EditeModal open={openModal} onCancel={handleCloseModal} onOk={handleOkModal} channelId={editChannelId} />
     </>
   );
