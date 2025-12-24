@@ -4,15 +4,22 @@ WORKDIR /web
 COPY ./VERSION .
 COPY ./web .
 
-RUN npm install --prefix /web/default & \
-    npm install --prefix /web/berry & \
-    npm install --prefix /web/air & \
-    wait
+# Install dependencies for all themes
+RUN npm install --prefix /web/default && \
+    npm install --prefix /web/berry && \
+    npm install --prefix /web/air
 
-RUN DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/default & \
-    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/berry & \
-    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/air & \
-    wait
+# Build themes sequentially and move outputs to build folder
+RUN mkdir -p /web/build/default /web/build/berry /web/build/air
+
+RUN DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/default && \
+    cp -r /web/default/build/* /web/build/default/
+
+RUN DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/berry && \
+    cp -r /web/berry/build/* /web/build/berry/
+
+RUN DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/air && \
+    cp -r /web/air/build/* /web/build/air/
 
 FROM golang:alpine AS builder2
 
