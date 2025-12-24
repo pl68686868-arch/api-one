@@ -4,26 +4,27 @@ WORKDIR /web
 COPY ./VERSION .
 COPY ./web .
 
-# Create build output directories
-RUN mkdir -p /web/build/default /web/build/berry /web/build/air
+# Create parent build directory (themes will create subdirs themselves)
+RUN mkdir -p /web/build
 
-# Build default theme
+# Build default theme (script auto-moves to ../build/default)
 WORKDIR /web/default
 RUN npm install && \
-    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat /web/VERSION) npm run build && \
-    cp -r build/* /web/build/default/
+    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat /web/VERSION) npm run build
 
-# Build berry theme
+# Build berry theme (script auto-moves to ../build/berry)
 WORKDIR /web/berry
 RUN npm install && \
-    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat /web/VERSION) npm run build && \
-    cp -r build/* /web/build/berry/
+    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat /web/VERSION) npm run build
 
-# Build air theme
+# Build air theme (script auto-moves to ../build/air)
 WORKDIR /web/air
 RUN npm install && \
-    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat /web/VERSION) npm run build && \
-    cp -r build/* /web/build/air/
+    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat /web/VERSION) npm run build
+
+# Verify builds exist
+WORKDIR /web
+RUN ls -la /web/build/
 
 # Go builder stage
 FROM golang:alpine AS builder2
