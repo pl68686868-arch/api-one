@@ -30,9 +30,9 @@ type Log struct {
 	IsStream          bool   `json:"is_stream" gorm:"default:false"`
 	SystemPromptReset bool   `json:"system_prompt_reset" gorm:"default:false"`
 	// Smart Model Selection tracking
-	VirtualModel      string `json:"virtual_model" gorm:"index;default:''"` // Original requested model (e.g., "auto-smart")
-	ResolvedModel     string `json:"resolved_model" gorm:"default:''"`      // Actual model used (e.g., "gpt-4o")
-	SelectionReason   string `json:"selection_reason" gorm:"type:text;default:''"` // JSON with selection details
+	VirtualModel      string `json:"virtual_model" gorm:"index"` // Original requested model (e.g., "auto-smart")
+	ResolvedModel     string `json:"resolved_model"`             // Actual model used (e.g., "gpt-4o")
+	SelectionReason   string `json:"selection_reason" gorm:"type:text"` // JSON with selection details - TEXT cannot have default value in MySQL
 }
 
 const (
