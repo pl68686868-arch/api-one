@@ -5,16 +5,19 @@ import { alpha } from '@mui/material/styles';
 
 const StatCard = ({ icon: Icon, label, value, color, isLoading }) => (
     <Box
+        className="shadow-premium-hover"
         sx={{
             p: 2.5,
             borderRadius: 2,
-            bgcolor: (theme) => alpha(theme.palette[color].main, 0.08),
+            background: (theme) => `linear-gradient(135deg, ${alpha(theme.palette[color].lighter, 0.8)} 0%, ${alpha(theme.palette[color].light, 0.6)} 100%)`,
+            backdropFilter: 'blur(8px)',
             border: 1,
-            borderColor: (theme) => alpha(theme.palette[color].main, 0.12),
-            transition: 'all 0.2s ease',
+            borderColor: (theme) => alpha(theme.palette[color].main, 0.15),
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: (theme) => `0 4px 12px ${alpha(theme.palette[color].main, 0.15)}`
+                transform: 'translateY(-4px)',
+                boxShadow: (theme) => `0 8px 24px ${alpha(theme.palette[color].main, 0.25)}`,
+                background: (theme) => `linear-gradient(135deg, ${alpha(theme.palette[color].lighter, 1)} 0%, ${alpha(theme.palette[color].light, 0.9)} 100%)`
             }
         }}
     >
@@ -75,7 +78,7 @@ const ChannelHealthOverview = ({ channels, isLoading }) => {
         : 0;
 
     return (
-        <Card sx={{ mb: 3, p: 2.5 }}>
+        <Card className="glass-card" sx={{ mb: 3, p: 2.5, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
                 渠道概览
             </Typography>

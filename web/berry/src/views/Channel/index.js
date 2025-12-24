@@ -260,7 +260,7 @@ export default function ChannelPage() {
       <ChannelHealthOverview channels={channels} isLoading={initialLoading} />
 
       {/* Main Card */}
-      <Card sx={{ borderRadius: 2, boxShadow: 2 }}>
+      <Card className="glass-card shadow-premium-hover" sx={{ borderRadius: 2, boxShadow: 2 }}>
         {/* Search Bar */}
         <Box component="form" onSubmit={searchChannels} noValidate sx={{ px: 2, pt: 2 }}>
           <TableToolBar
