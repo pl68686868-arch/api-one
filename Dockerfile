@@ -4,23 +4,28 @@ WORKDIR /web
 COPY ./VERSION .
 COPY ./web .
 
-# Install dependencies for all themes
-RUN npm install --prefix /web/default && \
-    npm install --prefix /web/berry && \
-    npm install --prefix /web/air
-
-# Build themes sequentially and move outputs to build folder
+# Create build output directories
 RUN mkdir -p /web/build/default /web/build/berry /web/build/air
 
-RUN DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/default && \
-    cp -r /web/default/build/* /web/build/default/
+# Build default theme
+WORKDIR /web/default
+RUN npm install && \
+    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat /web/VERSION) npm run build && \
+    cp -r build/* /web/build/default/
 
-RUN DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/berry && \
-    cp -r /web/berry/build/* /web/build/berry/
+# Build berry theme
+WORKDIR /web/berry
+RUN npm install && \
+    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat /web/VERSION) npm run build && \
+    cp -r build/* /web/build/berry/
 
-RUN DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat ./VERSION) npm run build --prefix /web/air && \
-    cp -r /web/air/build/* /web/build/air/
+# Build air theme
+WORKDIR /web/air
+RUN npm install && \
+    DISABLE_ESLINT_PLUGIN='true' REACT_APP_VERSION=$(cat /web/VERSION) npm run build && \
+    cp -r build/* /web/build/air/
 
+# Go builder stage
 FROM golang:alpine AS builder2
 
 RUN apk add --no-cache \
@@ -43,6 +48,7 @@ COPY --from=builder /web/build ./web/build
 
 RUN go build -trimpath -ldflags "-s -w -X 'github.com/songquanpeng/one-api/common.Version=$(cat VERSION)' -linkmode external -extldflags '-static'" -o one-api
 
+# Final stage
 FROM alpine:latest
 
 RUN apk add --no-cache ca-certificates tzdata
