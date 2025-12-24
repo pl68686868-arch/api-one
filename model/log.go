@@ -29,6 +29,10 @@ type Log struct {
 	ElapsedTime       int64  `json:"elapsed_time" gorm:"default:0"` // unit is ms
 	IsStream          bool   `json:"is_stream" gorm:"default:false"`
 	SystemPromptReset bool   `json:"system_prompt_reset" gorm:"default:false"`
+	// Smart Model Selection tracking
+	VirtualModel      string `json:"virtual_model" gorm:"index;default:''"` // Original requested model (e.g., "auto-smart")
+	ResolvedModel     string `json:"resolved_model" gorm:"default:''"`      // Actual model used (e.g., "gpt-4o")
+	SelectionReason   string `json:"selection_reason" gorm:"type:text;default:''"` // JSON with selection details
 }
 
 const (

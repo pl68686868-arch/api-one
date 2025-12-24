@@ -5,16 +5,18 @@ const LogTableHead = ({ userIsAdmin }) => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell>时间</TableCell>
-        {userIsAdmin && <TableCell>渠道</TableCell>}
-        {userIsAdmin && <TableCell>用户</TableCell>}
-        <TableCell>令牌</TableCell>
-        <TableCell>类型</TableCell>
-        <TableCell>模型</TableCell>
-        <TableCell>提示</TableCell>
-        <TableCell>补全</TableCell>
-        <TableCell>额度</TableCell>
-        <TableCell>详情</TableCell>
+        <TableCell width={50}></TableCell> {/* Expand button column */}
+        <TableCell>Time</TableCell>
+        {userIsAdmin && <TableCell>Channel</TableCell>}
+        {userIsAdmin && <TableCell>User</TableCell>}
+        <TableCell>Token</TableCell>
+        <TableCell>Type</TableCell>
+        <TableCell>Model</TableCell>
+        <TableCell>Latency</TableCell>
+        <TableCell>Mode</TableCell>
+        <TableCell>Prompt</TableCell>
+        <TableCell>Completion</TableCell>
+        <TableCell>Quota</TableCell>
       </TableRow>
     </TableHead>
   );
