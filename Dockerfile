@@ -24,7 +24,11 @@ RUN npm install && \
 
 # Verify builds exist
 WORKDIR /web
-RUN ls -la /web/build/
+RUN echo "=== Build Output Verification ===" && \
+    ls -la /web/build/ && \
+    ls -la /web/build/default/ | head -5 && \
+    ls -la /web/build/berry/ | head -5 && \
+    ls -la /web/build/air/ | head -5
 
 # Go builder stage
 FROM golang:alpine AS builder2
