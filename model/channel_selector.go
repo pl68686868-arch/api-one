@@ -440,13 +440,16 @@ func CacheGetChannelWithStrategy(group string, model string, strategyName string
 }
 
 // Global smart selector
-var smartSelector *SmartChannelSelector
+var (
+	smartSelector     *SmartChannelSelector
+	smartSelectorOnce sync.Once
+)
 
 // GetSmartChannelSelector returns the global smart channel selector
 func GetSmartChannelSelector() *SmartChannelSelector {
-	if smartSelector == nil {
+	smartSelectorOnce.Do(func() {
 		smartSelector = NewSmartChannelSelector()
-	}
+	})
 	return smartSelector
 }
 

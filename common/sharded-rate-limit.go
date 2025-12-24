@@ -67,6 +67,10 @@ func (l *ShardedRateLimiter) Init(expirationDuration time.Duration) {
 
 // getShard returns the shard for a given key using FNV-1a hash
 func (l *ShardedRateLimiter) getShard(key string) *shard {
+	// Safety check: auto-initialize if not already done
+	if !l.initialized {
+		l.Init(5 * time.Minute) // Default expiration
+	}
 	h := fnv.New32a()
 	h.Write([]byte(key))
 	return l.shards[h.Sum32()%ShardCount]
