@@ -13,6 +13,9 @@ import { store } from 'store';
 import 'assets/scss/style.scss';
 import config from './config';
 
+// i18n
+import './i18n';
+
 // ==============================|| REACT DOM RENDER  ||============================== //
 
 const container = document.getElementById('root');
