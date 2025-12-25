@@ -81,6 +81,13 @@
       "show_detail": "Details",
       "hide_detail": "Hide Details"
     },
+    "overview": {
+      "title": "Channel Overview",
+      "active_channels": "Active Channels",
+      "disabled_channels": "Disabled Channels",
+      "total_balance_approx": "Total Balance (approx)",
+      "avg_response_time": "Avg Response"
+    },
     "messages": {
       "test_success": "Channel {{name}} test successful, model {{model}}, time {{time}}s, output: {{message}}",
       "test_all_started": "Channel testing started successfully, please refresh page to see results.",

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { Box, Card, Grid, Typography, Skeleton } from '@mui/material';
 import { IconServer, IconServerOff, IconCash, IconActivity } from '@tabler/icons-react';
 import { alpha } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 const StatCard = ({ icon: Icon, label, value, color, isLoading }) => (
     <Box
@@ -84,6 +85,7 @@ const StatCard = ({ icon: Icon, label, value, color, isLoading }) => (
 );
 
 const ChannelHealthOverview = ({ channels, isLoading }) => {
+    const { t } = useTranslation();
     const activeCount = channels.filter(c => c.status === 1).length;
     const disabledCount = channels.filter(c => c.status !== 1).length;
 
@@ -106,13 +108,13 @@ const ChannelHealthOverview = ({ channels, isLoading }) => {
     return (
         <Card className="glass-card" sx={{ mb: 3, p: 2.5, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
-                渠道概览
+                {t('channel.overview.title')}
             </Typography>
             <Grid container spacing={2}>
                 <Grid item xs={6} sm={3}>
                     <StatCard
                         icon={IconServer}
-                        label="活跃渠道"
+                        label={t('channel.overview.active_channels')}
                         value={activeCount}
                         color="success"
                         isLoading={isLoading}
@@ -121,7 +123,7 @@ const ChannelHealthOverview = ({ channels, isLoading }) => {
                 <Grid item xs={6} sm={3}>
                     <StatCard
                         icon={IconServerOff}
-                        label="禁用渠道"
+                        label={t('channel.overview.disabled_channels')}
                         value={disabledCount}
                         color="warning"
                         isLoading={isLoading}
@@ -130,7 +132,7 @@ const ChannelHealthOverview = ({ channels, isLoading }) => {
                 <Grid item xs={6} sm={3}>
                     <StatCard
                         icon={IconCash}
-                        label="总余额 (约)"
+                        label={t('channel.overview.total_balance_approx')}
                         value={`$${totalBalance.toFixed(0)}`}
                         color="info"
                         isLoading={isLoading}
@@ -139,7 +141,7 @@ const ChannelHealthOverview = ({ channels, isLoading }) => {
                 <Grid item xs={6} sm={3}>
                     <StatCard
                         icon={IconActivity}
-                        label="平均响应"
+                        label={t('channel.overview.avg_response_time')}
                         value={avgResponseTime > 0 ? `${avgResponseTime}ms` : '--'}
                         color="primary"
                         isLoading={isLoading}
