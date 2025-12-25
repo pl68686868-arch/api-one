@@ -50,10 +50,10 @@ const validationSchema = Yup.object().shape({
   groups: Yup.array().min(1, 'User组 cannot be empty'),
   base_url: Yup.string().when('type', {
     is: (value) => [3, 8].includes(value),
-    then: Yup.string().required('ChannelAPI地址 cannot be empty'), // base_url 是必需的
-    otherwise: Yup.string() // 在其他情况下，base_url 可以是任意字符串
+    then: Yup.string().required('Channel API address cannot be empty'), // base_url 是必需的
+    otherwise: Yup.string() // In other cases, base_url can be any string
   }),
-  model_mapping: Yup.string().test('is-json', 'Must是有效的JSON字符串', function (value) {
+  model_mapping: Yup.string().test('is-json', 'Must be a valid JSON string', function (value) {
     try {
       if (value === '' || value === null || value === undefined) {
         return true;
@@ -207,7 +207,7 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
       return [];
     }
 
-    // 如果 channelModel 是一个字符串
+    // If channelModel is a string
     if (typeof channelModel === 'string') {
       channelModel = channelModel.split(',');
     }
@@ -216,7 +216,7 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
       if (modelOption) {
         return modelOption;
       }
-      return { id: model, group: '自定义：点击或回车输入' };
+      return { id: model, group: 'Custom: click or press Enter to input' };
     });
     return modelList;
   }
@@ -434,7 +434,7 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
                     const event = {
                       target: {
                         name: 'models',
-                        value: value.map((item) => (typeof item === 'string' ? { id: item, group: '自定义：点击或回车输入' } : item))
+                        value: value.map((item) => (typeof item === 'string' ? { id: item, group: 'Custom: click or press Enter to input' } : item))
                       }
                     };
                     handleChange(event);
@@ -460,7 +460,7 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
                     if (inputValue !== '' && !isExisting) {
                       filtered.push({
                         id: inputValue,
-                        group: '自定义：点击或回车输入'
+                        group: 'Custom: click or press Enter to input'
                       });
                     }
                     return filtered;
@@ -491,14 +491,14 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
                       setFieldValue('models', initialModel(basicModels));
                     }}
                   >
-                    填入相关Model
+                    Fill in related models
                   </Button>
                   <Button
                     onClick={() => {
                       setFieldValue('models', modelOptions);
                     }}
                   >
-                    填入所有Model
+                    Fill in all models
                   </Button>
                 </ButtonGroup>
               </Container>
@@ -531,7 +531,7 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
                         onChange={handleChange}
                         aria-describedby="helper-text-channel-key-label"
                         minRows={5}
-                        placeholder={inputPrompt.key + '，一行一个密钥'}
+                        placeholder={inputPrompt.key + ', one key per line'}
                       />
                     )}
 

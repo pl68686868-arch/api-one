@@ -21,9 +21,9 @@ const ResponseTimeLabel = ({ test_time, response_time, handle_action }) => {
   }
   let title = (
     <>
-      点击测速
+      Click to test
       <br />
-      {test_time != 0 ? '上次测速Time：' + timestamp2string(test_time) : 'Not tested'}
+      {test_time != 0 ? 'Last test time:' + timestamp2string(test_time) : 'Not tested'}
     </>
   );
 

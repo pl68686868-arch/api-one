@@ -33,7 +33,7 @@ const LarkOAuth = () => {
         showError(message);
       }
       if (count === 0) {
-        setPrompt(`ActionFailed，重定向至Login界面中...`);
+        setPrompt(`Action failed, redirecting to login...`);
         await new Promise((resolve) => setTimeout(resolve, 2000));
         navigate('/login');
         return;

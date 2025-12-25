@@ -655,13 +655,13 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="WeChatAccountQRCodeImageURL">微信公众号二维码图片链接</InputLabel>
+                <InputLabel htmlFor="WeChatAccountQRCodeImageURL">微信公众号QR code图片链接</InputLabel>
                 <OutlinedInput
                   id="WeChatAccountQRCodeImageURL"
                   name="WeChatAccountQRCodeImageURL"
                   value={inputs.WeChatAccountQRCodeImageURL || ''}
                   onChange={handleInputChange}
-                  label="微信公众号二维码图片链接"
+                  label="微信公众号QR code图片链接"
                   placeholder="输入一个图片链接"
                   disabled={loading}
                 />
@@ -889,7 +889,7 @@ const SystemSetting = () => {
           Warning
         </DialogTitle>
         <Divider />
-        <DialogContent>CancelPasswordLogin将导致所有未绑定其他Login方式的User（包括Management员）无法通过PasswordLogin，ConfirmCancel？</DialogContent>
+        <DialogContent>CancelPasswordLogin将导致所有Unbound其他Login方式的User（包括Management员）无法通过PasswordLogin，ConfirmCancel？</DialogContent>
         <DialogActions>
           <Button onClick={() => setShowPasswordWarningModal(false)}>Cancel</Button>
           <Button

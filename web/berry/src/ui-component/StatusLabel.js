@@ -7,7 +7,7 @@ const STATUS_CONFIG = {
     label: 'Enable',
     color: 'success',
     icon: IconCircleCheck,
-    tooltip: 'ChannelEnabled，Normal运行中'
+    tooltip: 'Channel enabled, running normally'
   },
   2: {
     label: 'Manually Disabled',

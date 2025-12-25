@@ -43,12 +43,12 @@ const ResetPasswordForm = () => {
     <Stack spacing={3} padding={'24px'} justifyContent={'center'} alignItems={'center'}>
       {!inputs.email || !inputs.token ? (
         <Typography variant="h3" sx={{ textDecoration: 'none' }}>
-          无效的链接
+          Invalid link
         </Typography>
       ) : newPassword ? (
         <Alert severity="error">
-          你的新Password是: <b>{newPassword}</b> <br />
-          请Login后及时修改Password
+          Your new password is: <b>{newPassword}</b> <br />
+          Please change password after login
         </Alert>
       ) : (
         <Button fullWidth onClick={submit} size="large" type="submit" variant="contained" color="primary">

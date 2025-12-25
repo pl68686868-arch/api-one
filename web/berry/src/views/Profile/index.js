@@ -31,9 +31,9 @@ import { ReactComponent as Lark } from 'assets/images/icons/lark.svg';
 import { ReactComponent as OIDC } from 'assets/images/icons/oidc.svg';
 
 const validationSchema = Yup.object().shape({
-  username: Yup.string().required('User名 cannot be empty').min(3, 'User名 不能小于 3 个字符'),
+  username: Yup.string().required('Username cannot be empty').min(3, 'Username must be at least 3 characters'),
   display_name: Yup.string(),
-  password: Yup.string().test('password', 'Password不能小于 8 个字符', (val) => {
+  password: Yup.string().test('password', 'Password must be at least 8 characters', (val) => {
     return !val || val.length >= 8;
   })
 });
@@ -77,7 +77,7 @@ export default function Profile() {
       const res = await API.get(`/api/oauth/wechat/bind?code=${code}`);
       const { success, message } = res.data;
       if (success) {
-        showSuccess('微信账户绑定Success！');
+        showSuccess('WeChat account bound successfully！');
       }
       return { success, message };
     } catch (err) {
@@ -140,19 +140,19 @@ export default function Profile() {
           <Stack spacing={2}>
             <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ paddingBottom: '20px' }}>
               <Label variant="ghost" color={inputs.wechat_id ? 'primary' : 'default'}>
-                <IconBrandWechat /> {inputs.wechat_id || '未绑定'}
+                <IconBrandWechat /> {inputs.wechat_id || 'Unbound'}
               </Label>
               <Label variant="ghost" color={inputs.github_id ? 'primary' : 'default'}>
-                <IconBrandGithub /> {inputs.github_id || '未绑定'}
+                <IconBrandGithub /> {inputs.github_id || 'Unbound'}
               </Label>
               <Label variant="ghost" color={inputs.email ? 'primary' : 'default'}>
-                <IconMail /> {inputs.email || '未绑定'}
+                <IconMail /> {inputs.email || 'Unbound'}
               </Label>
               <Label variant="ghost" color={inputs.lark_id ? 'primary' : 'default'}>
-                <SvgIcon component={Lark} inheritViewBox="0 0 24 24" /> {inputs.lark_id || '未绑定'}
+                <SvgIcon component={Lark} inheritViewBox="0 0 24 24" /> {inputs.lark_id || 'Unbound'}
               </Label>
               <Label variant="ghost" color={inputs.oidc_id ? 'primary' : 'default'}>
-                <SvgIcon component={OIDC} inheritViewBox="0 0 24 24" /> {getOidcId() || '未绑定'}
+                <SvgIcon component={OIDC} inheritViewBox="0 0 24 24" /> {getOidcId() || 'Unbound'}
               </Label>
             </Stack>
             <SubCard title="Profile信息">
@@ -206,12 +206,12 @@ export default function Profile() {
                 </Grid>
               </Grid>
             </SubCard>
-            <SubCard title="账号绑定">
+            <SubCard title="Account binding">
               <Grid container spacing={2}>
                 {status.wechat_login && !inputs.wechat_id && (
                   <Grid xs={12} md={4}>
                     <Button variant="contained" onClick={handleWechatOpen}>
-                      绑定微信账号
+                      Bind WeChat account
                     </Button>
                   </Grid>
                 )}
@@ -243,7 +243,7 @@ export default function Profile() {
                       setOpenEmail(true);
                     }}
                   >
-                    {inputs.email ? '更换邮箱' : 'Bind email'}
+                    {inputs.email ? 'Change email' : 'Bind email'}
                   </Button>
                   {turnstileEnabled ? (
                     <Turnstile
@@ -261,19 +261,19 @@ export default function Profile() {
             <SubCard title="其他">
               <Grid container spacing={2}>
                 <Grid xs={12}>
-                  <Alert severity="info">注意，此处生成的Token用于SystemManagement，而非用于Request OpenAI 相关的服务，请知悉。</Alert>
+                  <Alert severity="info">Note: Token generated here is for system management, not for requesting OpenAI services。</Alert>
                 </Grid>
                 {inputs.access_token && (
                   <Grid xs={12}>
                     <Alert severity="error">
-                      你的访问Token是: <b>{inputs.access_token}</b> <br />
-                      请妥善保管。如有泄漏，请立即Reset。
+                      Your access token is: <b>{inputs.access_token}</b> <br />
+                      Please keep it safe. If leaked, reset immediately。
                     </Alert>
                   </Grid>
                 )}
                 <Grid xs={12}>
                   <Button variant="contained" onClick={generateAccessToken}>
-                    {inputs.access_token ? 'Reset访问Token' : '生成访问Token'}
+                    {inputs.access_token ? 'Reset access token' : 'Generate access token'}
                   </Button>
                 </Grid>
 
@@ -298,7 +298,7 @@ export default function Profile() {
           危险Action
         </DialogTitle>
         <Divider />
-        <DialogContent>您正在Delete自己的帐户，将清空所有数据且不可恢复</DialogContent>
+        <DialogContent>You are deleting your account, all data will be cleared and cannot be recovered</DialogContent>
         <DialogActions>
           <Button onClick={() => setShowAccountDeleteModal(false)}>Cancel</Button>
           <Button

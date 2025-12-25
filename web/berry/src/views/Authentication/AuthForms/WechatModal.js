@@ -25,13 +25,13 @@ const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
       <DialogTitle>微信Verification codeLogin</DialogTitle>
       <DialogContent>
         <Grid container direction="column" alignItems="center">
-          <img src={qrCode} alt="二维码" style={{ maxWidth: '300px', maxHeight: '300px', width: 'auto', height: 'auto' }} />
+          <img src={qrCode} alt="QR code" style={{ maxWidth: '300px', maxHeight: '300px', width: 'auto', height: 'auto' }} />
           <Typography
             variant="body2"
             color="text.secondary"
             style={{ marginTop: '10px', textAlign: 'center', wordWrap: 'break-word', maxWidth: '300px' }}
           >
-            请使用微信扫描二维码关注公众号，输入「Verification code」Get verification code（三分钟内有效）
+            请使用微信扫描QR code关注公众号，输入「Verification code」Get verification code（三分钟内有效）
           </Typography>
           <Formik initialValues={{ code: '' }} validationSchema={validationSchema} onSubmit={handleSubmit}>
             {({ errors, touched }) => (

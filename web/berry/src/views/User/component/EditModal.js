@@ -28,7 +28,7 @@ import { API } from 'utils/api';
 
 const validationSchema = Yup.object().shape({
   is_edit: Yup.boolean(),
-  username: Yup.string().required('User名 cannot be empty'),
+  username: Yup.string().required('Username cannot be empty'),
   display_name: Yup.string(),
   password: Yup.string().when('is_edit', {
     is: false,

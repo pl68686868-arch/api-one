@@ -106,13 +106,13 @@ const RegisterForm = ({ ...others }) => {
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          username: Yup.string().max(255).required('User名是必填项'),
-          password: Yup.string().max(255).required('Password是必填项'),
+          username: Yup.string().max(255).required('Username is required'),
+          password: Yup.string().max(255).required('Password is required'),
           confirmPassword: Yup.string()
-            .required('ConfirmPassword是必填项')
-            .oneOf([Yup.ref('password'), null], '两次输入的Password不一致'),
-          email: showEmailVerification ? Yup.string().email('Must是有效的Email地址').max(255).required('Email是必填项') : Yup.mixed(),
-          verification_code: showEmailVerification ? Yup.string().max(255).required('Verification code是必填项') : Yup.mixed()
+            .required('ConfirmPassword is required')
+            .oneOf([Yup.ref('password'), null], 'Passwords do not match'),
+          email: showEmailVerification ? Yup.string().email('Must be a valid email address').max(255).required('Email is required') : Yup.mixed(),
+          verification_code: showEmailVerification ? Yup.string().max(255).required('Verification code is required') : Yup.mixed()
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           if (turnstileEnabled && turnstileToken === '') {

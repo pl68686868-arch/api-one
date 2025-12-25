@@ -94,9 +94,9 @@ const ForgetPasswordForm = ({ ...others }) => {
           }}
           validationSchema={Yup.object().shape({
             email: Yup.string()
-              .email("Must是有效的Email地址")
+              .email("Must be a valid email address")
               .max(255)
-              .required("Email是必填项"),
+              .required("Email is required"),
           })}
           onSubmit={submit}
         >

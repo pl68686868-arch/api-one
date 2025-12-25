@@ -25,7 +25,7 @@ const Footer = () => {
             构建，主题 berry 来自{' '}
             <Link href="https://github.com/MartialBE" target="_blank">
               MartialBE
-            </Link>{' '}，源代码遵循
+            </Link>{' '}，source code follows
             <Link href="https://opensource.org/licenses/mit-license.php"> MIT 协议</Link>
           </>
         )}
