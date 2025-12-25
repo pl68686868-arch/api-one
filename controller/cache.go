@@ -2,38 +2,39 @@ package controller
 
 import (
 	"net/http"
-	"sync/atomic"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/config"
+	"github.com/songquanpeng/one-api/common/logger"
 	"github.com/songquanpeng/one-api/relay/cache"
 )
 
 // CacheStatsResponse represents cache statistics
 type CacheStatsResponse struct {
-	Enabled         bool    `json:"enabled"`
-	
+	Enabled bool `json:"enabled"`
+
 	// Exact Match Cache
-	ExactCacheEnabled bool   `json:"exact_cache_enabled"`
-	ExactCacheTTL     int    `json:"exact_cache_ttl"`
-	
+	ExactCacheEnabled bool `json:"exact_cache_enabled"`
+	ExactCacheTTL     int  `json:"exact_cache_ttl"`
+
 	// Semantic Cache
 	SemanticCacheEnabled   bool    `json:"semantic_cache_enabled"`
 	SemanticCacheThreshold float64 `json:"semantic_cache_threshold"`
 	SemanticCacheMaxSize   int     `json:"semantic_cache_max_size"`
 	SemanticCacheEntries   int     `json:"semantic_cache_entries"`
 	SemanticCacheTotalHits int     `json:"semantic_cache_total_hits"`
-	
+
 	// Overall Stats
-	TotalHits       int64   `json:"total_hits"`
-	TotalMisses     int64   `json:"total_misses"`
-	HitRate         float64 `json:"hit_rate"`
-	TokensSaved     int64   `json:"tokens_saved"`
-	EstCostSaved    float64 `json:"est_cost_saved"` // In USD
-	
+	TotalHits    int64   `json:"total_hits"`
+	TotalMisses  int64   `json:"total_misses"`
+	HitRate      float64 `json:"hit_rate"`
+	TokensSaved  int64   `json:"tokens_saved"`
+	EstCostSaved float64 `json:"est_cost_saved"` // In USD
+
 	// Timing
-	LastUpdated     int64   `json:"last_updated"`
+	LastUpdated int64 `json:"last_updated"`
 }
 
 // GetCacheStats returns cache statistics
@@ -46,57 +47,55 @@ type CacheStatsResponse struct {
 // @Router /api/cache/stats [get]
 func GetCacheStats(c *gin.Context) {
 	metrics := cache.CacheMetrics.GetStats()
-	
-	hits := metrics["hits"].(int64)
-	misses := metrics["misses"].(int64)
-	tokensSaved := metrics["tokens_saved"].(int64)
-	
+
+	// Safe type assertions with defaults
+	hits := safeInt64(metrics, "hits", 0)
+	misses := safeInt64(metrics, "misses", 0)
+	tokensSaved := safeInt64(metrics, "tokens_saved", 0)
+
 	// Calculate hit rate
 	var hitRate float64
 	total := hits + misses
 	if total > 0 {
 		hitRate = float64(hits) / float64(total)
 	}
-	
+
 	// Estimate cost saved (assuming $0.002 per 1K tokens average)
 	estCostSaved := float64(tokensSaved) * 0.000002
-	
-	// Get semantic cache stats
-	var semanticStats map[string]interface{}
-	if cache.GetSemanticCache() != nil {
-		semanticStats = cache.GetSemanticCache().GetStats()
-	} else {
-		semanticStats = map[string]interface{}{
-			"enabled":    false,
-			"entries":    0,
-			"total_hits": 0,
-		}
+
+	// Get semantic cache stats safely
+	semanticEntries := 0
+	semanticTotalHits := 0
+	if sc := cache.GetSemanticCache(); sc != nil {
+		semanticStats := sc.GetStats()
+		semanticEntries = safeInt(semanticStats, "entries", 0)
+		semanticTotalHits = safeInt(semanticStats, "total_hits", 0)
 	}
-	
+
 	response := CacheStatsResponse{
-		Enabled:             config.ResponseCacheEnabled || config.SemanticCacheEnabled,
-		
+		Enabled: config.ResponseCacheEnabled || config.SemanticCacheEnabled,
+
 		// Exact Cache
-		ExactCacheEnabled:   config.ResponseCacheEnabled,
-		ExactCacheTTL:       config.ResponseCacheTTL,
-		
+		ExactCacheEnabled: config.ResponseCacheEnabled,
+		ExactCacheTTL:     config.ResponseCacheTTL,
+
 		// Semantic Cache
 		SemanticCacheEnabled:   config.SemanticCacheEnabled,
 		SemanticCacheThreshold: config.SemanticCacheThreshold,
 		SemanticCacheMaxSize:   config.SemanticCacheMaxSize,
-		SemanticCacheEntries:   semanticStats["entries"].(int),
-		SemanticCacheTotalHits: semanticStats["total_hits"].(int),
-		
+		SemanticCacheEntries:   semanticEntries,
+		SemanticCacheTotalHits: semanticTotalHits,
+
 		// Overall
-		TotalHits:       hits,
-		TotalMisses:     misses,
-		HitRate:         hitRate,
-		TokensSaved:     tokensSaved,
-		EstCostSaved:    estCostSaved,
-		
+		TotalHits:    hits,
+		TotalMisses:  misses,
+		HitRate:      hitRate,
+		TokensSaved:  tokensSaved,
+		EstCostSaved: estCostSaved,
+
 		LastUpdated: time.Now().Unix(),
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    response,
@@ -126,25 +125,27 @@ func ClearCache(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	cleared := 0
-	
+	exactCleared := 0
+
 	switch req.Type {
 	case "exact":
-		// Clear exact match cache - would need Redis scan
-		cleared = 0 // TODO: Implement Redis scan for llm:cache:exact:* keys
-		
+		exactCleared = clearExactCache()
+		cleared = exactCleared
+
 	case "semantic":
 		if sc := cache.GetSemanticCache(); sc != nil {
 			cleared = sc.Clear()
 		}
-		
+
 	case "all":
 		if sc := cache.GetSemanticCache(); sc != nil {
 			cleared = sc.Clear()
 		}
-		// TODO: Also clear exact cache
-		
+		exactCleared = clearExactCache()
+		cleared += exactCleared
+
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -152,15 +153,53 @@ func ClearCache(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	// Reset metrics
 	cache.CacheMetrics.Reset()
-	
+
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Cache cleared successfully",
-		"cleared": cleared,
+		"success":       true,
+		"message":       "Cache cleared successfully",
+		"cleared":       cleared,
+		"exact_cleared": exactCleared,
 	})
+}
+
+// clearExactCache clears all exact match cache entries from Redis
+func clearExactCache() int {
+	if !common.RedisEnabled {
+		return 0
+	}
+
+	// Use SCAN to find and delete all exact cache keys
+	ctx := common.RDB.Context()
+	var cursor uint64
+	var cleared int
+
+	for {
+		var keys []string
+		var err error
+		keys, cursor, err = common.RDB.Scan(ctx, cursor, "llm:cache:exact:*", 100).Result()
+		if err != nil {
+			logger.SysError("Failed to scan Redis keys: " + err.Error())
+			break
+		}
+
+		if len(keys) > 0 {
+			deleted, err := common.RDB.Del(ctx, keys...).Result()
+			if err != nil {
+				logger.SysError("Failed to delete Redis keys: " + err.Error())
+			} else {
+				cleared += int(deleted)
+			}
+		}
+
+		if cursor == 0 {
+			break
+		}
+	}
+
+	return cleared
 }
 
 // ToggleCacheRequest represents cache toggle request
@@ -187,14 +226,16 @@ func ToggleCache(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	switch req.Type {
 	case "exact":
 		config.ResponseCacheEnabled = req.Enabled
-		
+		logger.SysLog("Exact cache toggled: " + boolToString(req.Enabled))
+
 	case "semantic":
 		config.SemanticCacheEnabled = req.Enabled
-		
+		logger.SysLog("Semantic cache toggled: " + boolToString(req.Enabled))
+
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -202,7 +243,7 @@ func ToggleCache(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "Cache " + req.Type + " set to " + boolToString(req.Enabled),
@@ -216,5 +257,31 @@ func boolToString(b bool) string {
 	return "disabled"
 }
 
-// Unused import fix - atomic is used in metrics
-var _ = atomic.AddInt64
+// Safe type assertion helpers
+func safeInt64(m map[string]interface{}, key string, defaultVal int64) int64 {
+	if v, ok := m[key]; ok {
+		switch val := v.(type) {
+		case int64:
+			return val
+		case int:
+			return int64(val)
+		case float64:
+			return int64(val)
+		}
+	}
+	return defaultVal
+}
+
+func safeInt(m map[string]interface{}, key string, defaultVal int) int {
+	if v, ok := m[key]; ok {
+		switch val := v.(type) {
+		case int:
+			return val
+		case int64:
+			return int(val)
+		case float64:
+			return int(val)
+		}
+	}
+	return defaultVal
+}
