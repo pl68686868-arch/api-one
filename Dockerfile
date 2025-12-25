@@ -59,6 +59,7 @@ FROM alpine:latest
 RUN apk add --no-cache ca-certificates tzdata
 
 COPY --from=builder2 /build/one-api /
+COPY --from=builder2 /build/web/build /web/build
 
 EXPOSE 3000
 WORKDIR /data
