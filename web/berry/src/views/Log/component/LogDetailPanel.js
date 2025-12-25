@@ -70,17 +70,24 @@ Metric.propTypes = {
 
 // Main detail panel component
 export default function LogDetailPanel({ item }) {
+    // Try to parse selection_reason as JSON (backward compatibility)
+    // New format is plain text, old format may be JSON
     let selectionReason = null;
+    let selectionReasonText = item.selection_reason || null;
+
     try {
-        selectionReason = item.selection_reason ? JSON.parse(item.selection_reason) : null;
+        if (item.selection_reason && item.selection_reason.startsWith('{')) {
+            selectionReason = JSON.parse(item.selection_reason);
+            selectionReasonText = null; // Use structured data instead
+        }
     } catch (e) {
-        // Invalid JSON, ignore
+        // Not JSON, treat as plain text
     }
 
     return (
         <Grid container spacing={3}>
             {/* Request Information */}
-            <Grid item xs={12} md={selectionReason ? 6 : 12}>
+            <Grid item xs={12} md={(selectionReason || selectionReasonText || item.actual_model) ? 6 : 12}>
                 <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
                     Request Information
                 </Typography>
@@ -93,17 +100,70 @@ export default function LogDetailPanel({ item }) {
                     <InfoRow label="Streaming" value={item.is_stream ? 'Yes' : 'No'} />
                     <InfoRow label="Prompt Tokens" value={item.prompt_tokens || 0} />
                     <InfoRow label="Completion Tokens" value={item.completion_tokens || 0} />
-                    {item.virtual_model && (
+
+                    {/* Model Information */}
+                    {(item.virtual_model || item.actual_model) && (
                         <>
                             <Divider sx={{ my: 1 }} />
-                            <InfoRow label="Virtual Model" value={item.virtual_model} />
-                            <InfoRow label="Resolved To" value={item.resolved_model || item.model_name} />
+                            {item.virtual_model && (
+                                <>
+                                    <InfoRow label="Virtual Model" value={item.virtual_model} />
+                                    <InfoRow label="Resolved To" value={item.resolved_model || item.model_name} />
+                                </>
+                            )}
+                            {item.actual_model && item.actual_model !== item.model_name && (
+                                <InfoRow
+                                    label="Actual Model"
+                                    value={item.actual_model}
+                                    copyable={true}
+                                />
+                            )}
                         </>
                     )}
                 </Box>
             </Grid>
 
-            {/* Smart Selection Details */}
+            {/* Channel Selection Details - New Format (Plain Text) */}
+            {(selectionReasonText || !!item.channel_health_score) && (
+                <Grid item xs={12} md={6}>
+                    <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
+                        Channel Selection
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        {selectionReasonText && (
+                            <Box
+                                sx={{
+                                    p: 1.5,
+                                    bgcolor: 'primary.lighter',
+                                    borderRadius: 1,
+                                    border: 1,
+                                    borderColor: 'primary.light'
+                                }}
+                            >
+                                <Typography variant="body2" color="primary.main" sx={{ fontWeight: 500 }}>
+                                    {selectionReasonText}
+                                </Typography>
+                            </Box>
+                        )}
+
+                        {item.channel_health_score && item.channel_health_score > 0 && (
+                            <InfoRow
+                                label="Health Score"
+                                value={
+                                    <Chip
+                                        label={`${(item.channel_health_score * 100).toFixed(1)}%`}
+                                        color={item.channel_health_score > 0.95 ? 'success' : item.channel_health_score > 0.8 ? 'warning' : 'error'}
+                                        size="small"
+                                        sx={{ fontWeight: 600 }}
+                                    />
+                                }
+                            />
+                        )}
+                    </Box>
+                </Grid>
+            )}
+
+            {/* Smart Selection Details - Old Format (JSON) */}
             {selectionReason && (
                 <Grid item xs={12} md={6}>
                     <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
