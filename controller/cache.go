@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"net/http"
 	"time"
 
@@ -49,9 +50,9 @@ func GetCacheStats(c *gin.Context) {
 	metrics := cache.CacheMetrics.GetStats()
 
 	// Safe type assertions with defaults
-	hits := safeInt64(metrics, "hits", 0)
-	misses := safeInt64(metrics, "misses", 0)
-	tokensSaved := safeInt64(metrics, "tokens_saved", 0)
+	hits := cacheSafeInt64(metrics, "hits", 0)
+	misses := cacheSafeInt64(metrics, "misses", 0)
+	tokensSaved := cacheSafeInt64(metrics, "tokens_saved", 0)
 
 	// Calculate hit rate
 	var hitRate float64
@@ -68,8 +69,8 @@ func GetCacheStats(c *gin.Context) {
 	semanticTotalHits := 0
 	if sc := cache.GetSemanticCache(); sc != nil {
 		semanticStats := sc.GetStats()
-		semanticEntries = safeInt(semanticStats, "entries", 0)
-		semanticTotalHits = safeInt(semanticStats, "total_hits", 0)
+		semanticEntries = cacheSafeInt(semanticStats, "entries", 0)
+		semanticTotalHits = cacheSafeInt(semanticStats, "total_hits", 0)
 	}
 
 	response := CacheStatsResponse{
@@ -172,7 +173,7 @@ func clearExactCache() int {
 	}
 
 	// Use SCAN to find and delete all exact cache keys
-	ctx := common.RDB.Context()
+	ctx := context.Background()
 	var cursor uint64
 	var cleared int
 
@@ -257,8 +258,8 @@ func boolToString(b bool) string {
 	return "disabled"
 }
 
-// Safe type assertion helpers
-func safeInt64(m map[string]interface{}, key string, defaultVal int64) int64 {
+// Safe type assertion helpers for cache stats
+func cacheSafeInt64(m map[string]interface{}, key string, defaultVal int64) int64 {
 	if v, ok := m[key]; ok {
 		switch val := v.(type) {
 		case int64:
@@ -272,7 +273,7 @@ func safeInt64(m map[string]interface{}, key string, defaultVal int64) int64 {
 	return defaultVal
 }
 
-func safeInt(m map[string]interface{}, key string, defaultVal int) int {
+func cacheSafeInt(m map[string]interface{}, key string, defaultVal int) int {
 	if v, ok := m[key]; ok {
 		switch val := v.(type) {
 		case int:

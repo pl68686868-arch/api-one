@@ -99,6 +99,7 @@ var AutomaticEnableChannelEnabled = false
 var QuotaRemindThreshold int64 = 1000
 var PreConsumedQuota int64 = 500
 var ApproximateTokenEnabled = false
+var RetryTimes = 0
 
 // Response Cache Configuration
 var ResponseCacheEnabled = false
