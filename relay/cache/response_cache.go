@@ -64,7 +64,12 @@ func (rc *ResponseCache) CheckCache(
 	data, err := common.RedisGet("llm:cache:exact:" + key)
 
 	if err != nil {
-		CacheMetrics.RecordMiss()
+		// Redis error - don't record as miss (transient issue)
+		return "", false
+	}
+
+	// Empty data means cache miss
+	if data == "" {
 		return "", false
 	}
 
@@ -72,7 +77,6 @@ func (rc *ResponseCache) CheckCache(
 	var cached CachedResponse
 	if err := json.Unmarshal([]byte(data), &cached); err != nil {
 		logger.SysError("Failed to unmarshal cached response: " + err.Error())
-		CacheMetrics.RecordMiss()
 		return "", false
 	}
 
@@ -90,7 +94,8 @@ func (rc *ResponseCache) StoreCache(
 	responseContent string,
 	tokensUsed int,
 ) error {
-	if !rc.enabled || !common.RedisEnabled {
+	// Nil check for safety
+	if rc == nil || !rc.enabled || !common.RedisEnabled {
 		return nil
 	}
 

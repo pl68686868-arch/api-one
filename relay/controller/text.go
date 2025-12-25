@@ -41,7 +41,6 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 	meta.ActualModelName = textRequest.Model
 
 	// Cache lookup chain: Exact Match → Semantic → LLM
-	cacheHit := false
 	
 	// 1. Check exact match cache first (fastest)
 	if config.ResponseCacheEnabled {
@@ -52,9 +51,11 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 				if err := cache.ReplayCachedStream(c, cached); err == nil {
 					return nil
 				}
+				// Fall through on error
 			} else {
 				content := cache.ExtractContentFromStream(cached)
 				if content != "" {
+					c.Header("X-Cache-Hit", "exact")
 					c.JSON(http.StatusOK, gin.H{
 						"id":      "chatcmpl-cached",
 						"object":  "chat.completion",
@@ -76,12 +77,13 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 					})
 					return nil
 				}
+				// Empty content - fall through
 			}
 		}
 	}
 	
 	// 2. Check semantic cache (similarity-based)
-	if config.SemanticCacheEnabled && !cacheHit {
+	if config.SemanticCacheEnabled {
 		if cached, score, found := cache.GetSemanticCache().CheckSemantic(meta.OriginModelName, textRequest.Messages); found {
 			logger.Infof(ctx, "[SEMANTIC CACHE HIT] model=%s score=%.3f stream=%v", meta.OriginModelName, score, meta.IsStream)
 			
@@ -89,9 +91,12 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 				if err := cache.ReplayCachedStream(c, cached); err == nil {
 					return nil
 				}
+				// Fall through on error
 			} else {
 				content := cache.ExtractContentFromStream(cached)
 				if content != "" {
+					c.Header("X-Cache-Hit", "semantic")
+					c.Header("X-Semantic-Score", fmt.Sprintf("%.3f", score))
 					c.JSON(http.StatusOK, gin.H{
 						"id":      "chatcmpl-semantic",
 						"object":  "chat.completion", 
@@ -111,12 +116,11 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 							"total_tokens":      0,
 						},
 					})
-					c.Header("X-Semantic-Score", fmt.Sprintf("%.3f", score))
 					return nil
 				}
+				// Empty content - fall through
 			}
 		}
-		cache.CacheMetrics.RecordMiss()
 	}
 
 	// set system prompt if not empty
