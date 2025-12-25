@@ -160,6 +160,35 @@ export default function LogDetailPanel({ item }) {
                                 }
                             />
                         )}
+
+                        {item.available_channels && item.available_channels > 0 && (
+                            <InfoRow
+                                label="Available Channels"
+                                value={
+                                    <Chip
+                                        label={`${item.available_channels} channel${item.available_channels > 1 ? 's' : ''}`}
+                                        color="info"
+                                        size="small"
+                                        variant="outlined"
+                                        sx={{ fontWeight: 600 }}
+                                    />
+                                }
+                            />
+                        )}
+
+                        {item.selection_score && item.selection_score > 0 && (
+                            <InfoRow
+                                label="Selection Score"
+                                value={
+                                    <Chip
+                                        label={item.selection_score.toFixed(2)}
+                                        color="secondary"
+                                        size="small"
+                                        sx={{ fontWeight: 600 }}
+                                    />
+                                }
+                            />
+                        )}
                     </Box>
                 </Grid>
             )}
