@@ -19,6 +19,8 @@ const (
 	ActualModel       = "actual_model"       // Added for tracking actual model after mapping
 	ChannelHealthScore = "channel_health_score" // Added for tracking channel health
 	SelectionReason    = "selection_reason"     // Added for tracking selection reasoning
+	AvailableChannels  = "available_channels"   // Added for tracking channel count
+	SelectionScore     = "selection_score"      // Added for tracking selection score
 	ChannelName       = "channel_name"
 	TokenId           = "token_id"
 	TokenName         = "token_name"

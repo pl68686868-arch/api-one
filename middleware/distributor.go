@@ -84,46 +84,58 @@ func Distribute() func(c *gin.Context) {
 				}
 			}
 			
-			// For non-virtual models, use intelligent channel selection based on health
-			var err error
-			channel, err = model.CacheGetHealthiestChannel(userGroup, requestModel)
-			
-			// Get health metrics once for this channel
-			var healthScore float64
-			var selectionReason string
-			
+		// For non-virtual models, use intelligent channel selection based on health
+		var err error
+		selectionInfo, err := model.CacheGetHealthiestChannel(userGroup, requestModel)
+		
+		// Tracking variables
+		var healthScore float64
+		var selectionReason string
+		var availableChannels int
+		var selectionScore float64
+		
+		if err != nil {
+			// Fallback to random if healthiest fails
+			channel, err = model.CacheGetRandomSatisfiedChannel(userGroup, requestModel, false)
 			if err != nil {
-				// Fallback to random if healthiest fails
-				channel, err = model.CacheGetRandomSatisfiedChannel(userGroup, requestModel, false)
-				if err != nil {
-					message := fmt.Sprintf("当前分组 %s 下对于模型 %s 无可用渠道", userGroup, requestModel)
-					if channel != nil {
-						logger.SysError(fmt.Sprintf("渠道不存在：%d", channel.Id))
-						message = "数据库一致性已被破坏，请联系管理员"
-					}
-					abortWithMessage(c, http.StatusServiceUnavailable, message)
-					return
+				message := fmt.Sprintf("当前分组 %s 下对于模型 %s 无可用渠道", userGroup, requestModel)
+				if channel != nil {
+					logger.SysError(fmt.Sprintf("渠道不存在：%d", channel.Id))
+					message = "数据库一致性已被破坏，请联系管理员"
 				}
-				selectionReason = "Random selection (health tracker unavailable)"
-			} else {
-				// Get health metrics for transparency (query once)
-				tracker := model.GetHealthTracker()
-				health := tracker.GetHealth(channel.Id)
-				if health != nil {
-					healthScore = health.SuccessRate()
-					selectionReason = fmt.Sprintf("Health-based selection (success rate: %.1f%%, avg latency: %dms)", 
-						healthScore*100, health.AvgLatency().Milliseconds())
-				} else {
-					selectionReason = "Health-based selection"
-				}
+				abortWithMessage(c, http.StatusServiceUnavailable, message)
+				return
 			}
+			selectionReason = "Random selection (health tracker unavailable)"
+			availableChannels = 1 // Unknown, assume at least 1
+		} else {
+			// Success! Use health-based selection with full tracking
+			channel = selectionInfo.Channel
+			availableChannels = selectionInfo.AvailableCount
+			selectionScore = selectionInfo.SelectionScore
 			
-			// Store metrics in context for logging
-			c.Set(ctxkey.SelectionReason, selectionReason)
-			if healthScore > 0 {
-				c.Set(ctxkey.ChannelHealthScore, healthScore)
+			// Get health metrics for detailed reason
+			tracker := model.GetHealthTracker()
+			health := tracker.GetHealth(channel.Id)
+			if health != nil {
+				healthScore = health.SuccessRate()
+				selectionReason = fmt.Sprintf("Health-based selection (success rate: %.1f%%, avg latency: %dms, score: %.0f, %d channels available)", 
+					healthScore*100, health.AvgLatency().Milliseconds(), selectionScore, availableChannels)
+			} else {
+				selectionReason = fmt.Sprintf("Health-based selection (%d channels available)", availableChannels)
 			}
 		}
+		
+		// Store all metrics in context for logging
+		c.Set(ctxkey.SelectionReason, selectionReason)
+		c.Set(ctxkey.AvailableChannels, availableChannels)
+		if healthScore > 0 {
+			c.Set(ctxkey.ChannelHealthScore, healthScore)
+		}
+		if selectionScore > 0 {
+			c.Set(ctxkey.SelectionScore, selectionScore)
+		}
+	}
 
 		logger.Debugf(ctx, "user id %d, user group: %s, request model: %s, using channel #%d", userId, userGroup, requestModel, channel.Id)
 		SetupContextForSelectedChannel(c, channel, requestModel)

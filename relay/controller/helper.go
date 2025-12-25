@@ -137,12 +137,14 @@ func postConsumeQuota(ctx context.Context, usage *relaymodel.Usage, meta *meta.M
 		ElapsedTime:       helper.CalcElapsedTime(meta.StartTime),
 		SystemPromptReset: systemPromptReset,
 		// Model mapping transparency
-		VirtualModel:      meta.OriginModelName,
-		ResolvedModel:     meta.ActualModelName,
+		VirtualModel:       meta.OriginModelName,
+		ResolvedModel:      meta.ActualModelName,
 		// Enhanced channel selection tracking
 		ActualModel:        getStringFromContext(ctx, ctxkey.ActualModel),
 		ChannelHealthScore: getFloat64FromContext(ctx, ctxkey.ChannelHealthScore),
 		SelectionReason:    getStringFromContext(ctx, ctxkey.SelectionReason),
+		AvailableChannels:  getIntFromContext(ctx, ctxkey.AvailableChannels),
+		SelectionScore:     getFloat64FromContext(ctx, ctxkey.SelectionScore),
 	})
 	model.UpdateUserUsedQuotaAndRequestCount(meta.UserId, quota)
 	model.UpdateChannelUsedQuota(meta.ChannelId, quota)
@@ -169,6 +171,17 @@ func getFloat64FromContext(ctx context.Context, key string) float64 {
 		}
 	}
 	return 0.0
+}
+
+func getIntFromContext(ctx context.Context, key string) int {
+	if ginCtx, ok := ctx.(*gin.Context); ok {
+		if val, exists := ginCtx.Get(key); exists {
+			if i, ok := val.(int); ok {
+				return i
+			}
+		}
+	}
+	return 0
 }
 
 
