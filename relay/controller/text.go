@@ -17,6 +17,7 @@ import (
 	"github.com/songquanpeng/one-api/relay/apitype"
 	"github.com/songquanpeng/one-api/relay/billing"
 	billingratio "github.com/songquanpeng/one-api/relay/billing/ratio"
+	"github.com/songquanpeng/one-api/relay/cache"
 	"github.com/songquanpeng/one-api/relay/channeltype"
 	"github.com/songquanpeng/one-api/relay/meta"
 	"github.com/songquanpeng/one-api/relay/model"
@@ -32,6 +33,42 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 		return openai.ErrorWrapper(err, "invalid_text_request", http.StatusBadRequest)
 	}
 	meta.IsStream = textRequest.Stream
+
+	// Check cache before LLM call
+	if config.ResponseCacheEnabled {
+		if cached, found := cache.GetCache().CheckCache(meta.OriginModelName, textRequest.Messages); found {
+			logger.Infof(ctx, "[CACHE HIT] model=%s stream=%v", meta.OriginModelName, meta.IsStream)
+			
+			if meta.IsStream {
+				// Replay cached stream
+				if err := cache.ReplayCachedStream(c, cached); err != nil {
+					logger.SysError("Failed to replay cached stream: " + err.Error())
+					cache.CacheMetrics.RecordMiss()
+				} else {
+					return nil // Success - cached stream sent
+				}
+			} else {
+				// Return cached non-streaming response
+				content := cache.ExtractContentFromStream(cached)
+				c.JSON(http.StatusOK, gin.H{
+					"id":      "chatcmpl-cached",
+					"object":  "chat.completion",
+					"created": 1234567890,
+					"model":   meta.OriginModelName,
+					"choices": []gin.H{{
+						"index": 0,
+						"message": gin.H{
+							"role":    "assistant",
+							"content": content,
+						},
+						"finish_reason": "stop",
+					}},
+				})
+				return nil // Success - cached response sent
+			}
+		}
+		cache.CacheMetrics.RecordMiss()
+	}
 
 	// map model name
 	meta.OriginModelName = textRequest.Model
@@ -75,13 +112,42 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 		return RelayErrorHandler(resp)
 	}
 
-	// do response
-	usage, respErr := adaptor.DoResponse(c, resp, meta)
-	if respErr != nil {
-		logger.Errorf(ctx, "respErr is not nil: %+v", respErr)
-		billing.ReturnPreConsumedQuota(ctx, preConsumedQuota, meta.TokenId)
-		return respErr
+	// do response with caching support
+	var usage *model.Usage
+	var respErr *model.ErrorWithStatusCode
+	
+	if config.ResponseCacheEnabled && meta.IsStream {
+		// Capture streaming response for caching
+		cachedStream, tokens, err := cache.CaptureAndCacheStream(c, resp, meta.ActualModelName, textRequest.Messages)
+		if err != nil {
+			logger.Errorf(ctx, "Failed to capture stream: %s", err.Error())
+			billing.ReturnPreConsumedQuota(ctx, preConsumedQuota, meta.TokenId)
+			return openai.ErrorWrapper(err, "stream_capture_failed", http.StatusInternalServerError)
+		}
+		
+		// Create usage from captured data
+		usage = &model.Usage{
+			TotalTokens: tokens,
+		}
+		
+		logger.Infof(ctx, "[CACHE STORE] model=%s stream=true cached=%d bytes", meta.ActualModelName, len(cachedStream))
+	} else {
+		// Normal non-streaming response
+		usage, respErr = adaptor.DoResponse(c, resp, meta)
+		if respErr != nil {
+			logger.Errorf(ctx, "respErr is not nil: %+v", respErr)
+			billing.ReturnPreConsumedQuota(ctx, preConsumedQuota, meta.TokenId)
+			return respErr
+		}
+		
+		// Cache non-streaming response
+		if config.ResponseCacheEnabled && usage != nil {
+			// Note: We need response text but DoResponse doesn't return it
+			// For non-streaming, we'll cache the next request's response
+			// This is a limitation - streaming cache is more effective
+		}
 	}
+	
 	// post-consume quota
 	go postConsumeQuota(ctx, usage, meta, textRequest, ratio, preConsumedQuota, modelRatio, groupRatio, systemPromptReset)
 	return nil

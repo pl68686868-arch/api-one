@@ -19,6 +19,7 @@ import (
 	"github.com/songquanpeng/one-api/controller"
 	"github.com/songquanpeng/one-api/middleware"
 	"github.com/songquanpeng/one-api/model"
+	"github.com/songquanpeng/one-api/relay/cache"
 	"github.com/songquanpeng/one-api/relay/adaptor/openai"
 	"github.com/songquanpeng/one-api/router"
 )
@@ -69,10 +70,17 @@ func main() {
 	}
 	if config.MemoryCacheEnabled {
 		logger.SysLog("memory cache enabled")
-		logger.SysLog(fmt.Sprintf("sync frequency: %d seconds", config.SyncFrequency))
 		model.InitChannelCache()
 	}
+	
+	// Initialize response cache
+	if config.ResponseCacheEnabled {
+		cache.InitResponseCache()
+		logger.SysLog("response cache enabled")
+	}
+	
 	if config.MemoryCacheEnabled {
+		logger.SysLog("sync frequency: " + strconv.Itoa(config.SyncFrequency))
 		go model.SyncOptions(config.SyncFrequency)
 		go model.SyncChannelCache(config.SyncFrequency)
 	}

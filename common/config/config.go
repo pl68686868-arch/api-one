@@ -99,7 +99,37 @@ var AutomaticEnableChannelEnabled = false
 var QuotaRemindThreshold int64 = 1000
 var PreConsumedQuota int64 = 500
 var ApproximateTokenEnabled = false
-var RetryTimes = 0
+
+// Response Cache Configuration
+var ResponseCacheEnabled = false
+var ResponseCacheTTL = 3600 // 1 hour in seconds
+
+// SQL DSN Configuration
+var SQLDSN = ""
+var UsingSQLite = false
+var UsingPostgreSQL = false
+var UsingMySQL = false
+
+func init() {
+	if env.Bool("SQL_DSN_ENABLED", false) {
+		SQLDSN = os.Getenv("SQL_DSN")
+	}
+	if SQLDSN != "" {
+		UsingSQLite = strings.HasPrefix(SQLDSN, "file:")
+		UsingPostgreSQL = strings.HasPrefix(SQLDSN, "postgres://")
+		UsingMySQL = !UsingSQLite && !UsingPostgreSQL
+	}
+
+	// Response Cache
+	if os.Getenv("RESPONSE_CACHE_ENABLED") == "true" {
+		ResponseCacheEnabled = true
+	}
+	if ttl := os.Getenv("RESPONSE_CACHE_TTL"); ttl != "" {
+		if parsed, err := strconv.Atoi(ttl); err == nil && parsed > 0 {
+			ResponseCacheTTL = parsed
+		}
+	}
+}
 
 var RootUserEmail = ""
 
