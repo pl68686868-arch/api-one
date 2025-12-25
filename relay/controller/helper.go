@@ -146,6 +146,15 @@ func postConsumeQuota(ctx context.Context, usage *relaymodel.Usage, meta *meta.M
 		AvailableChannels:  getIntFromContext(ctx, ctxkey.AvailableChannels),
 		SelectionScore:     getFloat64FromContext(ctx, ctxkey.SelectionScore),
 	})
+	
+	// Record channel health metrics for intelligent routing
+	// This populates the health tracker with success/failure data and latency
+	if meta.ChannelId > 0 {
+		elapsed := time.Duration(helper.CalcElapsedTime(meta.StartTime)) * time.Millisecond
+		// Success if we got here (failures are handled in relay/relay.go before reaching here)
+		model.RecordChannelResult(meta.ChannelId, elapsed, true)
+	}
+	
 	model.UpdateUserUsedQuotaAndRequestCount(meta.UserId, quota)
 	model.UpdateChannelUsedQuota(meta.ChannelId, quota)
 }
