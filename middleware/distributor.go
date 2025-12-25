@@ -95,7 +95,15 @@ func Distribute() func(c *gin.Context) {
 						// Store selection metrics for logging
 						c.Set(ctxkey.SelectionReason, result.Reason)
 						c.Set(ctxkey.SelectionScore, result.Score)
-						// Note: AvailableChannels not tracked in automodel (SelectionResult has no AvailableCount field)
+						
+						// Get health score and available channels from health tracker
+						if healthTracker := model.GetHealthTracker(); healthTracker != nil {
+							if health := healthTracker.GetHealth(result.ChannelID); health != nil {
+								healthScore := health.SuccessRate() * 100
+								c.Set(ctxkey.ChannelHealthScore, healthScore)
+							}
+							c.Set(ctxkey.AvailableChannels, 1)
+						}
 						
 						SetupContextForSelectedChannel(c, channel, requestModel)
 						c.Next()
