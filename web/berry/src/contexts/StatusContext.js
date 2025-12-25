@@ -47,7 +47,7 @@ const StatusProvider = ({ children }) => {
           payload: data,
         });
       }
-      showError("无法正常连接至服务器！");
+      showError("无法Normal连接至服务器！");
     }
 
     if (system_name) {

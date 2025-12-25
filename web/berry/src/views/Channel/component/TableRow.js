@@ -106,7 +106,7 @@ export default function ChannelTableRow({
     const { success, message, balance } = res.data;
     if (success) {
       setItemBalance(balance);
-      showInfo(`BalanceUpdateSuccess！`);
+      showInfo(`Balanceupdated successfully！`);
     } else {
       showError(message);
     }

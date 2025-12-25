@@ -23,13 +23,13 @@ const ResponseTimeLabel = ({ test_time, response_time, handle_action }) => {
     <>
       点击测速
       <br />
-      {test_time != 0 ? '上次测速Time：' + timestamp2string(test_time) : '未Test'}
+      {test_time != 0 ? '上次测速Time：' + timestamp2string(test_time) : 'Not tested'}
     </>
   );
 
   return (
     <Tooltip title={title} placement="top" onClick={handle_action}>
-      <Label color={color}> {response_time == 0 ? '未Test' : time} </Label>
+      <Label color={color}> {response_time == 0 ? 'Not tested' : time} </Label>
     </Tooltip>
   );
 };

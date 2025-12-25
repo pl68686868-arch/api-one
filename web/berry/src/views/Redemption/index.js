@@ -96,7 +96,7 @@ export default function Redemption() {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess('ActionSuccess完成！');
+      showSuccess('Action completed successfully！');
       if (action === 'delete') {
         await loadRedemptions(0);
       }
@@ -107,7 +107,7 @@ export default function Redemption() {
     return res.data;
   };
 
-  // 处理Refresh
+  // Handle refresh
   const handleRefresh = async () => {
     await loadRedemptions(0);
     setActivePage(0);
@@ -145,12 +145,12 @@ export default function Redemption() {
         <Typography variant="h4">Redeem</Typography>
 
         <Button variant="contained" color="primary" startIcon={<IconPlus />} onClick={() => handleOpenModal(0)}>
-          NewRedeem码
+          NewRedemption code
         </Button>
       </Stack>
       <Card>
         <Box component="form" onSubmit={searchRedemptions} noValidate sx={{marginTop: 2}}>
-          <TableToolBar filterName={searchKeyword} handleFilterName={handleSearchKeyword} placeholder={'SearchRedeem码的ID和Name...'} />
+          <TableToolBar filterName={searchKeyword} handleFilterName={handleSearchKeyword} placeholder={'SearchRedemption code的ID和Name...'} />
         </Box>
         <Toolbar
           sx={{

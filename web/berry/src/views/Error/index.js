@@ -38,7 +38,7 @@ export default function NotFoundView() {
           />
 
           <Button size="large" variant="contained" onClick={goBack}>
-            返回
+            Go back
           </Button>
         </Box>
       </Container>

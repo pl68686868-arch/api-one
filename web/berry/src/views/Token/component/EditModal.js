@@ -73,9 +73,9 @@ const EditModal = ({ open, tokenId, onCancel, onOk }) => {
     const { success, message } = res.data;
     if (success) {
       if (values.is_edit) {
-        showSuccess('TokenUpdateSuccess！');
+        showSuccess('Tokenupdated successfully！');
       } else {
-        showSuccess('Token创建Success，请在列表页面点击Copy获取Token！');
+        showSuccess('Tokencreated successfully，请在列表页面点击Copy获取Token！');
       }
       setSubmitting(false);
       setStatus({ success: true });
@@ -135,7 +135,7 @@ const EditModal = ({ open, tokenId, onCancel, onOk }) => {
       </DialogTitle>
       <Divider />
       <DialogContent>
-        <Alert severity="info">注意，Token的Quota仅用于限制Token本身的最大Quota使用量，实际的使用受到账户的剩RemainingQuota限制。</Alert>
+        <Alert severity="info">注意，Token的Quota仅用于限制Token本身的最大Quota使用量，实际的使用受到账户的Remaining Quota限制。</Alert>
         <Formik initialValues={inputs} enableReinitialize validationSchema={validationSchema} onSubmit={submit}>
           {({ errors, handleBlur, handleChange, handleSubmit, touched, values, setFieldError, setFieldValue, isSubmitting }) => (
             <form noValidate onSubmit={handleSubmit}>
@@ -177,7 +177,7 @@ const EditModal = ({ open, tokenId, onCancel, onOk }) => {
                   onBlur={handleBlur}
                   // filterSelectedOptions
                   disableCloseOnSelect
-                  renderInput={(params) => <TextField {...params} name="models" error={Boolean(errors.models)} label="Model范围" />}
+                  renderInput={(params) => <TextField {...params} name="models" error={Boolean(errors.models)} label="Model scope" />}
                   filterOptions={(options, params) => {
                     const filtered = filter(options, params);
                     const { inputValue } = params;
@@ -199,14 +199,14 @@ const EditModal = ({ open, tokenId, onCancel, onOk }) => {
                     {errors.models}
                   </FormHelperText>
                 ) : (
-                  <FormHelperText id="helper-tex-channel-models-label">请选择允许使用的Model，留空则不进行限制</FormHelperText>
+                  <FormHelperText id="helper-tex-channel-models-label">Select allowed models, leave blank for no restriction</FormHelperText>
                 )}
               </FormControl>
               <FormControl fullWidth error={Boolean(touched.subnet && errors.subnet)} sx={{ ...theme.typography.otherInput }}>
-                <InputLabel htmlFor="channel-subnet-label">IP 限制</InputLabel>
+                <InputLabel htmlFor="channel-subnet-label">IP Restriction</InputLabel>
                 <OutlinedInput
                   id="channel-subnet-label"
-                  label="IP 限制"
+                  label="IP Restriction"
                   type="text"
                   value={values.subnet}
                   name="subnet"
@@ -221,7 +221,7 @@ const EditModal = ({ open, tokenId, onCancel, onOk }) => {
                   </FormHelperText>
                 ) : (
                   <FormHelperText id="helper-tex-channel-subnet-label">
-                    Please enter允许访问的网段，例如：192.168.0.0/24，请使用英文逗号分隔多个网段
+                    Please enter allowed network segments，例如：192.168.0.0/24，请使用英文逗号分隔多个网段
                   </FormHelperText>
                 )}
               </FormControl>
@@ -236,7 +236,7 @@ const EditModal = ({ open, tokenId, onCancel, onOk }) => {
                         if (newError === null) {
                           setFieldError('expired_time', null);
                         } else {
-                          setFieldError('expired_time', '无效的日期');
+                          setFieldError('expired_time', 'Invalid date');
                         }
                       }}
                       onChange={(newValue) => {
@@ -266,7 +266,7 @@ const EditModal = ({ open, tokenId, onCancel, onOk }) => {
                   }
                 }}
               />{' '}
-              永不Expired
+              Never expires
               <FormControl fullWidth error={Boolean(touched.remain_quota && errors.remain_quota)} sx={{ ...theme.typography.otherInput }}>
                 <InputLabel htmlFor="channel-remain_quota-label">Quota</InputLabel>
                 <OutlinedInput

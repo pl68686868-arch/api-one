@@ -85,13 +85,13 @@ export default function UsersTableRow({ item, manageUser, handleOpenModal, setMo
 
         <TableCell>
           <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
-            <Tooltip title={'剩RemainingQuota'} placement="top">
+            <Tooltip title={'Remaining Quota'} placement="top">
               <Label color={'primary'} variant="outlined">
                 {' '}
                 {renderQuota(item.quota)}{' '}
               </Label>
             </Tooltip>
-            <Tooltip title={'已用Quota'} placement="top">
+            <Tooltip title={'Used Quota'} placement="top">
               <Label color={'primary'} variant="outlined">
                 {' '}
                 {renderQuota(item.used_quota)}{' '}
@@ -172,7 +172,7 @@ export default function UsersTableRow({ item, manageUser, handleOpenModal, setMo
       <Dialog open={openDelete} onClose={handleDeleteClose}>
         <DialogTitle>DeleteUser</DialogTitle>
         <DialogContent>
-          <DialogContentText>是否DeleteUser {item.name}？</DialogContentText>
+          <DialogContentText>Are you sure you want to deleteUser {item.name}？</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteClose}>Close</Button>

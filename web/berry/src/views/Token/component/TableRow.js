@@ -177,11 +177,11 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
                 case 1:
                   return 'Enabled';
                 case 2:
-                  return '已Disable';
+                  return 'Disabled';
                 case 3:
-                  return '已Expired';
+                  return 'Expired';
                 case 4:
-                  return '已耗尽';
+                  return 'Exhausted';
                 default:
                   return 'Unknown';
               }
@@ -199,11 +199,11 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
 
         <TableCell>{renderQuota(item.used_quota)}</TableCell>
 
-        <TableCell>{item.unlimited_quota ? 'Unlimited制' : renderQuota(item.remain_quota, 2)}</TableCell>
+        <TableCell>{item.unlimited_quota ? 'Unlimited' : renderQuota(item.remain_quota, 2)}</TableCell>
 
         <TableCell>{timestamp2string(item.created_time)}</TableCell>
 
-        <TableCell>{item.expired_time === -1 ? '永不Expired' : timestamp2string(item.expired_time)}</TableCell>
+        <TableCell>{item.expired_time === -1 ? 'Never expires' : timestamp2string(item.expired_time)}</TableCell>
 
         <TableCell>
           <Stack direction="row" spacing={1}>
@@ -222,7 +222,7 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
             </ButtonGroup>
             <ButtonGroup size="small" aria-label="split button">
               <Button color="primary" onClick={(e) => handleCopy(COPY_OPTIONS[0], 'link')}>
-                聊天
+                Chat
               </Button>
               <Button size="small" onClick={(e) => handleOpenMenu(e, 'link')}>
                 <IconCaretDownFilled size={'16px'} />
@@ -250,7 +250,7 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
       <Dialog open={openDelete} onClose={handleDeleteClose}>
         <DialogTitle>DeleteToken</DialogTitle>
         <DialogContent>
-          <DialogContentText>是否DeleteToken {item.name}？</DialogContentText>
+          <DialogContentText>Are you sure you want to deleteToken {item.name}？</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteClose}>Close</Button>

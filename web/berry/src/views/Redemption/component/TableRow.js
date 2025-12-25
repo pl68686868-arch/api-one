@@ -76,14 +76,14 @@ export default function RedemptionTableRow({ item, manageRedemption, handleOpenM
 
         <TableCell>{renderQuota(item.quota)}</TableCell>
         <TableCell>{timestamp2string(item.created_time)}</TableCell>
-        <TableCell>{item.redeemed_time ? timestamp2string(item.redeemed_time) : '尚未Redeem'}</TableCell>
+        <TableCell>{item.redeemed_time ? timestamp2string(item.redeemed_time) : 'Not redeemed'}</TableCell>
         <TableCell>
           <Stack direction="row" spacing={1}>
             <Button
               variant="contained"
               color="primary"
               onClick={() => {
-                copy(item.key, 'Redeem码');
+                copy(item.key, 'Redemption code');
               }}
             >
               Copy
@@ -123,9 +123,9 @@ export default function RedemptionTableRow({ item, manageRedemption, handleOpenM
       </Popover>
 
       <Dialog open={openDelete} onClose={handleDeleteClose}>
-        <DialogTitle>DeleteRedeem码</DialogTitle>
+        <DialogTitle>DeleteRedemption code</DialogTitle>
         <DialogContent>
-          <DialogContentText>是否DeleteRedeem码 {item.name}？</DialogContentText>
+          <DialogContentText>Are you sure you want to deleteRedemption code {item.name}？</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteClose}>Close</Button>

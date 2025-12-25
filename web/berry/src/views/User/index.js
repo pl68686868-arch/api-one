@@ -98,7 +98,7 @@ export default function Users() {
     res = await API.post(url, data);
     const { success, message } = res.data;
     if (success) {
-      showSuccess('ActionSuccess完成！');
+      showSuccess('Action completed successfully！');
       await loadUsers(activePage);
     } else {
       showError(message);
@@ -107,7 +107,7 @@ export default function Users() {
     return res.data;
   };
 
-  // 处理Refresh
+  // Handle refresh
   const handleRefresh = async () => {
     await loadUsers(activePage);
   };

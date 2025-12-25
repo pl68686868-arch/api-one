@@ -136,7 +136,7 @@ export default function ChannelPage() {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess('ActionSuccess完成！');
+      showSuccess('Action completed successfully！');
       if (action === 'delete') {
         await handleRefresh();
       }

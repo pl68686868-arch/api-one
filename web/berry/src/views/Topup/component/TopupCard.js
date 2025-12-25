@@ -84,17 +84,17 @@ const TopupCard = () => {
         }}
       >
         <FormControl fullWidth variant="outlined">
-          <InputLabel htmlFor="key">Redeem码</InputLabel>
+          <InputLabel htmlFor="key">Redemption code</InputLabel>
           <OutlinedInput
             id="key"
-            label="Redeem码"
+            label="Redemption code"
             type="text"
             value={redemptionCode}
             onChange={(e) => {
               setRedemptionCode(e.target.value);
             }}
             name="key"
-            placeholder="Please enterRedeem码"
+            placeholder="Please enterRedemption code"
             endAdornment={
               <InputAdornment position="end">
                 <Button variant="contained" onClick={topUp} disabled={isSubmitting}>
@@ -108,10 +108,10 @@ const TopupCard = () => {
 
         <Stack justifyContent="center" alignItems={'center'} spacing={3} paddingTop={'20px'}>
           <Typography variant={'h4'} color={theme.palette.grey[700]}>
-            还没有Redeem码？ 点击获取Redeem码：
+            还没有Redemption code？ 点击获取Redemption code：
           </Typography>
           <Button variant="contained" onClick={openTopUpLink}>
-            获取Redeem码
+            获取Redemption code
           </Button>
         </Stack>
       </SubCard>

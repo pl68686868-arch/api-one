@@ -74,9 +74,9 @@ const EditModal = ({ open, userId, onCancel, onOk }) => {
     const { success, message } = res.data;
     if (success) {
       if (values.is_edit) {
-        showSuccess('UserUpdateSuccess！');
+        showSuccess('Userupdated successfully！');
       } else {
-        showSuccess('User创建Success！');
+        showSuccess('Usercreated successfully！');
       }
       setSubmitting(false);
       setStatus({ success: true });

@@ -10,14 +10,14 @@ const getLatencyColor = (ms) => {
 };
 
 const getLatencyLabel = (ms) => {
-    if (ms < 500) return '极快';
-    if (ms < 1000) return '正常';
-    if (ms < 2000) return '较慢';
-    return '很慢';
+    if (ms < 500) return 'Very fast';
+    if (ms < 1000) return 'Normal';
+    if (ms < 2000) return 'Slow';
+    return 'Very slow';
 };
 
 const formatTime = (timestamp) => {
-    if (!timestamp) return '未Test';
+    if (!timestamp) return 'Not tested';
     const date = new Date(timestamp * 1000);
     return date.toLocaleString('zh-CN', {
         month: 'short',
@@ -33,7 +33,7 @@ const ResponseTimeBar = ({ responseTime, testTime, onClick }) => {
 
     if (!hasData) {
         return (
-            <Tooltip title="点击TestChannelResponseTime" arrow>
+            <Tooltip title="Click to test channel response time" arrow>
                 <Box
                     onClick={onClick}
                     sx={{
@@ -48,7 +48,7 @@ const ResponseTimeBar = ({ responseTime, testTime, onClick }) => {
                     }}
                 >
                     <IconClick size={16} />
-                    <Typography variant="caption">点击Test</Typography>
+                    <Typography variant="caption">Click to test</Typography>
                 </Box>
             </Tooltip>
         );
@@ -56,7 +56,7 @@ const ResponseTimeBar = ({ responseTime, testTime, onClick }) => {
 
     return (
         <Tooltip
-            title={`最后Test: ${formatTime(testTime)} | ${getLatencyLabel(responseTime)}`}
+            title={`Last test: ${formatTime(testTime)} | ${getLatencyLabel(responseTime)}`}
             arrow
             placement="top"
         >

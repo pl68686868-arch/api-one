@@ -54,9 +54,9 @@ const EditModal = ({ open, redemptiondId, onCancel, onOk }) => {
     const { success, message, data } = res.data;
     if (success) {
       if (values.is_edit) {
-        showSuccess('Redeem码UpdateSuccess！');
+        showSuccess('Redemption codeupdated successfully！');
       } else {
-        showSuccess('Redeem码创建Success！');
+        showSuccess('Redemption codecreated successfully！');
         if (data.length > 1) {
           let text = '';
           for (let i = 0; i < data.length; i++) {
@@ -96,7 +96,7 @@ const EditModal = ({ open, redemptiondId, onCancel, onOk }) => {
   return (
     <Dialog open={open} onClose={onCancel} fullWidth maxWidth={'md'}>
       <DialogTitle sx={{ margin: '0px', fontWeight: 700, lineHeight: '1.55556', padding: '24px', fontSize: '1.125rem' }}>
-        {redemptiondId ? 'EditRedeem码' : 'NewRedeem码'}
+        {redemptiondId ? 'EditRedemption code' : 'NewRedemption code'}
       </DialogTitle>
       <Divider />
       <DialogContent>

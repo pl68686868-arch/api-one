@@ -84,7 +84,7 @@ export default function Log() {
     setSearchKeyword({ ...searchKeyword, [event.target.name]: event.target.value });
   };
 
-  // 处理Refresh
+  // Handle refresh
   const handleRefresh = () => {
     setInitPage(true);
   };

@@ -6,8 +6,8 @@ const TokenTableHead = () => {
       <TableRow>
         <TableCell>Name</TableCell>
         <TableCell>Status</TableCell>
-        <TableCell>已用Quota</TableCell>
-        <TableCell>剩RemainingQuota</TableCell>
+        <TableCell>Used Quota</TableCell>
+        <TableCell>Remaining Quota</TableCell>
         <TableCell>Created Time</TableCell>
         <TableCell>ExpiredTime</TableCell>
         <TableCell>Action</TableCell>

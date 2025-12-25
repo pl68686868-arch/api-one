@@ -7,19 +7,19 @@ const STATUS_CONFIG = {
     label: 'Enable',
     color: 'success',
     icon: IconCircleCheck,
-    tooltip: 'ChannelEnabled，正常运行中'
+    tooltip: 'ChannelEnabled，Normal运行中'
   },
   2: {
     label: 'Manually Disabled',
     color: 'warning', 
     icon: IconAlertCircle,
-    tooltip: 'Channel已被Manually Disabled'
+    tooltip: 'Channel manually disabled'
   },
   3: {
     label: 'Auto Disabled',
     color: 'error',
     icon: IconCircleX,
-    tooltip: 'Channel因Error被SystemAuto Disabled'
+    tooltip: 'Channel auto-disabled by system error'
   }
 };
 

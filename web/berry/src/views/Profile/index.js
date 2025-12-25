@@ -105,7 +105,7 @@ export default function Profile() {
       const res = await API.put(`/api/user/self`, inputs);
       const { success, message } = res.data;
       if (success) {
-        showSuccess('User信息UpdateSuccess！');
+        showSuccess('User信息updated successfully！');
       } else {
         showError(message);
       }

@@ -211,13 +211,13 @@ const OperationSetting = () => {
               />
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel htmlFor="ChatLink">聊天链接</InputLabel>
+              <InputLabel htmlFor="ChatLink">Chat链接</InputLabel>
               <OutlinedInput
                 id="ChatLink"
                 name="ChatLink"
                 value={inputs.ChatLink}
                 onChange={handleInputChange}
-                label="聊天链接"
+                label="Chat链接"
                 placeholder="例如 ChatGPT Next Web 的部署地址"
                 disabled={loading}
               />

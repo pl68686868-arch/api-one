@@ -188,9 +188,9 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
     const { success, message } = res.data;
     if (success) {
       if (channelId) {
-        showSuccess('ChannelUpdateSuccess！');
+        showSuccess('Channelupdated successfully！');
       } else {
-        showSuccess('Channel创建Success！');
+        showSuccess('Channelcreated successfully！');
       }
       setSubmitting(false);
       setStatus({ success: true });

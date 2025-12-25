@@ -42,7 +42,7 @@ const ForgetPasswordForm = ({ ...others }) => {
     setDisableButton(true);
     setSubmitting(true);
     if (turnstileEnabled && turnstileToken === "") {
-      showInfo("请稍后几秒重试，Turnstile 正在检查User环境！");
+      showInfo("Please wait a few seconds, Turnstile is checking user environment！");
       setSubmitting(false);
       return;
     }
@@ -51,7 +51,7 @@ const ForgetPasswordForm = ({ ...others }) => {
     );
     const { success, message } = res.data;
     if (success) {
-      showSuccess("Reset邮件发送Success，请检查邮箱！");
+      showSuccess("Reset email sent successfully, please check your mailbox！");
       setSendEmail(true);
     } else {
       showError(message);
@@ -85,7 +85,7 @@ const ForgetPasswordForm = ({ ...others }) => {
     <>
       {sendEmail ? (
         <Typography variant="h3" padding={"20px"}>
-          Reset邮件发送Success，请检查邮箱！
+          Reset email sent successfully, please check your mailbox！
         </Typography>
       ) : (
         <Formik

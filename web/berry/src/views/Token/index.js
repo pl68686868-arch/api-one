@@ -106,7 +106,7 @@ export default function Token() {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess('ActionSuccess完成！');
+      showSuccess('Action completed successfully！');
       if (action === 'delete') {
         await handleRefresh();
       }
@@ -117,7 +117,7 @@ export default function Token() {
     return res.data;
   };
 
-  // 处理Refresh
+  // Handle refresh
   const handleRefresh = async () => {
     await loadTokens(activePage);
   };

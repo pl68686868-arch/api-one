@@ -12,7 +12,7 @@ const ChannelTableHead = () => {
         <TableCell>ResponseTime</TableCell>
         <TableCell>Consumed耗</TableCell>
         <TableCell>Balance</TableCell>
-        <TableCell>Priority级</TableCell>
+        <TableCell>Priority level</TableCell>
         <TableCell>Action</TableCell>
       </TableRow>
     </TableHead>
