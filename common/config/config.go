@@ -104,6 +104,11 @@ var ApproximateTokenEnabled = false
 var ResponseCacheEnabled = false
 var ResponseCacheTTL = 3600 // 1 hour in seconds
 
+// Semantic Cache Configuration
+var SemanticCacheEnabled = false
+var SemanticCacheThreshold = 0.85 // Similarity threshold (0.0-1.0)
+var SemanticCacheMaxSize = 10000  // Maximum cache entries
+
 // SQL DSN Configuration
 var SQLDSN = ""
 var UsingSQLite = false
@@ -127,6 +132,21 @@ func init() {
 	if ttl := os.Getenv("RESPONSE_CACHE_TTL"); ttl != "" {
 		if parsed, err := strconv.Atoi(ttl); err == nil && parsed > 0 {
 			ResponseCacheTTL = parsed
+		}
+	}
+	
+	// Semantic Cache
+	if os.Getenv("SEMANTIC_CACHE_ENABLED") == "true" {
+		SemanticCacheEnabled = true
+	}
+	if threshold := os.Getenv("SEMANTIC_CACHE_THRESHOLD"); threshold != "" {
+		if parsed, err := strconv.ParseFloat(threshold, 64); err == nil && parsed > 0 && parsed <= 1 {
+			SemanticCacheThreshold = parsed
+		}
+	}
+	if maxSize := os.Getenv("SEMANTIC_CACHE_MAX_SIZE"); maxSize != "" {
+		if parsed, err := strconv.Atoi(maxSize); err == nil && parsed > 0 {
+			SemanticCacheMaxSize = parsed
 		}
 	}
 }

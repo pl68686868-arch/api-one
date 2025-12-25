@@ -40,21 +40,19 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 	textRequest.Model, _ = getMappedModelName(textRequest.Model, meta.ModelMapping)
 	meta.ActualModelName = textRequest.Model
 
-	// Check cache before LLM call (use OriginModelName for consistent key)
+	// Cache lookup chain: Exact Match → Semantic → LLM
+	cacheHit := false
+	
+	// 1. Check exact match cache first (fastest)
 	if config.ResponseCacheEnabled {
 		if cached, found := cache.GetCache().CheckCache(meta.OriginModelName, textRequest.Messages); found {
-			logger.Infof(ctx, "[CACHE HIT] model=%s stream=%v", meta.OriginModelName, meta.IsStream)
+			logger.Infof(ctx, "[EXACT CACHE HIT] model=%s stream=%v", meta.OriginModelName, meta.IsStream)
 			
 			if meta.IsStream {
-				// Replay cached stream
-				if err := cache.ReplayCachedStream(c, cached); err != nil {
-					logger.SysError("Failed to replay cached stream: " + err.Error())
-					// Fall through to normal LLM call
-				} else {
-					return nil // Success - cached stream sent
+				if err := cache.ReplayCachedStream(c, cached); err == nil {
+					return nil
 				}
 			} else {
-				// Return cached non-streaming response
 				content := cache.ExtractContentFromStream(cached)
 				if content != "" {
 					c.JSON(http.StatusOK, gin.H{
@@ -76,9 +74,46 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 							"total_tokens":      0,
 						},
 					})
-					return nil // Success - cached response sent
+					return nil
 				}
-				// Empty content - fall through to LLM call
+			}
+		}
+	}
+	
+	// 2. Check semantic cache (similarity-based)
+	if config.SemanticCacheEnabled && !cacheHit {
+		if cached, score, found := cache.GetSemanticCache().CheckSemantic(meta.OriginModelName, textRequest.Messages); found {
+			logger.Infof(ctx, "[SEMANTIC CACHE HIT] model=%s score=%.3f stream=%v", meta.OriginModelName, score, meta.IsStream)
+			
+			if meta.IsStream {
+				if err := cache.ReplayCachedStream(c, cached); err == nil {
+					return nil
+				}
+			} else {
+				content := cache.ExtractContentFromStream(cached)
+				if content != "" {
+					c.JSON(http.StatusOK, gin.H{
+						"id":      "chatcmpl-semantic",
+						"object":  "chat.completion", 
+						"created": time.Now().Unix(),
+						"model":   meta.OriginModelName,
+						"choices": []gin.H{{
+							"index": 0,
+							"message": gin.H{
+								"role":    "assistant",
+								"content": content,
+							},
+							"finish_reason": "stop",
+						}},
+						"usage": gin.H{
+							"prompt_tokens":     0,
+							"completion_tokens": 0,
+							"total_tokens":      0,
+						},
+					})
+					c.Header("X-Semantic-Score", fmt.Sprintf("%.3f", score))
+					return nil
+				}
 			}
 		}
 		cache.CacheMetrics.RecordMiss()
@@ -138,6 +173,16 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 		// Create usage from captured data
 		usage = &model.Usage{
 			TotalTokens: tokens,
+		}
+		
+		// Also store in semantic cache for similarity matching
+		if config.SemanticCacheEnabled {
+			go cache.GetSemanticCache().StoreSemantic(
+				meta.OriginModelName, 
+				textRequest.Messages,
+				cachedStream,
+				tokens,
+			)
 		}
 		
 		logger.Infof(ctx, "[CACHE STORE] model=%s stream=true cached=%d bytes", meta.ActualModelName, len(cachedStream))

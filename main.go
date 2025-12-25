@@ -79,6 +79,12 @@ func main() {
 		logger.SysLog("response cache enabled")
 	}
 	
+	// Initialize semantic cache
+	if config.SemanticCacheEnabled {
+		cache.InitSemanticCache()
+		logger.SysLog("semantic cache enabled")
+	}
+	
 	if config.MemoryCacheEnabled {
 		logger.SysLog("sync frequency: " + strconv.Itoa(config.SyncFrequency))
 		go model.SyncOptions(config.SyncFrequency)
