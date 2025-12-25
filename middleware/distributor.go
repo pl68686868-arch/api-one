@@ -98,8 +98,22 @@ func Distribute() func(c *gin.Context) {
 					abortWithMessage(c, http.StatusServiceUnavailable, message)
 					return
 				}
+				c.Set(ctxkey.SelectionReason, "Random selection (health tracker unavailable)")
+			} else {
+				// Get health metrics for transparency
+				tracker := model.GetHealthTracker()
+				health := tracker.GetHealth(channel.Id)
+				var reason string
+				if health != nil {
+					reason = fmt.Sprintf("Health-based selection (success rate: %.1f%%, avg latency: %dms)", 
+						health.SuccessRate()*100, health.AvgLatency().Milliseconds())
+				} else {
+					reason = "Health-based selection"
+				}
+				c.Set(ctxkey.SelectionReason, reason)
 			}
 		}
+
 		logger.Debugf(ctx, "user id %d, user group: %s, request model: %s, using channel #%d", userId, userGroup, requestModel, channel.Id)
 		SetupContextForSelectedChannel(c, channel, requestModel)
 		c.Next()
@@ -113,10 +127,32 @@ func SetupContextForSelectedChannel(c *gin.Context, channel *model.Channel, mode
 	if channel.SystemPrompt != nil && *channel.SystemPrompt != "" {
 		c.Set(ctxkey.SystemPrompt, *channel.SystemPrompt)
 	}
-	c.Set(ctxkey.ModelMapping, channel.GetModelMapping())
+	
+	// Get model mapping and track actual model
+	modelMapping := channel.GetModelMapping()
+	c.Set(ctxkey.ModelMapping, modelMapping)
+	
+	// Determine actual model after mapping
+	actualModel := modelName
+	if modelMapping != nil {
+		if mapped, exists := modelMapping[modelName]; exists {
+			actualModel = mapped
+		}
+	}
+	c.Set(ctxkey.ActualModel, actualModel) // Store actual model after mapping
+	
 	c.Set(ctxkey.OriginalModel, modelName) // for retry
 	c.Request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", channel.Key))
 	c.Set(ctxkey.BaseURL, channel.GetBaseURL())
+	
+	// Store channel health score for logging
+	tracker := model.GetHealthTracker()
+	health := tracker.GetHealth(channel.Id)
+	if health != nil {
+		healthScore := health.SuccessRate()
+		c.Set(ctxkey.ChannelHealthScore, healthScore)
+	}
+	
 	cfg, _ := channel.LoadConfig()
 	// this is for backward compatibility
 	if channel.Other != nil {

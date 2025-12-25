@@ -15,6 +15,7 @@ import (
 
 	"github.com/songquanpeng/one-api/common"
 	"github.com/songquanpeng/one-api/common/config"
+	"github.com/songquanpeng/one-api/common/ctxkey"
 	"github.com/songquanpeng/one-api/common/logger"
 	"github.com/songquanpeng/one-api/model"
 	"github.com/songquanpeng/one-api/relay/adaptor/openai"
@@ -138,10 +139,38 @@ func postConsumeQuota(ctx context.Context, usage *relaymodel.Usage, meta *meta.M
 		// Model mapping transparency
 		VirtualModel:      meta.OriginModelName,
 		ResolvedModel:     meta.ActualModelName,
+		// Enhanced channel selection tracking
+		ActualModel:        getStringFromContext(ctx, ctxkey.ActualModel),
+		ChannelHealthScore: getFloat64FromContext(ctx, ctxkey.ChannelHealthScore),
+		SelectionReason:    getStringFromContext(ctx, ctxkey.SelectionReason),
 	})
 	model.UpdateUserUsedQuotaAndRequestCount(meta.UserId, quota)
 	model.UpdateChannelUsedQuota(meta.ChannelId, quota)
 }
+
+// Helper functions to extract values from context
+func getStringFromContext(ctx context.Context, key string) string {
+	if ginCtx, ok := ctx.(*gin.Context); ok {
+		if val, exists := ginCtx.Get(key); exists {
+			if str, ok := val.(string); ok {
+				return str
+			}
+		}
+	}
+	return ""
+}
+
+func getFloat64FromContext(ctx context.Context, key string) float64 {
+	if ginCtx, ok := ctx.(*gin.Context); ok {
+		if val, exists := ginCtx.Get(key); exists {
+			if f, ok := val.(float64); ok {
+				return f
+			}
+		}
+	}
+	return 0.0
+}
+
 
 func getMappedModelName(modelName string, mapping map[string]string) (string, bool) {
 	if mapping == nil {

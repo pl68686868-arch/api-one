@@ -14,6 +14,11 @@ const (
 	OriginalModel     = "original_model"
 	Group             = "group"
 	ModelMapping      = "model_mapping"
+	IsStream          = "is_stream"
+	PromptTokens      = "prompt_tokens"
+	ActualModel       = "actual_model"       // Added for tracking actual model after mapping
+	ChannelHealthScore = "channel_health_score" // Added for tracking channel health
+	SelectionReason    = "selection_reason"     // Added for tracking selection reasoning
 	ChannelName       = "channel_name"
 	TokenId           = "token_id"
 	TokenName         = "token_name"

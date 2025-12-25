@@ -30,9 +30,14 @@ type Log struct {
 	IsStream          bool   `json:"is_stream" gorm:"default:false"`
 	SystemPromptReset bool   `json:"system_prompt_reset" gorm:"default:false"`
 	// Smart Model Selection tracking
-	VirtualModel      string `json:"virtual_model" gorm:"index"` // Original requested model (e.g., "auto-smart")
-	ResolvedModel     string `json:"resolved_model"`             // Actual model used (e.g., "gpt-4o")
-	SelectionReason   string `json:"selection_reason" gorm:"type:text"` // JSON with selection details - TEXT cannot have default value in MySQL
+	VirtualModel      string  `json:"virtual_model" gorm:"index"`       // Original requested model (e.g., "auto-smart", "smart-model")
+	ResolvedModel     string  `json:"resolved_model"`                   // Actual model used (e.g., "gpt-4o")
+	SelectionReason   string  `json:"selection_reason" gorm:"type:text"` // Human-readable selection reason
+	// Channel selection metrics (added for enhanced tracking)
+	ChannelHealthScore float64 `json:"channel_health_score" gorm:"default:0"` // Health score of selected channel (0-1)
+	AvailableChannels  int     `json:"available_channels" gorm:"default:0"`   // Number of channels available for this model
+	ActualModel        string  `json:"actual_model"`                          // Actual model after channel mapping (e.g., "qwen/qwen3-32b")
+	SelectionScore     float64 `json:"selection_score" gorm:"default:0"`      // Overall selection score used for ranking
 }
 
 const (
