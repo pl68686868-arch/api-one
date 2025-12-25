@@ -71,4 +71,29 @@ func SetRelayRouter(router *gin.Engine) {
 		relayV1Router.GET("/threads/:id/runs/:runsId/steps/:stepId", controller.RelayNotImplemented)
 		relayV1Router.GET("/threads/:id/runs/:runsId/steps", controller.RelayNotImplemented)
 	}
+	
+	// Add root-level routes for OpenAI API compatibility
+	// This allows clients to configure base URL as "http://your-server/v1" (like api.openai.com/v1)
+	// without creating duplicate /v1/v1 paths
+	relayRootRouter := router.Group("")
+	relayRootRouter.Use(middleware.RelayPanicRecover(), middleware.TokenAuth(), middleware.Distribute())
+	{
+		// Models endpoints
+		relayRootRouter.GET("/models", controller.ListModels)
+		relayRootRouter.GET("/models/:model", controller.RetrieveModel)
+		
+		// Core completion endpoints
+		relayRootRouter.POST("/completions", controller.Relay)
+		relayRootRouter.POST("/chat/completions", controller.Relay)
+		relayRootRouter.POST("/embeddings", controller.Relay)
+		relayRootRouter.POST("/moderations", controller.Relay)
+		
+		// Image generation
+		relayRootRouter.POST("/images/generations", controller.Relay)
+		
+		// Audio endpoints
+		relayRootRouter.POST("/audio/transcriptions", controller.Relay)
+		relayRootRouter.POST("/audio/translations", controller.Relay)
+		relayRootRouter.POST("/audio/speech", controller.Relay)
+	}
 }
