@@ -156,11 +156,11 @@ export default function Token() {
       </Stack>
       <Stack mb={2}>
         <Alert severity="info">
-          将 OpenAI API 基础地址 https://api.openai.com 替换为 <b>{siteInfo.server_address}</b>，Copy下面的密钥即可使用
+          将 OpenAI API 基础地址 https://api.openai.com 替换为 <b>{window.location.origin}/v1</b>，Copy下面的密钥即可使用
         </Alert>
       </Stack>
       <Card>
-        <Box component="form" onSubmit={searchTokens} noValidate sx={{marginTop: 2}}>
+        <Box component="form" onSubmit={searchTokens} noValidate sx={{ marginTop: 2 }}>
           <TableToolBar filterName={searchKeyword} handleFilterName={handleSearchKeyword} placeholder={'SearchToken的Name...'} />
         </Box>
         <Toolbar
@@ -173,7 +173,7 @@ export default function Token() {
           }}
         >
           <Container>
-            <ButtonGroup variant="outlined" aria-label="outlined small primary button group" sx={{marginBottom: 2}}>
+            <ButtonGroup variant="outlined" aria-label="outlined small primary button group" sx={{ marginBottom: 2 }}>
               <Button onClick={handleRefresh} startIcon={<IconRefresh width={'18px'} />}>
                 Refresh
               </Button>
