@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"io"
 	"net/http"
 	"strings"
 
@@ -27,6 +26,9 @@ func CaptureAndCacheStream(
 	model string,
 	messages []relaymodel.Message,
 ) (string, int, error) {
+	// IMPORTANT: Close response body when done to prevent memory leaks
+	defer resp.Body.Close()
+
 	// Set SSE headers
 	c.Header("Content-Type", "text/event-stream")
 	c.Header("Cache-Control", "no-cache")
@@ -35,7 +37,11 @@ func CaptureAndCacheStream(
 
 	var buffer bytes.Buffer
 	var totalTokens int
+	
+	// Use scanner with larger buffer for long responses (10MB max)
+	const maxScanSize = 10 * 1024 * 1024
 	scanner := bufio.NewScanner(resp.Body)
+	scanner.Buffer(make([]byte, 0, 64*1024), maxScanSize)
 	
 	for scanner.Scan() {
 		line := scanner.Text()

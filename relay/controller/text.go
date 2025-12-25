@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -34,7 +35,12 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 	}
 	meta.IsStream = textRequest.Stream
 
-	// Check cache before LLM call
+	// map model name FIRST (needed for cache key)
+	meta.OriginModelName = textRequest.Model
+	textRequest.Model, _ = getMappedModelName(textRequest.Model, meta.ModelMapping)
+	meta.ActualModelName = textRequest.Model
+
+	// Check cache before LLM call (use OriginModelName for consistent key)
 	if config.ResponseCacheEnabled {
 		if cached, found := cache.GetCache().CheckCache(meta.OriginModelName, textRequest.Messages); found {
 			logger.Infof(ctx, "[CACHE HIT] model=%s stream=%v", meta.OriginModelName, meta.IsStream)
@@ -43,37 +49,41 @@ func RelayTextHelper(c *gin.Context) *model.ErrorWithStatusCode {
 				// Replay cached stream
 				if err := cache.ReplayCachedStream(c, cached); err != nil {
 					logger.SysError("Failed to replay cached stream: " + err.Error())
-					cache.CacheMetrics.RecordMiss()
+					// Fall through to normal LLM call
 				} else {
 					return nil // Success - cached stream sent
 				}
 			} else {
 				// Return cached non-streaming response
 				content := cache.ExtractContentFromStream(cached)
-				c.JSON(http.StatusOK, gin.H{
-					"id":      "chatcmpl-cached",
-					"object":  "chat.completion",
-					"created": 1234567890,
-					"model":   meta.OriginModelName,
-					"choices": []gin.H{{
-						"index": 0,
-						"message": gin.H{
-							"role":    "assistant",
-							"content": content,
+				if content != "" {
+					c.JSON(http.StatusOK, gin.H{
+						"id":      "chatcmpl-cached",
+						"object":  "chat.completion",
+						"created": time.Now().Unix(),
+						"model":   meta.OriginModelName,
+						"choices": []gin.H{{
+							"index": 0,
+							"message": gin.H{
+								"role":    "assistant",
+								"content": content,
+							},
+							"finish_reason": "stop",
+						}},
+						"usage": gin.H{
+							"prompt_tokens":     0,
+							"completion_tokens": 0,
+							"total_tokens":      0,
 						},
-						"finish_reason": "stop",
-					}},
-				})
-				return nil // Success - cached response sent
+					})
+					return nil // Success - cached response sent
+				}
+				// Empty content - fall through to LLM call
 			}
 		}
 		cache.CacheMetrics.RecordMiss()
 	}
 
-	// map model name
-	meta.OriginModelName = textRequest.Model
-	textRequest.Model, _ = getMappedModelName(textRequest.Model, meta.ModelMapping)
-	meta.ActualModelName = textRequest.Model
 	// set system prompt if not empty
 	systemPromptReset := setSystemPrompt(ctx, textRequest, meta.ForcedSystemPrompt)
 	// get model ratio & group ratio

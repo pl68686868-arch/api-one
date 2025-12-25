@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/songquanpeng/one-api/common"
@@ -27,17 +28,20 @@ type CachedResponse struct {
 }
 
 var globalCache *ResponseCache
+var cacheOnce sync.Once
 
 // InitResponseCache initializes the global response cache
 func InitResponseCache() {
-	globalCache = &ResponseCache{
-		enabled: config.ResponseCacheEnabled,
-		ttl:     time.Duration(config.ResponseCacheTTL) * time.Second,
-	}
-	logger.SysLog("Response cache initialized")
+	cacheOnce.Do(func() {
+		globalCache = &ResponseCache{
+			enabled: config.ResponseCacheEnabled,
+			ttl:     time.Duration(config.ResponseCacheTTL) * time.Second,
+		}
+		logger.SysLog("Response cache initialized")
+	})
 }
 
-// GetCache returns the global cache instance
+// GetCache returns the global cache instance (thread-safe)
 func GetCache() *ResponseCache {
 	if globalCache == nil {
 		InitResponseCache()
@@ -51,7 +55,8 @@ func (rc *ResponseCache) CheckCache(
 	model string,
 	messages []relaymodel.Message,
 ) (string, bool) {
-	if !rc.enabled || !common.RedisEnabled {
+	// Nil check for safety
+	if rc == nil || !rc.enabled || !common.RedisEnabled {
 		return "", false
 	}
 
