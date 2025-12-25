@@ -111,13 +111,21 @@ func (sc *SemanticCache) CheckSemantic(
 	
 	// Check if similarity exceeds threshold
 	if bestScore >= sc.threshold && bestMatch != nil {
-		// Update hit count
-		bestMatch.HitCount++
+		// Record metrics (thread-safe)
 		CacheMetrics.RecordHit()
 		CacheMetrics.AddTokensSaved(bestMatch.Tokens)
 		
-		logger.SysLog(fmt.Sprintf("[SEMANTIC HIT] score=%.3f query='%s...'", 
-			bestScore, truncate(query, 50)))
+		// Update hit count in a separate goroutine to avoid lock contention
+		go func(key string) {
+			sc.mu.Lock()
+			if entry, ok := sc.vectors[key]; ok {
+				entry.HitCount++
+			}
+			sc.mu.Unlock()
+		}(sc.findKeyByVector(bestMatch.Vector))
+		
+		logger.SysLog(fmt.Sprintf("[SEMANTIC HIT] score=%.3f query='%s'", 
+			bestScore, truncateUnicode(query, 50)))
 		
 		return bestMatch.Response, bestScore, true
 	}
@@ -166,9 +174,10 @@ func (sc *SemanticCache) StoreSemantic(
 		HitCount: 0,
 	}
 	
-	// Persist to Redis asynchronously
+	// Persist to Redis asynchronously (copy entry to avoid race)
 	if common.RedisEnabled {
-		go sc.persistToRedis(key, sc.vectors[key])
+		entryCopy := *sc.vectors[key] // Copy the entry
+		go sc.persistToRedis(key, &entryCopy)
 	}
 	
 	return nil
@@ -205,6 +214,13 @@ func (sc *SemanticCache) generateEmbedding(text string) []float64 {
 	
 	// Normalize to unit vector
 	normalize(vector)
+	
+	// Check for zero vector (shouldn't happen but safety check)
+	if isZeroVector(vector) {
+		// Use simple hash-based fallback for very short text
+		hash := hashString(text)
+		vector[hash%uint64(dim)] = 1.0
+	}
 	
 	return vector
 }
@@ -378,6 +394,9 @@ func extractModelFamily(model string) string {
 	if strings.Contains(model, "gpt-3.5") {
 		return "gpt35"
 	}
+	if strings.Contains(model, "o1-") || strings.Contains(model, "o3-") {
+		return "o1" // OpenAI reasoning models
+	}
 	if strings.Contains(model, "claude") {
 		return "claude"
 	}
@@ -387,8 +406,17 @@ func extractModelFamily(model string) string {
 	if strings.Contains(model, "llama") {
 		return "llama"
 	}
-	if strings.Contains(model, "mistral") {
+	if strings.Contains(model, "mistral") || strings.Contains(model, "mixtral") {
 		return "mistral"
+	}
+	if strings.Contains(model, "qwen") {
+		return "qwen"
+	}
+	if strings.Contains(model, "deepseek") {
+		return "deepseek"
+	}
+	if strings.Contains(model, "yi-") {
+		return "yi"
 	}
 	
 	// Default: first word
@@ -451,10 +479,34 @@ func hashString(s string) uint64 {
 	return hash
 }
 
-// truncate truncates a string to max length
+// truncate truncates a string to max length (bytes)
 func truncate(s string, maxLen int) string {
 	if len(s) <= maxLen {
 		return s
 	}
 	return s[:maxLen] + "..."
+}
+
+// truncateUnicode truncates a string to max runes (Unicode-safe)
+func truncateUnicode(s string, maxRunes int) string {
+	runes := []rune(s)
+	if len(runes) <= maxRunes {
+		return s
+	}
+	return string(runes[:maxRunes]) + "..."
+}
+
+// isZeroVector checks if all elements are zero
+func isZeroVector(v []float64) bool {
+	for _, val := range v {
+		if val != 0 {
+			return false
+		}
+	}
+	return true
+}
+
+// findKeyByVector finds the key for a given vector
+func (sc *SemanticCache) findKeyByVector(vector []float64) string {
+	return sc.vectorKey(vector)
 }
