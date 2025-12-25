@@ -17,7 +17,14 @@ func ResponseText2Usage(responseText string, modelName string, promptTokens int)
 }
 
 func GetFullRequestURL(baseURL string, requestURL string, channelType int) string {
-	if channelType == channeltype.OpenAICompatible {
+	// OpenAI-compatible providers that use /v1 in their base URL
+	// Trim /v1 from requestURL to prevent /v1/v1 duplication
+	if channelType == channeltype.OpenAICompatible ||
+		channelType == channeltype.Groq ||
+		channelType == channeltype.OpenRouter ||
+		channelType == channeltype.TogetherAI ||
+		channelType == channeltype.Moonshot ||
+		channelType == channeltype.DeepSeek {
 		return fmt.Sprintf("%s%s", strings.TrimSuffix(baseURL, "/"), strings.TrimPrefix(requestURL, "/v1"))
 	}
 	fullRequestURL := fmt.Sprintf("%s%s", baseURL, requestURL)
