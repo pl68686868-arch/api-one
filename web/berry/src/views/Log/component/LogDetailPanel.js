@@ -7,7 +7,8 @@ import {
     Divider,
     Stack,
     Tooltip,
-    IconButton
+    IconButton,
+    alpha
 } from '@mui/material';
 import { IconCopy, IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -134,7 +135,7 @@ export default function LogDetailPanel({ item }) {
                             <Box
                                 sx={{
                                     p: 1.5,
-                                    bgcolor: 'primary.lighter',
+                                    bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.15 : 0.1),
                                     borderRadius: 1,
                                     border: 1,
                                     borderColor: 'primary.light'

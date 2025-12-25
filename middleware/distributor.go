@@ -74,6 +74,7 @@ func Distribute() func(c *gin.Context) {
 					if err == nil && channel != nil {
 						requestModel = result.SelectedModel
 						c.Set(ctxkey.RequestModel, requestModel)
+						c.Set(ctxkey.SelectionReason, result.Reason) // Store selection reason for logging
 						SetupContextForSelectedChannel(c, channel, requestModel)
 						c.Next()
 						return
@@ -86,6 +87,11 @@ func Distribute() func(c *gin.Context) {
 			// For non-virtual models, use intelligent channel selection based on health
 			var err error
 			channel, err = model.CacheGetHealthiestChannel(userGroup, requestModel)
+			
+			// Get health metrics once for this channel
+			var healthScore float64
+			var selectionReason string
+			
 			if err != nil {
 				// Fallback to random if healthiest fails
 				channel, err = model.CacheGetRandomSatisfiedChannel(userGroup, requestModel, false)
@@ -98,19 +104,24 @@ func Distribute() func(c *gin.Context) {
 					abortWithMessage(c, http.StatusServiceUnavailable, message)
 					return
 				}
-				c.Set(ctxkey.SelectionReason, "Random selection (health tracker unavailable)")
+				selectionReason = "Random selection (health tracker unavailable)"
 			} else {
-				// Get health metrics for transparency
+				// Get health metrics for transparency (query once)
 				tracker := model.GetHealthTracker()
 				health := tracker.GetHealth(channel.Id)
-				var reason string
 				if health != nil {
-					reason = fmt.Sprintf("Health-based selection (success rate: %.1f%%, avg latency: %dms)", 
-						health.SuccessRate()*100, health.AvgLatency().Milliseconds())
+					healthScore = health.SuccessRate()
+					selectionReason = fmt.Sprintf("Health-based selection (success rate: %.1f%%, avg latency: %dms)", 
+						healthScore*100, health.AvgLatency().Milliseconds())
 				} else {
-					reason = "Health-based selection"
+					selectionReason = "Health-based selection"
 				}
-				c.Set(ctxkey.SelectionReason, reason)
+			}
+			
+			// Store metrics in context for logging
+			c.Set(ctxkey.SelectionReason, selectionReason)
+			if healthScore > 0 {
+				c.Set(ctxkey.ChannelHealthScore, healthScore)
 			}
 		}
 
@@ -145,13 +156,7 @@ func SetupContextForSelectedChannel(c *gin.Context, channel *model.Channel, mode
 	c.Request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", channel.Key))
 	c.Set(ctxkey.BaseURL, channel.GetBaseURL())
 	
-	// Store channel health score for logging
-	tracker := model.GetHealthTracker()
-	health := tracker.GetHealth(channel.Id)
-	if health != nil {
-		healthScore := health.SuccessRate()
-		c.Set(ctxkey.ChannelHealthScore, healthScore)
-	}
+	// Note: ChannelHealthScore is now set in distributor to avoid duplicate query
 	
 	cfg, _ := channel.LoadConfig()
 	// this is for backward compatibility
