@@ -43,10 +43,23 @@ func Distribute() func(c *gin.Context) {
 				abortWithMessage(c, http.StatusForbidden, "该渠道已被禁用")
 				return
 			}
+
+			// Set selection metrics for specific channel requests
+			c.Set(ctxkey.SelectionReason, "Direct channel selection")
+			c.Set(ctxkey.SelectionScore, 1.0) // Direct selection = perfect score
+			c.Set(ctxkey.AvailableChannels, 1) // Only one channel specified
+
+			// Get health score if available
+			if healthTracker := model.GetHealthTracker(); healthTracker != nil {
+				if health := healthTracker.GetHealth(id); health != nil {
+					score := health.CalculateScore()
+					c.Set(ctxkey.ChannelHealthScore, score)
+				}
+			}
 		} else {
 			requestModel = c.GetString(ctxkey.RequestModel)
 			userGroup := c.GetString(ctxkey.Group)
-			
+
 			// ALWAYS use intelligent channel selection for load balancing
 			// Check if this is a virtual model that needs model resolution too
 			if automodel.IsEnabled() && automodel.IsVirtualModel(requestModel) {
