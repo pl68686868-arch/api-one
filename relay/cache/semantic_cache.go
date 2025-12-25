@@ -351,6 +351,21 @@ func (sc *SemanticCache) GetStats() map[string]interface{} {
 	}
 }
 
+// Clear clears all semantic cache entries and returns count of cleared entries
+func (sc *SemanticCache) Clear() int {
+	if sc == nil {
+		return 0
+	}
+	
+	sc.mu.Lock()
+	defer sc.mu.Unlock()
+	
+	count := len(sc.vectors)
+	sc.vectors = make(map[string]*VectorEntry)
+	
+	return count
+}
+
 // Helper functions
 
 // extractQueryText extracts user query from messages

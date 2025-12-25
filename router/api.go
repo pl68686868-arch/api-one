@@ -126,5 +126,14 @@ func SetApiRouter(router *gin.Engine) {
 			intelligenceRoute.GET("/stats", controller.GetIntelligenceStats)
 			intelligenceRoute.GET("/strategies", controller.GetStrategies)
 		}
+		
+		// Cache management routes
+		cacheRoute := apiRouter.Group("/cache")
+		cacheRoute.Use(middleware.AdminAuth())
+		{
+			cacheRoute.GET("/stats", controller.GetCacheStats)
+			cacheRoute.POST("/clear", controller.ClearCache)
+			cacheRoute.POST("/toggle", controller.ToggleCache)
+		}
 	}
 }
