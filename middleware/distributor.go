@@ -52,8 +52,12 @@ func Distribute() func(c *gin.Context) {
 			// Get health score if available
 			if healthTracker := model.GetHealthTracker(); healthTracker != nil {
 				if health := healthTracker.GetHealth(id); health != nil {
-					score := health.CalculateScore()
-					c.Set(ctxkey.ChannelHealthScore, score)
+					// Calculate health score: success_rate * 100
+					var healthScore float64
+					if health.TotalRequests > 0 {
+						healthScore = (float64(health.SuccessCount) / float64(health.TotalRequests)) * 100
+					}
+					c.Set(ctxkey.ChannelHealthScore, healthScore)
 				}
 			}
 		} else {
