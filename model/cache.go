@@ -167,7 +167,21 @@ func CacheGetGroupModels(ctx context.Context, group string) ([]string, error) {
 	return models, nil
 }
 
+// GetEnabledChannels returns all enabled channels from cache
+// This is used by automodel resolver to avoid loading all channels from DB
+func GetEnabledChannels() []*Channel {
+	channelSyncLock.RLock()
+	defer channelSyncLock.RUnlock()
+	
+	result := make([]*Channel, 0, len(channelId2channel))
+	for _, channel := range channelId2channel {
+		result = append(result, channel)
+	}
+	return result
+}
+
 var group2model2channels map[string]map[string][]*Channel
+var channelId2channel map[int]*Channel
 var channelSyncLock sync.RWMutex
 
 func InitChannelCache() {

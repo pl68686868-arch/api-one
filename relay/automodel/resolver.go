@@ -343,9 +343,10 @@ func getCostScore(modelName string) float64 {
 }
 
 // getAvailableChannels gets all enabled channels for a group
-func getAvailableChannels(group string) []*model.Channel {
-	// Use existing GetAllChannels
-	channels, _ := model.GetAllChannels(0, 0, "enabled")
+func getAvailableChannels(group string) []*model.Channel {	
+	// Get enabled channels from cache (optimized - no DB query)
+	// This is much faster than GetAllChannels(0, 0, "enabled") which loads ALL channels
+	channels := model.GetEnabledChannels()
 	
 	var result []*model.Channel
 	for _, ch := range channels {
