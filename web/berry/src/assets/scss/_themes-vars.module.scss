@@ -51,15 +51,16 @@ $tableBorderBottom: #f1f3f4;
 
 // ==============================|| DARK THEME VARIANTS ||============================== //
 
-// paper & background
-$darkBackground: #1a223f; // level 3
-$darkPaper: #111936; // level 4
-$darkDivider: rgba(227, 232, 239, 0.2);
-$darkSelectedBack : rgba(124, 77, 255, 0.15);
+// paper & background - PREMIUM DEEP DARK
+$darkBackground: #0f1319; // level 3 - Deep rich black
+$darkPaper: #0a0e17; // level 4 - Deepest background
+$darkDivider: rgba(255, 255, 255, 0.08); // Softer dividers
+$darkSelectedBack : rgba(99, 102, 241, 0.15); // Indigo selection
+$darkBorderColor: rgba(255, 255, 255, 0.12); // Subtle borders
 
-// dark 800 & 900
-$darkLevel1: #29314f; // level 1
-$darkLevel2: #212946; // level 2
+// dark 800 & 900 - PREMIUM CARD COLORS
+$darkLevel1: #1a1f2e; // level 1 - Lighter cards
+$darkLevel2: #12161f; // level 2 - Main card background
 
 // primary dark
 $darkPrimaryLight: #eef2f6;
@@ -162,6 +163,7 @@ $darkTextSecondary: #8492c4;
 
   darkDivider: $darkDivider;
   darkSelectedBack: $darkSelectedBack;
+  darkBorderColor: $darkBorderColor;
   tableBackground: $tableBackground;
   tableBorderBottom: $tableBorderBottom;
 }
