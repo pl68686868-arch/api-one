@@ -45,8 +45,10 @@ func Distribute() func(c *gin.Context) {
 			}
 		} else {
 			requestModel = c.GetString(ctxkey.RequestModel)
+			userGroup := c.GetString(ctxkey.Group)
 			
-			// Check if this is a virtual model (auto, auto-fast, auto-cheap, auto-vi, etc.)
+			// ALWAYS use intelligent channel selection for load balancing
+			// Check if this is a virtual model that needs model resolution too
 			if automodel.IsEnabled() && automodel.IsVirtualModel(requestModel) {
 				// Get messages for analysis (need to parse request body)
 				messages := getMessagesFromContext(c)
@@ -58,13 +60,14 @@ func Distribute() func(c *gin.Context) {
 					requestModel = "gpt-4o-mini" // Safe fallback
 				} else {
 					// Success! Use the resolved model and channel
-					logger.Infof(ctx, "automodel: %s -> %s (channel %d, score %.2f)", 
-						result.RequestedModel, result.SelectedModel, result.ChannelID, result.Score)
+					logger.Infof(ctx, "automodel: %s -> %s (channel %d, score %.2f, reason: %s)", 
+						result.RequestedModel, result.SelectedModel, result.ChannelID, result.Score, result.Reason)
 					
 					// Set response headers for transparency
 					c.Header("X-Auto-Requested-Model", result.RequestedModel)
 					c.Header("X-Auto-Selected-Model", result.SelectedModel)
 					c.Header("X-Auto-Selection-Score", fmt.Sprintf("%.2f", result.Score))
+					c.Header("X-Auto-Selection-Reason", result.Reason)
 					
 					// Get the channel and set up context
 					channel, err = model.GetChannelById(result.ChannelID, true)
@@ -80,16 +83,21 @@ func Distribute() func(c *gin.Context) {
 				}
 			}
 			
+			// For non-virtual models, use intelligent channel selection based on health
 			var err error
-			channel, err = model.CacheGetRandomSatisfiedChannel(userGroup, requestModel, false)
+			channel, err = model.CacheGetHealthiestChannel(userGroup, requestModel)
 			if err != nil {
-				message := fmt.Sprintf("当前分组 %s 下对于模型 %s 无可用渠道", userGroup, requestModel)
-				if channel != nil {
-					logger.SysError(fmt.Sprintf("渠道不存在：%d", channel.Id))
-					message = "数据库一致性已被破坏，请联系管理员"
+				// Fallback to random if healthiest fails
+				channel, err = model.CacheGetRandomSatisfiedChannel(userGroup, requestModel, false)
+				if err != nil {
+					message := fmt.Sprintf("当前分组 %s 下对于模型 %s 无可用渠道", userGroup, requestModel)
+					if channel != nil {
+						logger.SysError(fmt.Sprintf("渠道不存在：%d", channel.Id))
+						message = "数据库一致性已被破坏，请联系管理员"
+					}
+					abortWithMessage(c, http.StatusServiceUnavailable, message)
+					return
 				}
-				abortWithMessage(c, http.StatusServiceUnavailable, message)
-				return
 			}
 		}
 		logger.Debugf(ctx, "user id %d, user group: %s, request model: %s, using channel #%d", userId, userGroup, requestModel, channel.Id)
