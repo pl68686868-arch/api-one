@@ -17,16 +17,17 @@ func ResponseText2Usage(responseText string, modelName string, promptTokens int)
 }
 
 func GetFullRequestURL(baseURL string, requestURL string, channelType int) string {
-	// OpenAI-compatible providers that use /v1 in their base URL
-	// Trim /v1 from requestURL to prevent /v1/v1 duplication
-	if channelType == channeltype.OpenAICompatible ||
-		channelType == channeltype.Groq ||
-		channelType == channeltype.OpenRouter ||
-		channelType == channeltype.TogetherAI ||
-		channelType == channeltype.Moonshot ||
-		channelType == channeltype.DeepSeek {
+	// Auto-detect and prevent /v1/v1 duplication
+	// If baseURL already ends with /v1, trim /v1 from requestURL
+	if strings.HasSuffix(baseURL, "/v1") && strings.HasPrefix(requestURL, "/v1") {
 		return fmt.Sprintf("%s%s", strings.TrimSuffix(baseURL, "/"), strings.TrimPrefix(requestURL, "/v1"))
 	}
+	
+	// Special handling for OpenAICompatible type
+	if channelType == channeltype.OpenAICompatible {
+		return fmt.Sprintf("%s%s", strings.TrimSuffix(baseURL, "/"), strings.TrimPrefix(requestURL, "/v1"))
+	}
+	
 	fullRequestURL := fmt.Sprintf("%s%s", baseURL, requestURL)
 
 	if strings.HasPrefix(baseURL, "https://gateway.ai.cloudflare.com") {
