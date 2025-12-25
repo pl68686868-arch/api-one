@@ -210,7 +210,7 @@ func RelayImageHelper(c *gin.Context, relayMode int) *relaymodel.ErrorWithStatus
 		}
 		if quota != 0 {
 			tokenName := c.GetString(ctxkey.TokenName)
-			logContent := fmt.Sprintf("倍率：%.2f × %.2f", modelRatio, groupRatio)
+			logContent := fmt.Sprintf("倍率:%.2f × %.2f", modelRatio, groupRatio)
 			model.RecordConsumeLog(ctx, &model.Log{
 				UserId:           meta.UserId,
 				ChannelId:        meta.ChannelId,
@@ -220,6 +220,9 @@ func RelayImageHelper(c *gin.Context, relayMode int) *relaymodel.ErrorWithStatus
 				TokenName:        tokenName,
 				Quota:            int(quota),
 				Content:          logContent,
+				// Model mapping transparency
+				VirtualModel:     meta.OriginModelName,
+				ResolvedModel:    meta.ActualModelName,
 			})
 			model.UpdateUserUsedQuotaAndRequestCount(meta.UserId, quota)
 			channelId := c.GetInt(ctxkey.ChannelId)
