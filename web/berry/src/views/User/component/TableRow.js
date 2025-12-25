@@ -28,9 +28,9 @@ function renderRole(role) {
     case 1:
       return <Label color="default">普通User</Label>;
     case 10:
-      return <Label color="orange">管理员</Label>;
+      return <Label color="orange">Management员</Label>;
     case 100:
-      return <Label color="success">超级管理员</Label>;
+      return <Label color="success">超级Management员</Label>;
     default:
       return <Label color="error">Unknown身份</Label>;
   }
@@ -149,7 +149,7 @@ export default function UsersTableRow({ item, manageUser, handleOpenModal, setMo
             }}
           >
             <IconUser style={{ marginRight: '16px' }} />
-            {item.role === 1 ? '设为管理员' : 'Cancel管理员'}
+            {item.role === 1 ? '设为Management员' : 'CancelManagement员'}
           </MenuItem>
         )}
 

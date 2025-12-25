@@ -66,7 +66,7 @@ const RegisterForm = ({ ...others }) => {
 
   const handleSendCode = async (email) => {
     if (email === '') {
-      showError('Please enter邮箱');
+      showError('Please enter email');
       return;
     }
     if (turnstileEnabled && turnstileToken === '') {
@@ -112,7 +112,7 @@ const RegisterForm = ({ ...others }) => {
             .required('ConfirmPassword是必填项')
             .oneOf([Yup.ref('password'), null], '两次输入的Password不一致'),
           email: showEmailVerification ? Yup.string().email('Must是有效的Email地址').max(255).required('Email是必填项') : Yup.mixed(),
-          verification_code: showEmailVerification ? Yup.string().max(255).required('验证码是必填项') : Yup.mixed()
+          verification_code: showEmailVerification ? Yup.string().max(255).required('Verification code是必填项') : Yup.mixed()
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           if (turnstileEnabled && turnstileToken === '') {
@@ -241,7 +241,7 @@ const RegisterForm = ({ ...others }) => {
                     endAdornment={
                       <InputAdornment position="end">
                         <Button variant="contained" color="primary" onClick={() => handleSendCode(values.email)}>
-                          发送验证码
+                          发送Verification code
                         </Button>
                       </InputAdornment>
                     }
@@ -258,7 +258,7 @@ const RegisterForm = ({ ...others }) => {
                   error={Boolean(touched.verification_code && errors.verification_code)}
                   sx={{ ...theme.typography.customInput }}
                 >
-                  <InputLabel htmlFor="outlined-adornment-verification_code-register">验证码</InputLabel>
+                  <InputLabel htmlFor="outlined-adornment-verification_code-register">Verification code</InputLabel>
                   <OutlinedInput
                     id="outlined-adornment-verification_code-register"
                     type="text"

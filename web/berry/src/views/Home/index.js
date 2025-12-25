@@ -36,7 +36,7 @@ const Home = () => {
       localStorage.setItem('home_page_content', content);
     } else {
       showError(message);
-      setHomePageContent('Loading首页内容Failed...');
+      setHomePageContent('LoadingHomepage contentFailed...');
     }
     setHomePageContentLoaded(true);
   };

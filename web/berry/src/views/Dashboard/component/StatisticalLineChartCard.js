@@ -100,7 +100,7 @@ const StatisticalLineChartCard = ({ isLoading, title, chartData, todayValue }) =
                           color: theme.palette.primary[200]
                         }}
                       >
-                        无数据
+                        No data
                       </Typography>
                     )}
                   </Grid>

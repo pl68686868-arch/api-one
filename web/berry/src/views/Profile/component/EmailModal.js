@@ -22,8 +22,8 @@ import useRegister from "hooks/useRegister";
 import { API } from "utils/api";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email("Please enter正确的邮箱地址").required("邮箱cannot be empty"),
-  email_verification_code: Yup.string().required("验证码cannot be empty"),
+  email: Yup.string().email("Please enter a valid email address").required("Email cannot be empty"),
+  email_verification_code: Yup.string().required("Verification code cannot be empty"),
 });
 
 const EmailModal = ({ open, handleClose, turnstileToken }) => {
@@ -41,7 +41,7 @@ const EmailModal = ({ open, handleClose, turnstileToken }) => {
     );
     const { success, message } = res.data;
     if (success) {
-      showSuccess("邮箱账户绑定Success！");
+      showSuccess("Email account bound successfully！");
       setSubmitting(false);
       setStatus({ success: true });
       handleClose();
@@ -68,7 +68,7 @@ const EmailModal = ({ open, handleClose, turnstileToken }) => {
   const handleSendCode = async (email) => {
     setDisableButton(true);
     if (email === "") {
-      showError("Please enter邮箱");
+      showError("Please enter email");
       return;
     }
     if (turnstileToken === "") {
@@ -89,7 +89,7 @@ const EmailModal = ({ open, handleClose, turnstileToken }) => {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>绑定邮箱</DialogTitle>
+      <DialogTitle>Bind email</DialogTitle>
       <DialogContent>
         <Grid container direction="column" alignItems="center">
           <Formik
@@ -132,8 +132,8 @@ const EmailModal = ({ open, handleClose, turnstileToken }) => {
                           disabled={disableButton || loading}
                         >
                           {disableButton
-                            ? `重新发送(${countdown})`
-                            : "获取验证码"}
+                            ? `Resend(${countdown})`
+                            : "Get verification code"}
                         </Button>
                       </InputAdornment>
                     }
@@ -154,7 +154,7 @@ const EmailModal = ({ open, handleClose, turnstileToken }) => {
                   sx={{ ...theme.typography.customInput }}
                 >
                   <InputLabel htmlFor="email_verification_code">
-                    验证码
+                    Verification code
                   </InputLabel>
                   <OutlinedInput
                     id="email_verification_code"

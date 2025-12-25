@@ -7,7 +7,7 @@ import { showError } from 'utils/common';
 import * as Yup from 'yup';
 
 const validationSchema = Yup.object().shape({
-  code: Yup.string().required('验证码cannot be empty')
+  code: Yup.string().required('Verification code cannot be empty')
 });
 
 const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
@@ -22,7 +22,7 @@ const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>微信验证码Login</DialogTitle>
+      <DialogTitle>微信Verification codeLogin</DialogTitle>
       <DialogContent>
         <Grid container direction="column" alignItems="center">
           <img src={qrCode} alt="二维码" style={{ maxWidth: '300px', maxHeight: '300px', width: 'auto', height: 'auto' }} />
@@ -31,7 +31,7 @@ const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
             color="text.secondary"
             style={{ marginTop: '10px', textAlign: 'center', wordWrap: 'break-word', maxWidth: '300px' }}
           >
-            请使用微信扫描二维码关注公众号，输入「验证码」获取验证码（三分钟内有效）
+            请使用微信扫描二维码关注公众号，输入「Verification code」Get verification code（三分钟内有效）
           </Typography>
           <Formik initialValues={{ code: '' }} validationSchema={validationSchema} onSubmit={handleSubmit}>
             {({ errors, touched }) => (
@@ -40,7 +40,7 @@ const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
                   <Field
                     as={TextField}
                     name="code"
-                    label="验证码"
+                    label="Verification code"
                     error={touched.code && Boolean(errors.code)}
                     helperText={touched.code && errors.code}
                     fullWidth

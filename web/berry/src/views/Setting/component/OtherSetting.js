@@ -113,7 +113,7 @@ const OtherSetting = () => {
     const res = await API.get('https://api.github.com/repos/songquanpeng/one-api/releases/latest');
     const { tag_name, body } = res.data;
     if (tag_name === process.env.REACT_APP_VERSION) {
-      showSuccess(`已是最新Version：${tag_name}`);
+      showSuccess(`Already latest version：${tag_name}`);
     } else {
       setUpdateData({
         tag_name: tag_name,
@@ -126,11 +126,11 @@ const OtherSetting = () => {
   return (
     <>
       <Stack spacing={2}>
-        <SubCard title="通用Settings">
+        <SubCard title="General settings">
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12}>
               <Button variant="contained" onClick={checkUpdate}>
-                检查Update
+                Check update
               </Button>
             </Grid>
             <Grid xs={12}>
@@ -139,23 +139,23 @@ const OtherSetting = () => {
                   multiline
                   maxRows={15}
                   id="Notice"
-                  label="公告"
+                  label="Notice"
                   value={inputs.Notice}
                   name="Notice"
                   onChange={handleInputChange}
                   minRows={10}
-                  placeholder="在此输入新的公告内容，支持 Markdown & HTML 代码"
+                  placeholder="在此输入新的Notice内容，支持 Markdown & HTML 代码"
                 />
               </FormControl>
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitNotice}>
-                Save公告
+                SaveNotice
               </Button>
             </Grid>
           </Grid>
         </SubCard>
-        <SubCard title="个性化Settings">
+        <SubCard title="Personalization settings">
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12}>
               <FormControl fullWidth>
@@ -166,7 +166,7 @@ const OtherSetting = () => {
                   value={inputs.SystemName || ''}
                   onChange={handleInputChange}
                   label="SystemName"
-                  placeholder="在此输入SystemName"
+                  placeholder="Enter system name"
                   disabled={loading}
                 />
               </FormControl>
@@ -178,33 +178,33 @@ const OtherSetting = () => {
             </Grid>
             <Grid xs={12}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="Theme">主题Name</InputLabel>
+                <InputLabel htmlFor="Theme">Theme name</InputLabel>
                 <OutlinedInput
                     id="Theme"
                     name="Theme"
                     value={inputs.Theme || ''}
                     onChange={handleInputChange}
-                    label="主题Name"
-                    placeholder="Please enter主题Name"
+                    label="Theme name"
+                    placeholder="Please enterTheme name"
                     disabled={loading}
                 />
               </FormControl>
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitTheme}>
-                Settings主题（重启生效）
+                Set theme (restart required)
               </Button>
             </Grid>
             <Grid xs={12}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="Logo">Logo 图片地址</InputLabel>
+                <InputLabel htmlFor="Logo">Logo image URL</InputLabel>
                 <OutlinedInput
                   id="Logo"
                   name="Logo"
                   value={inputs.Logo || ''}
                   onChange={handleInputChange}
-                  label="Logo 图片地址"
-                  placeholder="在此输入Logo 图片地址"
+                  label="Logo image URL"
+                  placeholder="在此输入Logo image URL"
                   disabled={loading}
                 />
               </FormControl>
@@ -220,18 +220,18 @@ const OtherSetting = () => {
                   multiline
                   maxRows={15}
                   id="HomePageContent"
-                  label="首页内容"
+                  label="Homepage content"
                   value={inputs.HomePageContent}
                   name="HomePageContent"
                   onChange={handleInputChange}
                   minRows={10}
-                  placeholder="在此输入首页内容，支持 Markdown & HTML 代码，Settings后首页的Status信息将不再显示。如果输入的是一个链接，则会使用该链接作为 iframe 的 src 属性，这允许你Settings任意网页作为首页。"
+                  placeholder="在此输入Homepage content，支持 Markdown & HTML 代码，Settings后首页的Status信息将不再显示。如果输入的是一个链接，则会使用该链接作为 iframe 的 src 属性，这允许你Settings任意网页作为首页。"
                 />
               </FormControl>
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={() => submitOption('HomePageContent')}>
-                Save首页内容
+                SaveHomepage content
               </Button>
             </Grid>
             <Grid xs={12}>
@@ -240,23 +240,23 @@ const OtherSetting = () => {
                   multiline
                   maxRows={15}
                   id="About"
-                  label="关于"
+                  label="About"
                   value={inputs.About}
                   name="About"
                   onChange={handleInputChange}
                   minRows={10}
-                  placeholder="在此输入新的关于内容，支持 Markdown & HTML 代码。如果输入的是一个链接，则会使用该链接作为 iframe 的 src 属性，这允许你Settings任意网页作为关于页面。"
+                  placeholder="在此输入新的About内容，支持 Markdown & HTML 代码。如果输入的是一个链接，则会使用该链接作为 iframe 的 src 属性，这允许你Settings任意网页作为About页面。"
                 />
               </FormControl>
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitAbout}>
-                Save关于
+                SaveAbout
               </Button>
             </Grid>
             <Grid xs={12}>
               <Alert severity="warning">
-                移除 One API 的版权标识Must首先获得授权，项目维护需要花费大量精力，如果本项目对你有意义，请主动支持本项目。
+                Removing One API copyright requires authorization. If this project is meaningful to you, please support it.
               </Alert>
             </Grid>
             <Grid xs={12}>
@@ -265,18 +265,18 @@ const OtherSetting = () => {
                   multiline
                   maxRows={15}
                   id="Footer"
-                  label="页脚"
+                  label="Footer"
                   value={inputs.Footer}
                   name="Footer"
                   onChange={handleInputChange}
                   minRows={10}
-                  placeholder="在此输入新的页脚，留空则使用默认页脚，支持 HTML 代码"
+                  placeholder="在此输入新的Footer，留空则使用默认Footer，支持 HTML 代码"
                 />
               </FormControl>
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitFooter}>
-                Settings页脚
+                SettingsFooter
               </Button>
             </Grid>
           </Grid>
@@ -299,7 +299,7 @@ const OtherSetting = () => {
               openGitHubRelease();
             }}
           >
-            去GitHub查看
+            View on GitHub
           </Button>
         </DialogActions>
       </Dialog>

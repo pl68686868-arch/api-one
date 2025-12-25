@@ -28,7 +28,7 @@ const StatisticalBarChart = ({ isLoading, chartDatas }) => {
             <Grid item xs={12}>
               <Grid container alignItems="center" justifyContent="space-between">
                 <Grid item>
-                  <Typography variant="h3">统计</Typography>
+                  <Typography variant="h3">Statistics</Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -45,7 +45,7 @@ const StatisticalBarChart = ({ isLoading, chartDatas }) => {
                   }}
                 >
                   <Typography variant="h3" color={'#697586'}>
-                    暂无数据
+                    No data
                   </Typography>
                 </Box>
               )}

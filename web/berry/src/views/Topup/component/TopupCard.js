@@ -44,7 +44,7 @@ const TopupCard = () => {
 
   const openTopUpLink = () => {
     if (!topUpLink) {
-      showError('超级管理员未SettingsTopup链接！');
+      showError('超级Management员未SettingsTopup链接！');
       return;
     }
     window.open(topUpLink, '_blank');

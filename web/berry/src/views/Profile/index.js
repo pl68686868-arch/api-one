@@ -243,7 +243,7 @@ export default function Profile() {
                       setOpenEmail(true);
                     }}
                   >
-                    {inputs.email ? '更换邮箱' : '绑定邮箱'}
+                    {inputs.email ? '更换邮箱' : 'Bind email'}
                   </Button>
                   {turnstileEnabled ? (
                     <Turnstile
@@ -261,7 +261,7 @@ export default function Profile() {
             <SubCard title="其他">
               <Grid container spacing={2}>
                 <Grid xs={12}>
-                  <Alert severity="info">注意，此处生成的Token用于System管理，而非用于Request OpenAI 相关的服务，请知悉。</Alert>
+                  <Alert severity="info">注意，此处生成的Token用于SystemManagement，而非用于Request OpenAI 相关的服务，请知悉。</Alert>
                 </Grid>
                 {inputs.access_token && (
                   <Grid xs={12}>

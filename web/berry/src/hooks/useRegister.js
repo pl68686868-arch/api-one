@@ -28,7 +28,7 @@ const useRegister = () => {
       const res = await API.get(`/api/verification?email=${email}&turnstile=${turnstile}`);
       const { success, message } = res.data;
       if (success) {
-        showSuccess('验证码发送Success，请检查你的邮箱！');
+        showSuccess('Verification code发送Success，请检查你的邮箱！');
       }
       return { success, message };
     } catch (err) {

@@ -34,7 +34,7 @@ export function showError(error) {
                     enqueueSnackbar('Error：Request次数过多，请稍后再试！', getSnackbarOptions('ERROR'));
                     break;
                 case 500:
-                    enqueueSnackbar('Error：服务器内部Error，请联系管理员！', getSnackbarOptions('ERROR'));
+                    enqueueSnackbar('Error：服务器内部Error，请联系Management员！', getSnackbarOptions('ERROR'));
                     break;
                 case 405:
                     enqueueSnackbar('本站仅作演示之用，无服务端！', getSnackbarOptions('INFO'));

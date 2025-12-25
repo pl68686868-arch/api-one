@@ -75,7 +75,7 @@ const Header = () => {
               首页
             </Button>
             <Button component={Link} variant="text" to="/about" color={pathname === '/about' ? 'primary' : 'inherit'}>
-              关于
+              About
             </Button>
             <ThemeButton />
             {account.user ? (
@@ -135,7 +135,7 @@ const Header = () => {
                     </ListItemButton>
 
                     <ListItemButton component={Link} variant="text" to="/about">
-                      <ListItemText primary={<Typography variant="body2">关于</Typography>} />
+                      <ListItemText primary={<Typography variant="body2">About</Typography>} />
                     </ListItemButton>
                     <Divider />
                     {account.user ? (

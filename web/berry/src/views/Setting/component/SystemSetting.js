@@ -280,7 +280,7 @@ const SystemSetting = () => {
   return (
     <>
       <Stack spacing={2}>
-        <SubCard title="通用Settings">
+        <SubCard title="General settings">
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12}>
               <FormControl fullWidth>
@@ -511,7 +511,7 @@ const SystemSetting = () => {
               <a href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer">
                 点击此处
               </a>
-              管理你的 GitHub OAuth App
+              Management你的 GitHub OAuth App
             </span>
           }
         >
@@ -566,7 +566,7 @@ const SystemSetting = () => {
               <a href="https://open.feishu.cn/app" target="_blank" rel="noreferrer">
                 点击此处
               </a>
-              管理你的飞书应用
+              Management你的飞书应用
             </span>
           }
         >
@@ -842,7 +842,7 @@ const SystemSetting = () => {
               <a href="https://dash.cloudflare.com/" target="_blank" rel="noopener noreferrer">
                 点击此处
               </a>
-              管理你的 Turnstile Sites，推荐选择 Invisible Widget Type
+              Management你的 Turnstile Sites，推荐选择 Invisible Widget Type
             </span>
           }
         >
@@ -889,7 +889,7 @@ const SystemSetting = () => {
           Warning
         </DialogTitle>
         <Divider />
-        <DialogContent>CancelPasswordLogin将导致所有未绑定其他Login方式的User（包括管理员）无法通过PasswordLogin，ConfirmCancel？</DialogContent>
+        <DialogContent>CancelPasswordLogin将导致所有未绑定其他Login方式的User（包括Management员）无法通过PasswordLogin，ConfirmCancel？</DialogContent>
         <DialogActions>
           <Button onClick={() => setShowPasswordWarningModal(false)}>Cancel</Button>
           <Button

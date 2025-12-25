@@ -55,7 +55,7 @@ const Dashboard = () => {
           <Grid item lg={4} xs={12}>
             <StatisticalLineChartCard
               isLoading={isLoading}
-              title="今日Request量"
+              title="Today requests"
               chartData={requestChart?.chartData}
               todayValue={requestChart?.todayValue}
             />
@@ -63,7 +63,7 @@ const Dashboard = () => {
           <Grid item lg={4} xs={12}>
             <StatisticalLineChartCard
               isLoading={isLoading}
-              title="今日消费"
+              title="Today usage"
               chartData={quotaChart?.chartData}
               todayValue={quotaChart?.todayValue}
             />
@@ -71,7 +71,7 @@ const Dashboard = () => {
           <Grid item lg={4} xs={12}>
             <StatisticalLineChartCard
               isLoading={isLoading}
-              title="今日 token"
+              title="Today tokens"
               chartData={tokenChart?.chartData}
               todayValue={tokenChart?.todayValue}
             />
@@ -99,7 +99,7 @@ const Dashboard = () => {
                   <Typography variant="h3"> {users?.used_quota ? '$' + calculateQuota(users.used_quota) : 'Unknown'}</Typography>
                 </Grid>
                 <Grid item xs={4}>
-                  <Typography variant="h4">调用次数：</Typography>
+                  <Typography variant="h4">Call count:</Typography>
                 </Grid>
                 <Grid item xs={8}>
                   <Typography variant="h3"> {users?.request_count || 'Unknown'}</Typography>
@@ -205,7 +205,7 @@ function getLineCardOption(lineDataGroup, field) {
       todayValue = renderNumber(todayValue);
       break;
     case 'Quota':
-      chartData = generateChartOptions(lineData, '美元');
+      chartData = generateChartOptions(lineData, 'USD');
       todayValue = '$' + renderNumber(todayValue);
       break;
     case 'PromptTokens':

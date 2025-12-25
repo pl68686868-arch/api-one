@@ -125,21 +125,21 @@ const OperationSetting = () => {
       case "ratio":
         if (originInputs["ModelRatio"] !== inputs.ModelRatio) {
           if (!verifyJSON(inputs.ModelRatio)) {
-            showError("Model倍率不是合法的 JSON 字符串");
+            showError("Model ratio is not a valid JSON string");
             return;
           }
           await updateOption("ModelRatio", inputs.ModelRatio);
         }
         if (originInputs["GroupRatio"] !== inputs.GroupRatio) {
           if (!verifyJSON(inputs.GroupRatio)) {
-            showError("Group倍率不是合法的 JSON 字符串");
+            showError("Group ratio is not a valid JSON string");
             return;
           }
           await updateOption("GroupRatio", inputs.GroupRatio);
         }
         if (originInputs['CompletionRatio'] !== inputs.CompletionRatio) {
           if (!verifyJSON(inputs.CompletionRatio)) {
-            showError('补全倍率不是合法的 JSON 字符串');
+            showError('Completion ratio is not a valid JSON string');
             return;
           }
           await updateOption('CompletionRatio', inputs.CompletionRatio);
@@ -192,7 +192,7 @@ const OperationSetting = () => {
 
   return (
     <Stack spacing={2}>
-      <SubCard title="通用Settings">
+      <SubCard title="General settings">
         <Stack justifyContent="flex-start" alignItems="flex-start" spacing={2}>
           <Stack
             direction={{ sm: "column", md: "row" }}
@@ -293,7 +293,7 @@ const OperationSetting = () => {
               submitConfig("general").then();
             }}
           >
-            Save通用Settings
+            SaveGeneral settings
           </Button>
         </Stack>
       </SubCard>
@@ -305,7 +305,7 @@ const OperationSetting = () => {
           spacing={2}
         >
           <FormControlLabel
-            label="EnableLogs消费"
+            label="EnableLogsUsage"
             control={
               <Checkbox
                 checked={inputs.LogConsumeEnabled === "true"}
@@ -371,7 +371,7 @@ const OperationSetting = () => {
                 value={inputs.ChannelDisableThreshold}
                 onChange={handleInputChange}
                 label="最长ResponseTime"
-                placeholder="单位秒，当运行Channel全部Test时，超过此Time将Auto DisabledChannel"
+                placeholder="单位秒，当运行ChannelAllTest时，超过此Time将Auto DisabledChannel"
                 disabled={loading}
               />
             </FormControl>
