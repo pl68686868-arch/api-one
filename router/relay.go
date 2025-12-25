@@ -10,6 +10,15 @@ import (
 func SetRelayRouter(router *gin.Engine) {
 	router.Use(middleware.CORS())
 	router.Use(middleware.GzipDecodeMiddleware())
+	
+	// Middleware to handle /v1/v1/* duplication
+	// Supports both configs: localhost:3000 and localhost:3000/v1
+	router.Use(func(c *gin.Context) {
+		if strings.HasPrefix(c.Request.URL.Path, "/v1/v1/") {
+			c.Request.URL.Path = strings.Replace(c.Request.URL.Path, "/v1/v1/", "/v1/", 1)
+		}
+		c.Next()
+	})
 	// https://platform.openai.com/docs/api-reference/introduction
 	modelsRouter := router.Group("/v1/models")
 	modelsRouter.Use(middleware.TokenAuth())
