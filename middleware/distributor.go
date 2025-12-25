@@ -75,10 +75,10 @@ func Distribute() func(c *gin.Context) {
 						requestModel = result.SelectedModel
 						c.Set(ctxkey.RequestModel, requestModel)
 						
-						// Store ALL selection metrics for logging (not just reason!)
+						// Store selection metrics for logging
 						c.Set(ctxkey.SelectionReason, result.Reason)
 						c.Set(ctxkey.SelectionScore, result.Score)
-						c.Set(ctxkey.AvailableChannels, result.AvailableCount)
+						// Note: AvailableChannels not tracked in automodel (SelectionResult has no AvailableCount field)
 						
 						SetupContextForSelectedChannel(c, channel, requestModel)
 						c.Next()
