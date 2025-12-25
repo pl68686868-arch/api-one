@@ -9,15 +9,38 @@ const StatCard = ({ icon: Icon, label, value, color, isLoading }) => (
         sx={{
             p: 2.5,
             borderRadius: 2,
-            background: (theme) => `linear-gradient(135deg, ${alpha(theme.palette[color].lighter, 0.8)} 0%, ${alpha(theme.palette[color].light, 0.6)} 100%)`,
+            background: (theme) => {
+                const paletteColor = theme.palette[color];
+                if (!paletteColor) return theme.palette.background.paper;
+
+                // Safe fallback chain for gradient colors
+                const lightColor = paletteColor.light || paletteColor.main || paletteColor[200] || '#ccc';
+                const lighterColor = paletteColor.lighter || paletteColor.light || paletteColor[100] || '#ddd';
+
+                return `linear-gradient(135deg, ${alpha(lighterColor, 0.8)} 0%, ${alpha(lightColor, 0.6)} 100%)`;
+            },
             backdropFilter: 'blur(8px)',
             border: 1,
-            borderColor: (theme) => alpha(theme.palette[color].main, 0.15),
+            borderColor: (theme) => {
+                const mainColor = theme.palette[color]?.main || theme.palette.grey[500];
+                return alpha(mainColor, 0.15);
+            },
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
                 transform: 'translateY(-4px)',
-                boxShadow: (theme) => `0 8px 24px ${alpha(theme.palette[color].main, 0.25)}`,
-                background: (theme) => `linear-gradient(135deg, ${alpha(theme.palette[color].lighter, 1)} 0%, ${alpha(theme.palette[color].light, 0.9)} 100%)`
+                boxShadow: (theme) => {
+                    const mainColor = theme.palette[color]?.main || theme.palette.grey[500];
+                    return `0 8px 24px ${alpha(mainColor, 0.25)}`;
+                },
+                background: (theme) => {
+                    const paletteColor = theme.palette[color];
+                    if (!paletteColor) return theme.palette.background.paper;
+
+                    const lightColor = paletteColor.light || paletteColor.main || paletteColor[200] || '#ccc';
+                    const lighterColor = paletteColor.lighter || paletteColor.light || paletteColor[100] || '#ddd';
+
+                    return `linear-gradient(135deg, ${alpha(lighterColor, 1)} 0%, ${alpha(lightColor, 0.9)} 100%)`;
+                }
             }
         }}
     >
@@ -30,7 +53,10 @@ const StatCard = ({ icon: Icon, label, value, color, isLoading }) => (
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    bgcolor: (theme) => alpha(theme.palette[color].main, 0.12),
+                    bgcolor: (theme) => {
+                        const paletteColor = theme.palette[color];
+                        return alpha(paletteColor?.main || theme.palette.grey[500], 0.12);
+                    },
                     color: `${color}.main`
                 }}
             >
