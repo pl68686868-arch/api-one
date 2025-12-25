@@ -97,7 +97,7 @@ export default function ChannelTableRow({
         test_time: Date.now() / 1000,
         response_time: time * 1000,
       });
-      showInfo(`渠道 ${item.name} 测试成功，耗时 ${time.toFixed(2)} 秒。`);
+      showInfo(`Channel ${item.name} TestSuccess，耗时 ${time.toFixed(2)} 秒。`);
     }
   };
 
@@ -106,7 +106,7 @@ export default function ChannelTableRow({
     const { success, message, balance } = res.data;
     if (success) {
       setItemBalance(balance);
-      showInfo(`余额更新成功！`);
+      showInfo(`BalanceUpdateSuccess！`);
     } else {
       showError(message);
     }
@@ -190,7 +190,7 @@ export default function ChannelTableRow({
         <TableCell>
           {!CHANNEL_OPTIONS[item.type] ? (
             <Label color="error" variant="soft">
-              未知
+              Unknown
             </Label>
           ) : (
             <Label color={CHANNEL_OPTIONS[item.type].color} variant="soft">
@@ -225,7 +225,7 @@ export default function ChannelTableRow({
 
         {/* Balance */}
         <TableCell>
-          <Tooltip title="点击更新余额" placement="top">
+          <Tooltip title="点击UpdateBalance" placement="top">
             <Box
               onClick={updateChannelBalance}
               sx={{
@@ -293,14 +293,14 @@ export default function ChannelTableRow({
           sx={{ py: 1.5 }}
         >
           <IconEdit size={18} style={{ marginRight: 12 }} />
-          编辑
+          Edit
         </MenuItem>
         <MenuItem
           onClick={handleDeleteOpen}
           sx={{ color: "error.main", py: 1.5 }}
         >
           <IconTrash size={18} style={{ marginRight: 12 }} />
-          删除
+          Delete
         </MenuItem>
       </Popover>
 
@@ -312,15 +312,15 @@ export default function ChannelTableRow({
           sx: { borderRadius: 2 }
         }}
       >
-        <DialogTitle sx={{ fontWeight: 600 }}>删除渠道</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 600 }}>DeleteChannel</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            确定要删除渠道 <strong>{item.name}</strong> 吗？此操作无法撤销。
+            确定要DeleteChannel <strong>{item.name}</strong> 吗？此Action无法撤销。
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={handleDeleteClose} variant="outlined">
-            取消
+            Cancel
           </Button>
           <Button
             onClick={handleDelete}
@@ -328,7 +328,7 @@ export default function ChannelTableRow({
             color="error"
             autoFocus
           >
-            确认删除
+            ConfirmDelete
           </Button>
         </DialogActions>
       </Dialog>

@@ -66,11 +66,11 @@ const RegisterForm = ({ ...others }) => {
 
   const handleSendCode = async (email) => {
     if (email === '') {
-      showError('请输入邮箱');
+      showError('Please enter邮箱');
       return;
     }
     if (turnstileEnabled && turnstileToken === '') {
-      showError('请稍后几秒重试，Turnstile 正在检查用户环境！');
+      showError('请稍后几秒重试，Turnstile 正在检查User环境！');
       return;
     }
 
@@ -106,17 +106,17 @@ const RegisterForm = ({ ...others }) => {
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          username: Yup.string().max(255).required('用户名是必填项'),
-          password: Yup.string().max(255).required('密码是必填项'),
+          username: Yup.string().max(255).required('User名是必填项'),
+          password: Yup.string().max(255).required('Password是必填项'),
           confirmPassword: Yup.string()
-            .required('确认密码是必填项')
-            .oneOf([Yup.ref('password'), null], '两次输入的密码不一致'),
-          email: showEmailVerification ? Yup.string().email('必须是有效的Email地址').max(255).required('Email是必填项') : Yup.mixed(),
+            .required('ConfirmPassword是必填项')
+            .oneOf([Yup.ref('password'), null], '两次输入的Password不一致'),
+          email: showEmailVerification ? Yup.string().email('Must是有效的Email地址').max(255).required('Email是必填项') : Yup.mixed(),
           verification_code: showEmailVerification ? Yup.string().max(255).required('验证码是必填项') : Yup.mixed()
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           if (turnstileEnabled && turnstileToken === '') {
-            showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
+            showInfo('请稍后几秒重试，Turnstile 正在检查User环境！');
             setSubmitting(false);
             return;
           }
@@ -135,7 +135,7 @@ const RegisterForm = ({ ...others }) => {
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
             <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-username-register">用户名</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-username-register">User名</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-username-register"
                 type="text"
@@ -153,7 +153,7 @@ const RegisterForm = ({ ...others }) => {
             </FormControl>
 
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-password-register">密码</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-password-register">Password</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password-register"
                 type={showPassword ? 'text' : 'password'}
@@ -192,7 +192,7 @@ const RegisterForm = ({ ...others }) => {
               error={Boolean(touched.confirmPassword && errors.confirmPassword)}
               sx={{ ...theme.typography.customInput }}
             >
-              <InputLabel htmlFor="outlined-adornment-confirm-password-register">确认密码</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-confirm-password-register">ConfirmPassword</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-confirm-password-register"
                 type={showPassword ? 'text' : 'password'}
@@ -296,7 +296,7 @@ const RegisterForm = ({ ...others }) => {
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                  注册
+                  Register
                 </Button>
               </AnimateButton>
             </Box>

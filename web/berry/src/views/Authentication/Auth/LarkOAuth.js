@@ -21,7 +21,7 @@ const LarkOAuth = () => {
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
   const [searchParams] = useSearchParams();
-  const [prompt, setPrompt] = useState('处理中...');
+  const [prompt, setPrompt] = useState('Processing...');
   const { larkLogin } = useLogin();
 
   let navigate = useNavigate();
@@ -33,13 +33,13 @@ const LarkOAuth = () => {
         showError(message);
       }
       if (count === 0) {
-        setPrompt(`操作失败，重定向至登录界面中...`);
+        setPrompt(`ActionFailed，重定向至Login界面中...`);
         await new Promise((resolve) => setTimeout(resolve, 2000));
         navigate('/login');
         return;
       }
       count++;
-      setPrompt(`出现错误，第 ${count} 次重试中...`);
+      setPrompt(`Error occurred, attempt  ${count}  retrying...`);
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await sendCode(code, state, count);
     }
@@ -69,7 +69,7 @@ const LarkOAuth = () => {
                       <Grid item>
                         <Stack alignItems="center" justifyContent="center" spacing={1}>
                           <Typography color={theme.palette.primary.main} gutterBottom variant={matchDownSM ? 'h3' : 'h2'}>
-                            飞书 登录
+                            飞书 Login
                           </Typography>
                         </Stack>
                       </Grid>

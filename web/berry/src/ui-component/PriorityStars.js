@@ -15,7 +15,7 @@ const PriorityStars = ({ priority, onChange, max = 5, readOnly = false }) => {
 
     return (
         <Tooltip
-            title={readOnly ? `优先级: ${priority}` : `点击设置优先级 (当前: ${priority})`}
+            title={readOnly ? `Priority级: ${priority}` : `点击SettingsPriority级 (当前: ${priority})`}
             arrow
         >
             <Box

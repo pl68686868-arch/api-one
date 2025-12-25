@@ -5,12 +5,12 @@ const RedemptionTableHead = () => {
     <TableHead>
       <TableRow>
         <TableCell>ID</TableCell>
-        <TableCell>名称</TableCell>
-        <TableCell>状态</TableCell>
-        <TableCell>额度</TableCell>
-        <TableCell>创建时间</TableCell>
-        <TableCell>兑换时间</TableCell>
-        <TableCell>操作</TableCell>
+        <TableCell>Name</TableCell>
+        <TableCell>Status</TableCell>
+        <TableCell>Quota</TableCell>
+        <TableCell>Created Time</TableCell>
+        <TableCell>RedeemTime</TableCell>
+        <TableCell>Action</TableCell>
       </TableRow>
     </TableHead>
   );

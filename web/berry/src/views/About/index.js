@@ -22,7 +22,7 @@ const About = () => {
       localStorage.setItem('about', aboutContent);
     } else {
       showError(message);
-      setAbout('加载关于内容失败...');
+      setAbout('Loading关于内容Failed...');
     }
     setAboutLoaded(true);
   };
@@ -39,7 +39,7 @@ const About = () => {
             <Container sx={{ paddingTop: '40px' }}>
               <MainCard title="关于">
                 <Typography variant="body2">
-                  可在设置页面设置关于内容，支持 HTML & Markdown <br />
+                  可在Settings页面Settings关于内容，支持 HTML & Markdown <br />
                   项目仓库地址：
                   <a href="https://github.com/songquanpeng/one-api">https://github.com/songquanpeng/one-api</a>
                 </Typography>

@@ -120,7 +120,7 @@ const SystemSetting = () => {
         ...inputs,
         [key]: value
       }));
-      showSuccess('设置成功！');
+      showSuccess('SettingsSuccess！');
     } else {
       showError(message);
     }
@@ -243,7 +243,7 @@ const SystemSetting = () => {
   const submitOidc = async () => {
     if (inputs.OidcWellKnown !== '') {
       if (!inputs.OidcWellKnown.startsWith('http://') && !inputs.OidcWellKnown.startsWith('https://')) {
-        showError('Well-Known URL 必须以 http:// 或 https:// 开头');
+        showError('Well-Known URL Must以 http:// 或 https:// 开头');
         return;
       }
       try {
@@ -251,9 +251,9 @@ const SystemSetting = () => {
         inputs.OidcAuthorizationEndpoint = res.data['authorization_endpoint'];
         inputs.OidcTokenEndpoint = res.data['token_endpoint'];
         inputs.OidcUserinfoEndpoint = res.data['userinfo_endpoint'];
-        showSuccess('获取 OIDC 配置成功！');
+        showSuccess('获取 OIDC 配置Success！');
       } catch (err) {
-        showError("获取 OIDC 配置失败，请检查网络状况和 Well-Known URL 是否正确");
+        showError("获取 OIDC 配置Failed，请检查网络状况和 Well-Known URL 是否正确");
       }
     }
 
@@ -280,7 +280,7 @@ const SystemSetting = () => {
   return (
     <>
       <Stack spacing={2}>
-        <SubCard title="通用设置">
+        <SubCard title="通用Settings">
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12}>
               <FormControl fullWidth>
@@ -298,16 +298,16 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitServerAddress}>
-                更新服务器地址
+                Update服务器地址
               </Button>
             </Grid>
           </Grid>
         </SubCard>
-        <SubCard title="配置登录注册">
+        <SubCard title="配置LoginRegister">
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过密码进行登录"
+                label="允许通过Password进行Login"
                 control={
                   <Checkbox checked={inputs.PasswordLoginEnabled === 'true'} onChange={handleInputChange} name="PasswordLoginEnabled" />
                 }
@@ -315,7 +315,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过密码进行注册"
+                label="允许通过Password进行Register"
                 control={
                   <Checkbox
                     checked={inputs.PasswordRegisterEnabled === 'true'}
@@ -327,7 +327,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="通过密码注册时需要进行邮箱验证"
+                label="通过PasswordRegister时需要进行邮箱验证"
                 control={
                   <Checkbox
                     checked={inputs.EmailVerificationEnabled === 'true'}
@@ -339,31 +339,31 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过 GitHub 账户登录 & 注册"
+                label="允许通过 GitHub 账户Login & Register"
                 control={<Checkbox checked={inputs.GitHubOAuthEnabled === 'true'} onChange={handleInputChange} name="GitHubOAuthEnabled" />}
               />
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过 OIDC 登录 & 注册"
+                label="允许通过 OIDC Login & Register"
                 control={<Checkbox checked={inputs.OidcEnabled === 'true'} onChange={handleInputChange} name="OidcEnabled" />}
               />
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过微信登录 & 注册"
+                label="允许通过微信Login & Register"
                 control={<Checkbox checked={inputs.WeChatAuthEnabled === 'true'} onChange={handleInputChange} name="WeChatAuthEnabled" />}
               />
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许新用户注册（此项为否时，新用户将无法以任何方式进行注册）"
+                label="允许新UserRegister（此项为否时，新User将无法以任何方式进行Register）"
                 control={<Checkbox checked={inputs.RegisterEnabled === 'true'} onChange={handleInputChange} name="RegisterEnabled" />}
               />
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="启用 Turnstile 用户校验"
+                label="Enable Turnstile User校验"
                 control={
                   <Checkbox checked={inputs.TurnstileCheckEnabled === 'true'} onChange={handleInputChange} name="TurnstileCheckEnabled" />
                 }
@@ -371,11 +371,11 @@ const SystemSetting = () => {
             </Grid>
           </Grid>
         </SubCard>
-        <SubCard title="配置邮箱域名白名单" subTitle="用以防止恶意用户利用临时邮箱批量注册">
+        <SubCard title="配置邮箱域名白名单" subTitle="用以防止恶意User利用临时邮箱批量Register">
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12}>
               <FormControlLabel
-                label="启用邮箱域名白名单"
+                label="Enable邮箱域名白名单"
                 control={
                   <Checkbox
                     checked={inputs.EmailDomainRestrictionEnabled === 'true'}
@@ -418,12 +418,12 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitEmailDomainWhitelist}>
-                保存邮箱域名白名单设置
+                Save邮箱域名白名单Settings
               </Button>
             </Grid>
           </Grid>
         </SubCard>
-        <SubCard title="配置 SMTP" subTitle="用以支持系统的邮件发送">
+        <SubCard title="配置 SMTP" subTitle="用以支持System的邮件发送">
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
@@ -497,7 +497,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitSMTP}>
-                保存 SMTP 设置
+                Save SMTP Settings
               </Button>
             </Grid>
           </Grid>
@@ -507,7 +507,7 @@ const SystemSetting = () => {
           subTitle={
             <span>
               {' '}
-              用以支持通过 GitHub 进行登录注册，
+              用以支持通过 GitHub 进行LoginRegister，
               <a href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer">
                 点击此处
               </a>
@@ -531,7 +531,7 @@ const SystemSetting = () => {
                   value={inputs.GitHubClientId || ''}
                   onChange={handleInputChange}
                   label="GitHub Client ID"
-                  placeholder="输入你注册的 GitHub OAuth APP 的 ID"
+                  placeholder="输入你Register的 GitHub OAuth APP 的 ID"
                   disabled={loading}
                 />
               </FormControl>
@@ -552,17 +552,17 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitGitHubOAuth}>
-                保存 GitHub OAuth 设置
+                Save GitHub OAuth Settings
               </Button>
             </Grid>
           </Grid>
         </SubCard>
         <SubCard
-          title="配置飞书授权登录"
+          title="配置飞书授权Login"
           subTitle={
             <span>
               {' '}
-              用以支持通过飞书进行登录注册，
+              用以支持通过飞书进行LoginRegister，
               <a href="https://open.feishu.cn/app" target="_blank" rel="noreferrer">
                 点击此处
               </a>
@@ -573,7 +573,7 @@ const SystemSetting = () => {
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12}>
               <Alert severity="info" sx={{ wordWrap: 'break-word' }}>
-                主页链接填 <code>{inputs.ServerAddress}</code>
+                Home链接填 <code>{inputs.ServerAddress}</code>
                 ，重定向 URL 填 <code>{`${inputs.ServerAddress}/oauth/lark`}</code>
               </Alert>
             </Grid>
@@ -607,7 +607,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitLarkOAuth}>
-                保存飞书 OAuth 设置
+                Save飞书 OAuth Settings
               </Button>
             </Grid>
           </Grid>
@@ -616,7 +616,7 @@ const SystemSetting = () => {
           title="配置 WeChat Server"
           subTitle={
             <span>
-              用以支持通过微信进行登录注册，
+              用以支持通过微信进行LoginRegister，
               <a href="https://github.com/songquanpeng/wechat-server" target="_blank" rel="noopener noreferrer">
                 点击此处
               </a>
@@ -669,7 +669,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitWeChat}>
-                保存 WeChat Server 设置
+                Save WeChat Server Settings
               </Button>
             </Grid>
           </Grid>
@@ -679,18 +679,18 @@ const SystemSetting = () => {
           title="配置 OIDC"
           subTitle={
             <span>
-              用以支持通过 OIDC 登录，例如 Okta、Auth0 等兼容 OIDC 协议的 IdP
+              用以支持通过 OIDC Login，例如 Okta、Auth0 等兼容 OIDC 协议的 IdP
             </span>
           }
         >
           <Grid container spacing={ { xs: 3, sm: 2, md: 4 } }>
             <Grid xs={ 12 } md={ 12 }>
               <Alert severity="info" sx={ { wordWrap: 'break-word' } }>
-                主页链接填 <code>{ inputs.ServerAddress }</code>
+                Home链接填 <code>{ inputs.ServerAddress }</code>
                 ，重定向 URL 填 <code>{ `${ inputs.ServerAddress }/oauth/oidc` }</code>
               </Alert> <br />
               <Alert severity="info" sx={ { wordWrap: 'break-word' } }>
-                若你的 OIDC Provider 支持 Discovery Endpoint，你可以仅填写 OIDC Well-Known URL，系统会自动获取 OIDC 配置
+                若你的 OIDC Provider 支持 Discovery Endpoint，你可以仅填写 OIDC Well-Known URL，System会自动获取 OIDC 配置
               </Alert>
             </Grid>
             <Grid xs={ 12 } md={ 6 }>
@@ -730,7 +730,7 @@ const SystemSetting = () => {
                   value={ inputs.OidcWellKnown || '' }
                   onChange={ handleInputChange }
                   label="Well-Known URL"
-                  placeholder="请输入 OIDC 的 Well-Known URL"
+                  placeholder="Please enter OIDC 的 Well-Known URL"
                   disabled={ loading }
                 />
               </FormControl>
@@ -779,7 +779,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={ 12 }>
               <Button variant="contained" onClick={ submitOidc }>
-                保存 OIDC 设置
+                Save OIDC Settings
               </Button>
             </Grid>
           </Grid>
@@ -829,7 +829,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitMessagePusher}>
-                保存 Message Pusher 设置
+                Save Message Pusher Settings
               </Button>
             </Grid>
           </Grid>
@@ -838,7 +838,7 @@ const SystemSetting = () => {
           title="配置 Turnstile"
           subTitle={
             <span>
-              用以支持用户校验，
+              用以支持User校验，
               <a href="https://dash.cloudflare.com/" target="_blank" rel="noopener noreferrer">
                 点击此处
               </a>
@@ -856,7 +856,7 @@ const SystemSetting = () => {
                   value={inputs.TurnstileSiteKey || ''}
                   onChange={handleInputChange}
                   label="Turnstile Site Key"
-                  placeholder="输入你注册的 Turnstile Site Key"
+                  placeholder="输入你Register的 Turnstile Site Key"
                   disabled={loading}
                 />
               </FormControl>
@@ -878,7 +878,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitTurnstile}>
-                保存 Turnstile 设置
+                Save Turnstile Settings
               </Button>
             </Grid>
           </Grid>
@@ -886,12 +886,12 @@ const SystemSetting = () => {
       </Stack>
       <Dialog open={showPasswordWarningModal} onClose={() => setShowPasswordWarningModal(false)} maxWidth={'md'}>
         <DialogTitle sx={{ margin: '0px', fontWeight: 700, lineHeight: '1.55556', padding: '24px', fontSize: '1.125rem' }}>
-          警告
+          Warning
         </DialogTitle>
         <Divider />
-        <DialogContent>取消密码登录将导致所有未绑定其他登录方式的用户（包括管理员）无法通过密码登录，确认取消？</DialogContent>
+        <DialogContent>CancelPasswordLogin将导致所有未绑定其他Login方式的User（包括管理员）无法通过PasswordLogin，ConfirmCancel？</DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowPasswordWarningModal(false)}>取消</Button>
+          <Button onClick={() => setShowPasswordWarningModal(false)}>Cancel</Button>
           <Button
             sx={{ color: 'error.main' }}
             onClick={async () => {

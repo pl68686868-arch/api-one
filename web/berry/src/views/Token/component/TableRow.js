@@ -102,7 +102,7 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
 
   const actionItems = createMenu([
     {
-      text: '编辑',
+      text: 'Edit',
       icon: <IconEdit style={{ marginRight: '16px' }} />,
       onClick: () => {
         handleCloseMenu();
@@ -112,7 +112,7 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
       color: undefined
     },
     {
-      text: '删除',
+      text: 'Delete',
       icon: <IconTrash style={{ marginRight: '16px' }} />,
       onClick: handleDeleteOpen,
       color: 'error.main'
@@ -175,15 +175,15 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
             title={(() => {
               switch (statusSwitch) {
                 case 1:
-                  return '已启用';
+                  return 'Enabled';
                 case 2:
-                  return '已禁用';
+                  return '已Disable';
                 case 3:
-                  return '已过期';
+                  return '已Expired';
                 case 4:
                   return '已耗尽';
                 default:
-                  return '未知';
+                  return 'Unknown';
               }
             })()}
             placement="top"
@@ -199,11 +199,11 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
 
         <TableCell>{renderQuota(item.used_quota)}</TableCell>
 
-        <TableCell>{item.unlimited_quota ? '无限制' : renderQuota(item.remain_quota, 2)}</TableCell>
+        <TableCell>{item.unlimited_quota ? 'Unlimited制' : renderQuota(item.remain_quota, 2)}</TableCell>
 
         <TableCell>{timestamp2string(item.created_time)}</TableCell>
 
-        <TableCell>{item.expired_time === -1 ? '永不过期' : timestamp2string(item.expired_time)}</TableCell>
+        <TableCell>{item.expired_time === -1 ? '永不Expired' : timestamp2string(item.expired_time)}</TableCell>
 
         <TableCell>
           <Stack direction="row" spacing={1}>
@@ -214,7 +214,7 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
                   copy(`sk-${item.key}`);
                 }}
               >
-                复制
+                Copy
               </Button>
               <Button size="small" onClick={(e) => handleOpenMenu(e, 'copy')}>
                 <IconCaretDownFilled size={'16px'} />
@@ -248,14 +248,14 @@ export default function TokensTableRow({ item, manageToken, handleOpenModal, set
       </Popover>
 
       <Dialog open={openDelete} onClose={handleDeleteClose}>
-        <DialogTitle>删除Token</DialogTitle>
+        <DialogTitle>DeleteToken</DialogTitle>
         <DialogContent>
-          <DialogContentText>是否删除Token {item.name}？</DialogContentText>
+          <DialogContentText>是否DeleteToken {item.name}？</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteClose}>关闭</Button>
+          <Button onClick={handleDeleteClose}>Close</Button>
           <Button onClick={handleDelete} sx={{ color: 'error.main' }} autoFocus>
-            删除
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

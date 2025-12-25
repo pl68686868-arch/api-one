@@ -22,7 +22,7 @@ function renderType(type) {
     return (
       <Label variant="filled" color="error">
         {' '}
-        未知{' '}
+        Unknown{' '}
       </Label>
     );
   }

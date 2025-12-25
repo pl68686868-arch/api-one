@@ -29,7 +29,7 @@ const StatusProvider = ({ children }) => {
         process.env.REACT_APP_VERSION !== ""
       ) {
         showNotice(
-          `新版本可用：${data.version}，请使用快捷键 Shift + F5 刷新页面`
+          `新Version可用：${data.version}，请使用快捷键 Shift + F5 刷新页面`
         );
       }
       if (data.system_name) {

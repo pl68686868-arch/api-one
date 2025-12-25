@@ -31,9 +31,9 @@ import { ReactComponent as Lark } from 'assets/images/icons/lark.svg';
 import { ReactComponent as OIDC } from 'assets/images/icons/oidc.svg';
 
 const validationSchema = Yup.object().shape({
-  username: Yup.string().required('用户名 不能为空').min(3, '用户名 不能小于 3 个字符'),
+  username: Yup.string().required('User名 cannot be empty').min(3, 'User名 不能小于 3 个字符'),
   display_name: Yup.string(),
-  password: Yup.string().test('password', '密码不能小于 8 个字符', (val) => {
+  password: Yup.string().test('password', 'Password不能小于 8 个字符', (val) => {
     return !val || val.length >= 8;
   })
 });
@@ -77,11 +77,11 @@ export default function Profile() {
       const res = await API.get(`/api/oauth/wechat/bind?code=${code}`);
       const { success, message } = res.data;
       if (success) {
-        showSuccess('微信账户绑定成功！');
+        showSuccess('微信账户绑定Success！');
       }
       return { success, message };
     } catch (err) {
-      // 请求失败，设置错误信息
+      // RequestFailed，SettingsError信息
       return { success: false, message: '' };
     }
   };
@@ -91,7 +91,7 @@ export default function Profile() {
     const { success, message, data } = res.data;
     if (success) {
       setInputs((inputs) => ({ ...inputs, access_token: data }));
-      copy(data, '访问令牌');
+      copy(data, '访问Token');
     } else {
       showError(message);
     }
@@ -105,7 +105,7 @@ export default function Profile() {
       const res = await API.put(`/api/user/self`, inputs);
       const { success, message } = res.data;
       if (success) {
-        showSuccess('用户信息更新成功！');
+        showSuccess('User信息UpdateSuccess！');
       } else {
         showError(message);
       }
@@ -155,53 +155,53 @@ export default function Profile() {
                 <SvgIcon component={OIDC} inheritViewBox="0 0 24 24" /> {getOidcId() || '未绑定'}
               </Label>
             </Stack>
-            <SubCard title="个人信息">
+            <SubCard title="Profile信息">
               <Grid container spacing={2}>
                 <Grid xs={12}>
                   <FormControl fullWidth variant="outlined">
-                    <InputLabel htmlFor="username">用户名</InputLabel>
+                    <InputLabel htmlFor="username">User名</InputLabel>
                     <OutlinedInput
                       id="username"
-                      label="用户名"
+                      label="User名"
                       type="text"
                       value={inputs.username || ''}
                       onChange={handleInputChange}
                       name="username"
-                      placeholder="请输入用户名"
+                      placeholder="Please enterUser名"
                     />
                   </FormControl>
                 </Grid>
                 <Grid xs={12}>
                   <FormControl fullWidth variant="outlined">
-                    <InputLabel htmlFor="password">密码</InputLabel>
+                    <InputLabel htmlFor="password">Password</InputLabel>
                     <OutlinedInput
                       id="password"
-                      label="密码"
+                      label="Password"
                       type="password"
                       value={inputs.password || ''}
                       onChange={handleInputChange}
                       name="password"
-                      placeholder="请输入密码"
+                      placeholder="Please enterPassword"
                     />
                   </FormControl>
                 </Grid>
                 <Grid xs={12}>
                   <FormControl fullWidth variant="outlined">
-                    <InputLabel htmlFor="display_name">显示名称</InputLabel>
+                    <InputLabel htmlFor="display_name">显示Name</InputLabel>
                     <OutlinedInput
                       id="display_name"
-                      label="显示名称"
+                      label="显示Name"
                       type="text"
                       value={inputs.display_name || ''}
                       onChange={handleInputChange}
                       name="display_name"
-                      placeholder="请输入显示名称"
+                      placeholder="Please enter显示Name"
                     />
                   </FormControl>
                 </Grid>
                 <Grid xs={12}>
                   <Button variant="contained" color="primary" onClick={submit}>
-                    提交
+                    Submit
                   </Button>
                 </Grid>
               </Grid>
@@ -261,19 +261,19 @@ export default function Profile() {
             <SubCard title="其他">
               <Grid container spacing={2}>
                 <Grid xs={12}>
-                  <Alert severity="info">注意，此处生成的令牌用于系统管理，而非用于请求 OpenAI 相关的服务，请知悉。</Alert>
+                  <Alert severity="info">注意，此处生成的Token用于System管理，而非用于Request OpenAI 相关的服务，请知悉。</Alert>
                 </Grid>
                 {inputs.access_token && (
                   <Grid xs={12}>
                     <Alert severity="error">
-                      你的访问令牌是: <b>{inputs.access_token}</b> <br />
-                      请妥善保管。如有泄漏，请立即重置。
+                      你的访问Token是: <b>{inputs.access_token}</b> <br />
+                      请妥善保管。如有泄漏，请立即Reset。
                     </Alert>
                   </Grid>
                 )}
                 <Grid xs={12}>
                   <Button variant="contained" onClick={generateAccessToken}>
-                    {inputs.access_token ? '重置访问令牌' : '生成访问令牌'}
+                    {inputs.access_token ? 'Reset访问Token' : '生成访问Token'}
                   </Button>
                 </Grid>
 
@@ -285,7 +285,7 @@ export default function Profile() {
                       setShowAccountDeleteModal(true);
                     }}
                   >
-                    删除帐号
+                    Delete帐号
                   </Button>
                 </Grid>
               </Grid>
@@ -295,12 +295,12 @@ export default function Profile() {
       </UserCard>
       <Dialog open={showAccountDeleteModal} onClose={() => setShowAccountDeleteModal(false)} maxWidth={'md'}>
         <DialogTitle sx={{ margin: '0px', fontWeight: 500, lineHeight: '1.55556', padding: '24px', fontSize: '1.125rem' }}>
-          危险操作
+          危险Action
         </DialogTitle>
         <Divider />
-        <DialogContent>您正在删除自己的帐户，将清空所有数据且不可恢复</DialogContent>
+        <DialogContent>您正在Delete自己的帐户，将清空所有数据且不可恢复</DialogContent>
         <DialogActions>
-          <Button onClick={() => setShowAccountDeleteModal(false)}>取消</Button>
+          <Button onClick={() => setShowAccountDeleteModal(false)}>Cancel</Button>
           <Button
             sx={{ color: 'error.main' }}
             onClick={async () => {

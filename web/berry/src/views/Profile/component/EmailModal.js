@@ -22,8 +22,8 @@ import useRegister from "hooks/useRegister";
 import { API } from "utils/api";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email("请输入正确的邮箱地址").required("邮箱不能为空"),
-  email_verification_code: Yup.string().required("验证码不能为空"),
+  email: Yup.string().email("Please enter正确的邮箱地址").required("邮箱cannot be empty"),
+  email_verification_code: Yup.string().required("验证码cannot be empty"),
 });
 
 const EmailModal = ({ open, handleClose, turnstileToken }) => {
@@ -41,7 +41,7 @@ const EmailModal = ({ open, handleClose, turnstileToken }) => {
     );
     const { success, message } = res.data;
     if (success) {
-      showSuccess("邮箱账户绑定成功！");
+      showSuccess("邮箱账户绑定Success！");
       setSubmitting(false);
       setStatus({ success: true });
       handleClose();
@@ -68,11 +68,11 @@ const EmailModal = ({ open, handleClose, turnstileToken }) => {
   const handleSendCode = async (email) => {
     setDisableButton(true);
     if (email === "") {
-      showError("请输入邮箱");
+      showError("Please enter邮箱");
       return;
     }
     if (turnstileToken === "") {
-      showError("请稍后几秒重试，Turnstile 正在检查用户环境！");
+      showError("请稍后几秒重试，Turnstile 正在检查User环境！");
       return;
     }
     setLoading(true);
@@ -173,7 +173,7 @@ const EmailModal = ({ open, handleClose, turnstileToken }) => {
                     )}
                 </FormControl>
                 <DialogActions>
-                  <Button onClick={handleClose}>取消</Button>
+                  <Button onClick={handleClose}>Cancel</Button>
                   <Button
                     disableElevation
                     disabled={loading}
@@ -181,7 +181,7 @@ const EmailModal = ({ open, handleClose, turnstileToken }) => {
                     variant="contained"
                     color="primary"
                   >
-                    提交
+                    Submit
                   </Button>
                 </DialogActions>
               </form>

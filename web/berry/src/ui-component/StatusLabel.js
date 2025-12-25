@@ -4,22 +4,22 @@ import { IconCircleCheck, IconCircleX, IconAlertCircle } from '@tabler/icons-rea
 
 const STATUS_CONFIG = {
   1: {
-    label: '启用',
+    label: 'Enable',
     color: 'success',
     icon: IconCircleCheck,
-    tooltip: '渠道已启用，正常运行中'
+    tooltip: 'ChannelEnabled，正常运行中'
   },
   2: {
-    label: '手动禁用',
+    label: 'Manually Disabled',
     color: 'warning', 
     icon: IconAlertCircle,
-    tooltip: '渠道已被手动禁用'
+    tooltip: 'Channel已被Manually Disabled'
   },
   3: {
-    label: '自动禁用',
+    label: 'Auto Disabled',
     color: 'error',
     icon: IconCircleX,
-    tooltip: '渠道因错误被系统自动禁用'
+    tooltip: 'Channel因Error被SystemAuto Disabled'
   }
 };
 

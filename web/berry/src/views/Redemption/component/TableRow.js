@@ -67,7 +67,7 @@ export default function RedemptionTableRow({ item, manageRedemption, handleOpenM
         <TableCell>
           {item.status !== 1 && item.status !== 2 ? (
             <Label variant="filled" color={item.status === 3 ? 'success' : 'orange'}>
-              {item.status === 3 ? '已使用' : '未知'}
+              {item.status === 3 ? 'Used' : 'Unknown'}
             </Label>
           ) : (
             <TableSwitch id={`switch-${item.id}`} checked={statusSwitch === 1} onChange={handleStatus} />
@@ -76,17 +76,17 @@ export default function RedemptionTableRow({ item, manageRedemption, handleOpenM
 
         <TableCell>{renderQuota(item.quota)}</TableCell>
         <TableCell>{timestamp2string(item.created_time)}</TableCell>
-        <TableCell>{item.redeemed_time ? timestamp2string(item.redeemed_time) : '尚未兑换'}</TableCell>
+        <TableCell>{item.redeemed_time ? timestamp2string(item.redeemed_time) : '尚未Redeem'}</TableCell>
         <TableCell>
           <Stack direction="row" spacing={1}>
             <Button
               variant="contained"
               color="primary"
               onClick={() => {
-                copy(item.key, '兑换码');
+                copy(item.key, 'Redeem码');
               }}
             >
-              复制
+              Copy
             </Button>
             <IconButton onClick={handleOpenMenu} sx={{ color: 'rgb(99, 115, 129)' }}>
               <IconDotsVertical />
@@ -114,23 +114,23 @@ export default function RedemptionTableRow({ item, manageRedemption, handleOpenM
           }}
         >
           <IconEdit style={{ marginRight: '16px' }} />
-          编辑
+          Edit
         </MenuItem>
         <MenuItem onClick={handleDeleteOpen} sx={{ color: 'error.main' }}>
           <IconTrash style={{ marginRight: '16px' }} />
-          删除
+          Delete
         </MenuItem>
       </Popover>
 
       <Dialog open={openDelete} onClose={handleDeleteClose}>
-        <DialogTitle>删除兑换码</DialogTitle>
+        <DialogTitle>DeleteRedeem码</DialogTitle>
         <DialogContent>
-          <DialogContentText>是否删除兑换码 {item.name}？</DialogContentText>
+          <DialogContentText>是否DeleteRedeem码 {item.name}？</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteClose}>关闭</Button>
+          <Button onClick={handleDeleteClose}>Close</Button>
           <Button onClick={handleDelete} sx={{ color: 'error.main' }} autoFocus>
-            删除
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

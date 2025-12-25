@@ -5,15 +5,15 @@ const ChannelTableHead = () => {
     <TableHead>
       <TableRow>
         <TableCell>ID</TableCell>
-        <TableCell>名称</TableCell>
-        <TableCell>分组</TableCell>
-        <TableCell>类型</TableCell>
-        <TableCell>状态</TableCell>
-        <TableCell>响应时间</TableCell>
-        <TableCell>已消耗</TableCell>
-        <TableCell>余额</TableCell>
-        <TableCell>优先级</TableCell>
-        <TableCell>操作</TableCell>
+        <TableCell>Name</TableCell>
+        <TableCell>Group</TableCell>
+        <TableCell>Type</TableCell>
+        <TableCell>Status</TableCell>
+        <TableCell>ResponseTime</TableCell>
+        <TableCell>Consumed耗</TableCell>
+        <TableCell>Balance</TableCell>
+        <TableCell>Priority级</TableCell>
+        <TableCell>Action</TableCell>
       </TableRow>
     </TableHead>
   );

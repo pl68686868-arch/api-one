@@ -17,7 +17,7 @@ const getLatencyLabel = (ms) => {
 };
 
 const formatTime = (timestamp) => {
-    if (!timestamp) return '未测试';
+    if (!timestamp) return '未Test';
     const date = new Date(timestamp * 1000);
     return date.toLocaleString('zh-CN', {
         month: 'short',
@@ -33,7 +33,7 @@ const ResponseTimeBar = ({ responseTime, testTime, onClick }) => {
 
     if (!hasData) {
         return (
-            <Tooltip title="点击测试渠道响应时间" arrow>
+            <Tooltip title="点击TestChannelResponseTime" arrow>
                 <Box
                     onClick={onClick}
                     sx={{
@@ -48,7 +48,7 @@ const ResponseTimeBar = ({ responseTime, testTime, onClick }) => {
                     }}
                 >
                     <IconClick size={16} />
-                    <Typography variant="caption">点击测试</Typography>
+                    <Typography variant="caption">点击Test</Typography>
                 </Box>
             </Tooltip>
         );
@@ -56,7 +56,7 @@ const ResponseTimeBar = ({ responseTime, testTime, onClick }) => {
 
     return (
         <Tooltip
-            title={`最后测试: ${formatTime(testTime)} | ${getLatencyLabel(responseTime)}`}
+            title={`最后Test: ${formatTime(testTime)} | ${getLatencyLabel(responseTime)}`}
             arrow
             placement="top"
         >

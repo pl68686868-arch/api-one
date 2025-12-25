@@ -136,7 +136,7 @@ export default function ChannelPage() {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess('操作成功完成！');
+      showSuccess('ActionSuccess完成！');
       if (action === 'delete') {
         await handleRefresh();
       }
@@ -156,7 +156,7 @@ export default function ChannelPage() {
     const res = await API.get(`/api/channel/test`);
     const { success, message } = res.data;
     if (success) {
-      showInfo('已成功开始测试所有渠道，请稍后刷新页面查看结果。');
+      showInfo('已Success开始Test所有Channel，请稍后Refresh页面查看结果。');
     } else {
       showError(message);
     }
@@ -169,16 +169,16 @@ export default function ChannelPage() {
   const deleteAllDisabledChannels = async () => {
     const disabledCount = channels.filter(c => c.status !== 1).length;
     if (disabledCount === 0) {
-      showInfo('没有禁用的渠道可删除');
+      showInfo('没有Disable的Channel可Delete');
       return;
     }
-    if (!window.confirm(`确定要删除 ${disabledCount} 个禁用的渠道吗？`)) {
+    if (!window.confirm(`确定要Delete ${disabledCount} 个Disable的Channel吗？`)) {
       return;
     }
     const res = await API.delete(`/api/channel/disabled`);
     const { success, message, data } = res.data;
     if (success) {
-      showSuccess(`已删除所有禁用渠道，共计 ${data} 个`);
+      showSuccess(`已Delete所有DisableChannel，共计 ${data} 个`);
       await handleRefresh();
     } else {
       showError(message);
@@ -190,7 +190,7 @@ export default function ChannelPage() {
     const res = await API.get(`/api/channel/update_balance`);
     const { success, message } = res.data;
     if (success) {
-      showInfo('已更新完毕所有已启用渠道余额！');
+      showInfo('已Update完毕所有EnabledChannelBalance！');
       await handleRefresh();
     } else {
       showError(message);
@@ -232,9 +232,9 @@ export default function ChannelPage() {
       {/* Header */}
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 700 }}>渠道管理</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>Channel Management</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            管理您的 AI 服务渠道
+            Manage your AI service channels
           </Typography>
         </Box>
         <Button
@@ -252,7 +252,7 @@ export default function ChannelPage() {
             }
           }}
         >
-          新建渠道
+          New Channel
         </Button>
       </Stack>
 
@@ -266,7 +266,7 @@ export default function ChannelPage() {
           <TableToolBar
             filterName={searchKeyword}
             handleFilterName={handleSearchKeyword}
-            placeholder={'搜索渠道 ID、名称或密钥...'}
+            placeholder={'Search channel ID, name or key...'}
           />
         </Box>
 
@@ -291,7 +291,7 @@ export default function ChannelPage() {
             />
             {disabledCount > 0 && (
               <Chip
-                label={`${disabledCount} 禁用`}
+                label={`${disabledCount} Disable`}
                 color="warning"
                 size="small"
                 variant="outlined"
@@ -301,12 +301,12 @@ export default function ChannelPage() {
 
           {matchUpMd ? (
             <Stack direction="row" spacing={1}>
-              <Tooltip title="刷新列表">
+              <Tooltip title="Refresh列表">
                 <IconButton onClick={handleRefresh} size="small" sx={{ bgcolor: 'action.hover' }}>
                   <IconRefresh size={18} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="测试所有启用渠道">
+              <Tooltip title="Test所有EnableChannel">
                 <IconButton
                   onClick={testAllChannels}
                   size="small"
@@ -316,13 +316,13 @@ export default function ChannelPage() {
                   <IconTestPipe size={18} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="更新所有余额">
+              <Tooltip title="Update所有Balance">
                 <IconButton onClick={updateAllChannelsBalance} size="small" sx={{ bgcolor: 'action.hover' }}>
                   <IconCoin size={18} />
                 </IconButton>
               </Tooltip>
               {disabledCount > 0 && (
-                <Tooltip title={`删除 ${disabledCount} 个禁用渠道`}>
+                <Tooltip title={`Delete ${disabledCount} 个DisableChannel`}>
                   <IconButton
                     onClick={deleteAllDisabledChannels}
                     size="small"
@@ -341,9 +341,9 @@ export default function ChannelPage() {
               direction="left"
               FabProps={{ size: 'small' }}
             >
-              <SpeedDialAction icon={<IconRefresh size={18} />} tooltipTitle="刷新" onClick={handleRefresh} />
-              <SpeedDialAction icon={<IconTestPipe size={18} />} tooltipTitle="测试" onClick={testAllChannels} />
-              <SpeedDialAction icon={<IconCoin size={18} />} tooltipTitle="更新余额" onClick={updateAllChannelsBalance} />
+              <SpeedDialAction icon={<IconRefresh size={18} />} tooltipTitle="Refresh" onClick={handleRefresh} />
+              <SpeedDialAction icon={<IconTestPipe size={18} />} tooltipTitle="Test" onClick={testAllChannels} />
+              <SpeedDialAction icon={<IconCoin size={18} />} tooltipTitle="UpdateBalance" onClick={updateAllChannelsBalance} />
             </SpeedDial>
           )}
         </Toolbar>

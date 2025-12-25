@@ -12,7 +12,7 @@ const InviteCard = () => {
 
   const handleInviteUrl = async () => {
     if (inviteUl) {
-      copy(inviteUl, '邀请链接');
+      copy(inviteUl, 'Invite链接');
       return;
     }
     const res = await API.get('/api/user/aff');
@@ -20,7 +20,7 @@ const InviteCard = () => {
     if (success) {
       let link = `${window.location.origin}/register?aff=${data}`;
       setInviteUrl(link);
-      copy(link, '邀请链接');
+      copy(link, 'Invite链接');
     } else {
       showError(message);
     }
@@ -46,23 +46,23 @@ const InviteCard = () => {
       >
         <Stack justifyContent="center" alignItems={'center'} spacing={3}>
           <Typography variant="h3" sx={{ color: theme.palette.primary.dark }}>
-            邀请奖励
+            Invite奖励
           </Typography>
           <Typography variant="body" sx={{ color: theme.palette.primary.dark }}>
-            分享您的邀请链接，邀请好友注册，即可获得奖励！
+            分享您的Invite链接，Invite好友Register，即可获得奖励！
           </Typography>
 
           <OutlinedInput
             id="invite-url"
-            label="邀请链接"
+            label="Invite链接"
             type="text"
             value={inviteUl}
             name="invite-url"
-            placeholder="点击生成邀请链接"
+            placeholder="点击生成Invite链接"
             endAdornment={
               <InputAdornment position="end">
                 <Button variant="contained" onClick={handleInviteUrl}>
-                  {inviteUl ? '复制' : '生成'}
+                  {inviteUl ? 'Copy' : '生成'}
                 </Button>
               </InputAdornment>
             }

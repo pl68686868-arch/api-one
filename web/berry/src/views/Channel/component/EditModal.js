@@ -39,21 +39,21 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const filter = createFilterOptions();
 const validationSchema = Yup.object().shape({
   is_edit: Yup.boolean(),
-  name: Yup.string().required('名称 不能为空'),
-  type: Yup.number().required('渠道 不能为空'),
+  name: Yup.string().required('Name cannot be empty'),
+  type: Yup.number().required('Channel cannot be empty'),
   key: Yup.string().when(['is_edit', 'type'], {
     is: (is_edit, type) => !is_edit && type !== 33,
-    then: Yup.string().required('密钥 不能为空')
+    then: Yup.string().required('密钥 cannot be empty')
   }),
   other: Yup.string(),
-  models: Yup.array().min(1, '模型 不能为空'),
-  groups: Yup.array().min(1, '用户组 不能为空'),
+  models: Yup.array().min(1, 'Model cannot be empty'),
+  groups: Yup.array().min(1, 'User组 cannot be empty'),
   base_url: Yup.string().when('type', {
     is: (value) => [3, 8].includes(value),
-    then: Yup.string().required('渠道API地址 不能为空'), // base_url 是必需的
+    then: Yup.string().required('ChannelAPI地址 cannot be empty'), // base_url 是必需的
     otherwise: Yup.string() // 在其他情况下，base_url 可以是任意字符串
   }),
-  model_mapping: Yup.string().test('is-json', '必须是有效的JSON字符串', function (value) {
+  model_mapping: Yup.string().test('is-json', 'Must是有效的JSON字符串', function (value) {
     try {
       if (value === '' || value === null || value === undefined) {
         return true;
@@ -127,7 +127,7 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
       const { data } = res.data;
       data.forEach((item) => {
         if (!item.owned_by) {
-          item.owned_by = '未知';
+          item.owned_by = 'Unknown';
         }
       });
       // 先对data排序
@@ -188,9 +188,9 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
     const { success, message } = res.data;
     if (success) {
       if (channelId) {
-        showSuccess('渠道更新成功！');
+        showSuccess('ChannelUpdateSuccess！');
       } else {
-        showSuccess('渠道创建成功！');
+        showSuccess('Channel创建Success！');
       }
       setSubmitting(false);
       setStatus({ success: true });
@@ -278,7 +278,7 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
           fontSize: '1.125rem'
         }}
       >
-        {channelId ? '编辑渠道' : '新建渠道'}
+        {channelId ? 'EditChannel' : 'NewChannel'}
       </DialogTitle>
       <Divider />
       <DialogContent>
@@ -491,14 +491,14 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
                       setFieldValue('models', initialModel(basicModels));
                     }}
                   >
-                    填入相关模型
+                    填入相关Model
                   </Button>
                   <Button
                     onClick={() => {
                       setFieldValue('models', modelOptions);
                     }}
                   >
-                    填入所有模型
+                    填入所有Model
                   </Button>
                 </ButtonGroup>
               </Container>
@@ -550,7 +550,7 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
                       }}
                     >
                       <Switch checked={batchAdd} onChange={(e) => setBatchAdd(e.target.checked)} />
-                      批量添加
+                      批量Add
                     </Container>
                   )}
                 </>
@@ -609,9 +609,9 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
                 )}
               </FormControl>
               <DialogActions>
-                <Button onClick={onCancel}>取消</Button>
+                <Button onClick={onCancel}>Cancel</Button>
                 <Button disableElevation disabled={isSubmitting} type="submit" variant="contained" color="primary">
-                  提交
+                  Submit
                 </Button>
               </DialogActions>
             </form>

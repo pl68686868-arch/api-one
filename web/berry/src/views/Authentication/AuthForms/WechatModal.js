@@ -7,7 +7,7 @@ import { showError } from 'utils/common';
 import * as Yup from 'yup';
 
 const validationSchema = Yup.object().shape({
-  code: Yup.string().required('验证码不能为空')
+  code: Yup.string().required('验证码cannot be empty')
 });
 
 const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
@@ -16,13 +16,13 @@ const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
     if (success) {
       handleClose();
     } else {
-      showError(message || '未知错误');
+      showError(message || 'UnknownError');
     }
   };
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>微信验证码登录</DialogTitle>
+      <DialogTitle>微信验证码Login</DialogTitle>
       <DialogContent>
         <Grid container direction="column" alignItems="center">
           <img src={qrCode} alt="二维码" style={{ maxWidth: '300px', maxHeight: '300px', width: 'auto', height: 'auto' }} />
@@ -48,7 +48,7 @@ const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
                 </Grid>
                 <Grid item xs={12}>
                   <Button type="submit" fullWidth>
-                    提交
+                    Submit
                   </Button>
                 </Grid>
               </Form>

@@ -26,13 +26,13 @@ import { useTheme } from '@mui/material/styles';
 function renderRole(role) {
   switch (role) {
     case 1:
-      return <Label color="default">普通用户</Label>;
+      return <Label color="default">普通User</Label>;
     case 10:
       return <Label color="orange">管理员</Label>;
     case 100:
       return <Label color="success">超级管理员</Label>;
     default:
-      return <Label color="error">未知身份</Label>;
+      return <Label color="error">Unknown身份</Label>;
   }
 }
 
@@ -85,19 +85,19 @@ export default function UsersTableRow({ item, manageUser, handleOpenModal, setMo
 
         <TableCell>
           <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
-            <Tooltip title={'剩余额度'} placement="top">
+            <Tooltip title={'剩RemainingQuota'} placement="top">
               <Label color={'primary'} variant="outlined">
                 {' '}
                 {renderQuota(item.quota)}{' '}
               </Label>
             </Tooltip>
-            <Tooltip title={'已用额度'} placement="top">
+            <Tooltip title={'已用Quota'} placement="top">
               <Label color={'primary'} variant="outlined">
                 {' '}
                 {renderQuota(item.used_quota)}{' '}
               </Label>
             </Tooltip>
-            <Tooltip title={'请求次数'} placement="top">
+            <Tooltip title={'Request次数'} placement="top">
               <Label color={'primary'} variant="outlined">
                 {' '}
                 {renderNumber(item.request_count)}{' '}
@@ -149,7 +149,7 @@ export default function UsersTableRow({ item, manageUser, handleOpenModal, setMo
             }}
           >
             <IconUser style={{ marginRight: '16px' }} />
-            {item.role === 1 ? '设为管理员' : '取消管理员'}
+            {item.role === 1 ? '设为管理员' : 'Cancel管理员'}
           </MenuItem>
         )}
 
@@ -161,23 +161,23 @@ export default function UsersTableRow({ item, manageUser, handleOpenModal, setMo
           }}
         >
           <IconEdit style={{ marginRight: '16px' }} />
-          编辑
+          Edit
         </MenuItem>
         <MenuItem onClick={handleDeleteOpen} sx={{ color: 'error.main' }}>
           <IconTrash style={{ marginRight: '16px' }} />
-          删除
+          Delete
         </MenuItem>
       </Popover>
 
       <Dialog open={openDelete} onClose={handleDeleteClose}>
-        <DialogTitle>删除用户</DialogTitle>
+        <DialogTitle>DeleteUser</DialogTitle>
         <DialogContent>
-          <DialogContentText>是否删除用户 {item.name}？</DialogContentText>
+          <DialogContentText>是否DeleteUser {item.name}？</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteClose}>关闭</Button>
+          <Button onClick={handleDeleteClose}>Close</Button>
           <Button onClick={handleDelete} sx={{ color: 'error.main' }} autoFocus>
-            删除
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
