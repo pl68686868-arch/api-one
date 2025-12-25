@@ -1,42 +1,49 @@
 import { Box, Typography, Button, Container, Stack } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { GitHub } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 
-const BaseIndex = () => (
-  <Box
-    sx={{
-      minHeight: 'calc(100vh - 136px)',
-      backgroundImage: 'linear-gradient(to right, #ff9966, #ff5e62)',
-      color: 'white',
-      p: 4
-    }}
-  >
-    <Container maxWidth="lg">
-      <Grid container columns={12} wrap="nowrap" alignItems="center" sx={{ minHeight: 'calc(100vh - 230px)' }}>
-        <Grid md={7} lg={6}>
-          <Stack spacing={3}>
-            <Typography variant="h1" sx={{ fontSize: '4rem', color: '#fff', lineHeight: 1.5 }}>
-              One API
-            </Typography>
-            <Typography variant="h4" sx={{ fontSize: '1.5rem', color: '#fff', lineHeight: 1.5 }}>
-              All-in-one OpenAI interface <br />
-              Integrate various API access methods <br />
-              One-click deployment, ready to use
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<GitHub />}
-              href="https://github.com/songquanpeng/one-api"
-              target="_blank"
-              sx={{ backgroundColor: '#24292e', color: '#fff', width: 'fit-content', boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)' }}
-            >
-              GitHub
-            </Button>
-          </Stack>
+const BaseIndex = () => {
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        minHeight: 'calc(100vh - 136px)',
+        backgroundImage: theme.palette.mode === 'dark'
+          ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'  // Deep purple gradient for dark mode
+          : 'linear-gradient(to right, #ff9966, #ff5e62)',  // Original orange for light mode
+        color: 'white',
+        p: 4
+      }}
+    >
+      <Container maxWidth="lg">
+        <Grid container columns={12} wrap="nowrap" alignItems="center" sx={{ minHeight: 'calc(100vh - 230px)' }}>
+          <Grid md={7} lg={6}>
+            <Stack spacing={3}>
+              <Typography variant="h1" sx={{ fontSize: '4rem', color: '#fff', lineHeight: 1.5 }}>
+                One API
+              </Typography>
+              <Typography variant="h4" sx={{ fontSize: '1.5rem', color: '#fff', lineHeight: 1.5 }}>
+                All-in-one OpenAI interface <br />
+                Integrate various API access methods <br />
+                One-click deployment, ready to use
+              </Typography>
+              <Button
+                variant="contained"
+                startIcon={<GitHub />}
+                href="https://github.com/songquanpeng/one-api"
+                target="_blank"
+                sx={{ backgroundColor: '#24292e', color: '#fff', width: 'fit-content', boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)' }}
+              >
+                GitHub
+              </Button>
+            </Stack>
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
-  </Box>
-);
+      </Container>
+    </Box>
+  );
+};
 
 export default BaseIndex;
