@@ -14,33 +14,47 @@ const StatCard = ({ icon: Icon, label, value, color, isLoading }) => (
                 const paletteColor = theme.palette[color];
                 if (!paletteColor) return theme.palette.background.paper;
 
-                // Safe fallback chain for gradient colors
-                const lightColor = paletteColor.light || paletteColor.main || paletteColor[200] || '#ccc';
-                const lighterColor = paletteColor.lighter || paletteColor.light || paletteColor[100] || '#ddd';
+                const isDark = theme.palette.mode === 'dark';
 
-                return `linear-gradient(135deg, ${alpha(lighterColor, 0.8)} 0%, ${alpha(lightColor, 0.6)} 100%)`;
+                if (isDark) {
+                    // Dark mode: use much darker gradient
+                    const mainColor = paletteColor.main || '#666';
+                    return `linear-gradient(135deg, ${alpha(mainColor, 0.15)} 0%, ${alpha(mainColor, 0.08)} 100%)`;
+                } else {
+                    // Light mode: original gradient
+                    const lightColor = paletteColor.light || paletteColor.main || paletteColor[200] || '#ccc';
+                    const lighterColor = paletteColor.lighter || paletteColor.light || paletteColor[100] || '#ddd';
+                    return `linear-gradient(135deg, ${alpha(lighterColor, 0.8)} 0%, ${alpha(lightColor, 0.6)} 100%)`;
+                }
             },
             backdropFilter: 'blur(8px)',
             border: 1,
             borderColor: (theme) => {
                 const mainColor = theme.palette[color]?.main || theme.palette.grey[500];
-                return alpha(mainColor, 0.15);
+                const isDark = theme.palette.mode === 'dark';
+                return alpha(mainColor, isDark ? 0.2 : 0.15);
             },
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
                 transform: 'translateY(-4px)',
                 boxShadow: (theme) => {
                     const mainColor = theme.palette[color]?.main || theme.palette.grey[500];
-                    return `0 8px 24px ${alpha(mainColor, 0.25)}`;
+                    const isDark = theme.palette.mode === 'dark';
+                    return `0 8px 24px ${alpha(mainColor, isDark ? 0.3 : 0.25)}`;
                 },
                 background: (theme) => {
                     const paletteColor = theme.palette[color];
                     if (!paletteColor) return theme.palette.background.paper;
 
-                    const lightColor = paletteColor.light || paletteColor.main || paletteColor[200] || '#ccc';
-                    const lighterColor = paletteColor.lighter || paletteColor.light || paletteColor[100] || '#ddd';
-
-                    return `linear-gradient(135deg, ${alpha(lighterColor, 1)} 0%, ${alpha(lightColor, 0.9)} 100%)`;
+                    const isDark = theme.palette.mode === 'dark';
+                    if (isDark) {
+                        const mainColor = paletteColor.main || '#666';
+                        return `linear-gradient(135deg, ${alpha(mainColor, 0.25)} 0%, ${alpha(mainColor, 0.15)} 100%)`;
+                    } else {
+                        const lightColor = paletteColor.light || paletteColor.main || paletteColor[200] || '#ccc';
+                        const lighterColor = paletteColor.lighter || paletteColor.light || paletteColor[100] || '#ddd';
+                        return `linear-gradient(135deg, ${alpha(lighterColor, 1)} 0%, ${alpha(lightColor, 0.9)} 100%)`;
+                    }
                 }
             }
         }}
