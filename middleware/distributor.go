@@ -74,7 +74,12 @@ func Distribute() func(c *gin.Context) {
 					if err == nil && channel != nil {
 						requestModel = result.SelectedModel
 						c.Set(ctxkey.RequestModel, requestModel)
-						c.Set(ctxkey.SelectionReason, result.Reason) // Store selection reason for logging
+						
+						// Store ALL selection metrics for logging (not just reason!)
+						c.Set(ctxkey.SelectionReason, result.Reason)
+						c.Set(ctxkey.SelectionScore, result.Score)
+						c.Set(ctxkey.AvailableChannels, result.AvailableCount)
+						
 						SetupContextForSelectedChannel(c, channel, requestModel)
 						c.Next()
 						return
