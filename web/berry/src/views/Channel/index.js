@@ -45,7 +45,7 @@ import EditeModal from './component/EditModal';
 // ----------------------------------------------------------------------
 
 export default function ChannelPage() {
-  console.log("OneAPI DEBUG: DarkMode Fix Loaded - 2026-01-06 v4");
+  console.warn("OneAPI DEBUG: DarkMode Fix Loaded - 2026-01-06 v5");
   const [channels, setChannels] = useState([]);
   const [activePage, setActivePage] = useState(0);
   const [searching, setSearching] = useState(false);
