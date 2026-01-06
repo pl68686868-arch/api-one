@@ -1,6 +1,7 @@
 // WechatModal.js
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogTitle, DialogContent, TextField, Button, Typography, Grid } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import { showError } from 'utils/common';
@@ -10,19 +11,23 @@ const validationSchema = Yup.object().shape({
   code: Yup.string().required('Verification code cannot be empty')
 });
 
+});
+
 const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
+  const { t } = useTranslation();
+
   const handleSubmit = (values) => {
     const { success, message } = wechatLogin(values.code);
     if (success) {
       handleClose();
     } else {
-      showError(message || 'UnknownError');
+      showError(message || t('common.unknown_error'));
     }
   };
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>微信Verification codeLogin</DialogTitle>
+      <DialogTitle>{t('auth.wechat.title')}</DialogTitle>
       <DialogContent>
         <Grid container direction="column" alignItems="center">
           <img src={qrCode} alt="QR code" style={{ maxWidth: '300px', maxHeight: '300px', width: 'auto', height: 'auto' }} />
@@ -31,7 +36,7 @@ const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
             color="text.secondary"
             style={{ marginTop: '10px', textAlign: 'center', wordWrap: 'break-word', maxWidth: '300px' }}
           >
-            请使用微信扫描QR code关注公众号，输入「Verification code」Get verification code（三分钟内有效）
+            {t('auth.wechat.instructions')}
           </Typography>
           <Formik initialValues={{ code: '' }} validationSchema={validationSchema} onSubmit={handleSubmit}>
             {({ errors, touched }) => (
@@ -40,7 +45,7 @@ const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
                   <Field
                     as={TextField}
                     name="code"
-                    label="Verification code"
+                    label={t('auth.wechat.verification_code')}
                     error={touched.code && Boolean(errors.code)}
                     helperText={touched.code && errors.code}
                     fullWidth
@@ -48,7 +53,7 @@ const WechatModal = ({ open, handleClose, wechatLogin, qrCode }) => {
                 </Grid>
                 <Grid item xs={12}>
                   <Button type="submit" fullWidth>
-                    Submit
+                    {t('auth.wechat.submit')}
                   </Button>
                 </Grid>
               </Form>

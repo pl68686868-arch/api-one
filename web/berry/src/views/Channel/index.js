@@ -41,11 +41,13 @@ import {
   IconCoin
 } from '@tabler/icons-react';
 import EditeModal from './component/EditModal';
+import { useTranslation } from 'react-i18next';
 
 // ----------------------------------------------------------------------
 
 export default function ChannelPage() {
   console.warn("OneAPI DEBUG: DarkMode Fix Loaded - 2026-01-06 v5");
+  const { t } = useTranslation();
   const [channels, setChannels] = useState([]);
   const [activePage, setActivePage] = useState(0);
   const [searching, setSearching] = useState(false);
@@ -137,7 +139,7 @@ export default function ChannelPage() {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess('Action completed successfully！');
+      showSuccess(t('common.success'));
       if (action === 'delete') {
         await handleRefresh();
       }
@@ -157,7 +159,7 @@ export default function ChannelPage() {
     const res = await API.get(`/api/channel/test`);
     const { success, message } = res.data;
     if (success) {
-      showInfo('已Success开始Test所有Channel，请稍后Refresh页面查看结果。');
+      showInfo(t('channel.messages.test_all_started'));
     } else {
       showError(message);
     }
@@ -170,16 +172,16 @@ export default function ChannelPage() {
   const deleteAllDisabledChannels = async () => {
     const disabledCount = channels.filter(c => c.status !== 1).length;
     if (disabledCount === 0) {
-      showInfo('没有Disable的Channel可Delete');
+      showInfo(t('channel.overview.no_disabled')); // Need key
       return;
     }
-    if (!window.confirm(`确定要Delete ${disabledCount} 个Disable的Channel吗？`)) {
+    if (!window.confirm(`${t('channel.buttons.confirm_delete_disabled')} ${disabledCount} ?`)) {
       return;
     }
     const res = await API.delete(`/api/channel/disabled`);
     const { success, message, data } = res.data;
     if (success) {
-      showSuccess(`已Delete所有DisableChannel，共计 ${data} 个`);
+      showSuccess(t('channel.messages.delete_disabled_success', { count: data }));
       await handleRefresh();
     } else {
       showError(message);
@@ -191,7 +193,7 @@ export default function ChannelPage() {
     const res = await API.get(`/api/channel/update_balance`);
     const { success, message } = res.data;
     if (success) {
-      showInfo('已Update完毕所有EnabledChannelBalance！');
+      showInfo(t('channel.messages.all_balance_updated'));
       await handleRefresh();
     } else {
       showError(message);
@@ -233,9 +235,9 @@ export default function ChannelPage() {
       {/* Header */}
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 700 }}>Channel Management</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>{t('channel.title')}</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            Manage your AI service channels
+            {t('channel.subtitle')}
           </Typography>
         </Box>
         <Button
@@ -253,7 +255,7 @@ export default function ChannelPage() {
             }
           }}
         >
-          New Channel
+          {t('channel.buttons.add')}
         </Button>
       </Stack>
 
@@ -267,7 +269,7 @@ export default function ChannelPage() {
           <TableToolBar
             filterName={searchKeyword}
             handleFilterName={handleSearchKeyword}
-            placeholder={'Search channel ID, name or key...'}
+            placeholder={t('channel.search')}
           />
         </Box>
 
@@ -285,14 +287,14 @@ export default function ChannelPage() {
         >
           <Stack direction="row" spacing={1} alignItems="center">
             <Chip
-              label={`${activeCount} 活跃`}
+              label={`${activeCount} ${t('channel.overview.active')}`}
               color="success"
               size="small"
               variant="outlined"
             />
             {disabledCount > 0 && (
               <Chip
-                label={`${disabledCount} Disable`}
+                label={`${disabledCount} ${t('channel.overview.disabled')}`}
                 color="warning"
                 size="small"
                 variant="outlined"
@@ -302,12 +304,12 @@ export default function ChannelPage() {
 
           {matchUpMd ? (
             <Stack direction="row" spacing={1}>
-              <Tooltip title="Refresh列表">
+              <Tooltip title={t('common.refresh')}>
                 <IconButton onClick={handleRefresh} size="small" sx={{ bgcolor: 'action.hover' }}>
                   <IconRefresh size={18} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Test所有EnableChannel">
+              <Tooltip title={t('channel.buttons.test_all')}>
                 <IconButton
                   onClick={testAllChannels}
                   size="small"
@@ -317,13 +319,13 @@ export default function ChannelPage() {
                   <IconTestPipe size={18} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Update所有Balance">
+              <Tooltip title={t('channel.buttons.update_balance')}>
                 <IconButton onClick={updateAllChannelsBalance} size="small" sx={{ bgcolor: 'action.hover' }}>
                   <IconCoin size={18} />
                 </IconButton>
               </Tooltip>
               {disabledCount > 0 && (
-                <Tooltip title={`Delete ${disabledCount} 个DisableChannel`}>
+                <Tooltip title={`${t('channel.buttons.delete_disabled')} (${disabledCount})`}>
                   <IconButton
                     onClick={deleteAllDisabledChannels}
                     size="small"
@@ -342,9 +344,9 @@ export default function ChannelPage() {
               direction="left"
               FabProps={{ size: 'small' }}
             >
-              <SpeedDialAction icon={<IconRefresh size={18} />} tooltipTitle="Refresh" onClick={handleRefresh} />
-              <SpeedDialAction icon={<IconTestPipe size={18} />} tooltipTitle="Test" onClick={testAllChannels} />
-              <SpeedDialAction icon={<IconCoin size={18} />} tooltipTitle="UpdateBalance" onClick={updateAllChannelsBalance} />
+              <SpeedDialAction icon={<IconRefresh size={18} />} tooltipTitle={t('common.refresh')} onClick={handleRefresh} />
+              <SpeedDialAction icon={<IconTestPipe size={18} />} tooltipTitle={t('channel.buttons.test_all')} onClick={testAllChannels} />
+              <SpeedDialAction icon={<IconCoin size={18} />} tooltipTitle={t('channel.buttons.update_balance')} onClick={updateAllChannelsBalance} />
             </SpeedDial>
           )}
         </Toolbar>

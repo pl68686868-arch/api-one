@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { showError, showSuccess } from 'utils/common';
 
 import Table from '@mui/material/Table';
@@ -21,6 +22,7 @@ import EditeModal from './component/EditModal';
 
 // ----------------------------------------------------------------------
 export default function Redemption() {
+  const { t } = useTranslation();
   const [redemptions, setRedemptions] = useState([]);
   const [activePage, setActivePage] = useState(0);
   const [searching, setSearching] = useState(false);
@@ -96,7 +98,7 @@ export default function Redemption() {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess('Action completed successfully！');
+      showSuccess(t('common.success'));
       if (action === 'delete') {
         await loadRedemptions(0);
       }
@@ -142,15 +144,15 @@ export default function Redemption() {
   return (
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2.5}>
-        <Typography variant="h4">Redeem</Typography>
+        <Typography variant="h4">{t('redemption.header')}</Typography>
 
         <Button variant="contained" color="primary" startIcon={<IconPlus />} onClick={() => handleOpenModal(0)}>
-          NewRedemption code
+          {t('redemption.new')}
         </Button>
       </Stack>
       <Card>
-        <Box component="form" onSubmit={searchRedemptions} noValidate sx={{marginTop: 2}}>
-          <TableToolBar filterName={searchKeyword} handleFilterName={handleSearchKeyword} placeholder={'SearchRedemption code的ID和Name...'} />
+        <Box component="form" onSubmit={searchRedemptions} noValidate sx={{ marginTop: 2 }}>
+          <TableToolBar filterName={searchKeyword} handleFilterName={handleSearchKeyword} placeholder={t('redemption.search_placeholder')} />
         </Box>
         <Toolbar
           sx={{
@@ -162,9 +164,9 @@ export default function Redemption() {
           }}
         >
           <Container>
-            <ButtonGroup variant="outlined" aria-label="outlined small primary button group" sx={{marginBottom: 2}}>
+            <ButtonGroup variant="outlined" aria-label="outlined small primary button group" sx={{ marginBottom: 2 }}>
               <Button onClick={handleRefresh} startIcon={<IconRefresh width={'18px'} />}>
-                Refresh
+                {t('common.refresh')}
               </Button>
             </ButtonGroup>
           </Container>

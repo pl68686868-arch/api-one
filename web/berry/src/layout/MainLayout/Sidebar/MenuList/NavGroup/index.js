@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next'; // Added
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -11,6 +12,7 @@ import NavCollapse from '../NavCollapse';
 // ==============================|| SIDEBAR MENU LIST GROUP ||============================== //
 
 const NavGroup = ({ item }) => {
+  const { t } = useTranslation(); // Added
   const theme = useTheme();
 
   // menu list collapse & items
@@ -35,10 +37,10 @@ const NavGroup = ({ item }) => {
         subheader={
           item.title && (
             <Typography variant="caption" sx={{ ...theme.typography.menuCaption }} display="block" gutterBottom>
-              {item.title}
+              {t(item.title)}
               {item.caption && (
                 <Typography variant="caption" sx={{ ...theme.typography.subMenuCaption }} display="block" gutterBottom>
-                  {item.caption}
+                  {t(item.caption)}
                 </Typography>
               )}
             </Typography>

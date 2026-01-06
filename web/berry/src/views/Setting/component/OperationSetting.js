@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import SubCard from "ui-component/cards/SubCard";
 import {
   Stack,
@@ -19,6 +20,7 @@ import dayjs from "dayjs";
 require("dayjs/locale/zh-cn");
 
 const OperationSetting = () => {
+  const { t } = useTranslation();
   let now = new Date();
   let [inputs, setInputs] = useState({
     QuotaForNewUser: 0,
@@ -199,50 +201,50 @@ const OperationSetting = () => {
             spacing={{ xs: 3, sm: 2, md: 4 }}
           >
             <FormControl fullWidth>
-              <InputLabel htmlFor="TopUpLink">Topup链接</InputLabel>
+              <InputLabel htmlFor="TopUpLink">{t('setting.operation.general.topup_link')}</InputLabel>
               <OutlinedInput
                 id="TopUpLink"
                 name="TopUpLink"
                 value={inputs.TopUpLink}
                 onChange={handleInputChange}
-                label="Topup链接"
+                label={t('setting.operation.general.topup_link')}
                 placeholder="例如发卡网站的购买链接"
                 disabled={loading}
               />
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel htmlFor="ChatLink">Chat链接</InputLabel>
+              <InputLabel htmlFor="ChatLink">{t('setting.operation.general.chat_link')}</InputLabel>
               <OutlinedInput
                 id="ChatLink"
                 name="ChatLink"
                 value={inputs.ChatLink}
                 onChange={handleInputChange}
-                label="Chat链接"
+                label={t('setting.operation.general.chat_link')}
                 placeholder="例如 ChatGPT Next Web 的部署地址"
                 disabled={loading}
               />
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel htmlFor="QuotaPerUnit">单位Quota</InputLabel>
+              <InputLabel htmlFor="QuotaPerUnit">{t('setting.operation.general.quota_per_unit')}</InputLabel>
               <OutlinedInput
                 id="QuotaPerUnit"
                 name="QuotaPerUnit"
                 value={inputs.QuotaPerUnit}
                 onChange={handleInputChange}
-                label="单位Quota"
-                placeholder="一单位货币能Redeem的Quota"
+                label={t('setting.operation.general.quota_per_unit')}
+                placeholder={t('setting.operation.general.quota_per_unit_placeholder')}
                 disabled={loading}
               />
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel htmlFor="RetryTimes">重试次数</InputLabel>
+              <InputLabel htmlFor="RetryTimes">{t('setting.operation.general.retry_times')}</InputLabel>
               <OutlinedInput
                 id="RetryTimes"
                 name="RetryTimes"
                 value={inputs.RetryTimes}
                 onChange={handleInputChange}
-                label="重试次数"
-                placeholder="重试次数"
+                label={t('setting.operation.general.retry_times')}
+                placeholder={t('setting.operation.general.retry_times_placeholder')}
                 disabled={loading}
               />
             </FormControl>
@@ -255,7 +257,7 @@ const OperationSetting = () => {
           >
             <FormControlLabel
               sx={{ marginLeft: "0px" }}
-              label="以货币形式显示Quota"
+              label={t('setting.operation.general.display_in_currency')}
               control={
                 <Checkbox
                   checked={inputs.DisplayInCurrencyEnabled === "true"}
@@ -266,7 +268,7 @@ const OperationSetting = () => {
             />
 
             <FormControlLabel
-              label="Billing 相关 API 显示TokenQuota而非UserQuota"
+              label={t('setting.operation.general.display_token_stat')}
               control={
                 <Checkbox
                   checked={inputs.DisplayTokenStatEnabled === "true"}
@@ -277,7 +279,7 @@ const OperationSetting = () => {
             />
 
             <FormControlLabel
-              label="使用近似的方式估算 token 数以减少计算量"
+              label={t('setting.operation.general.approximate_token')}
               control={
                 <Checkbox
                   checked={inputs.ApproximateTokenEnabled === "true"}
@@ -293,11 +295,11 @@ const OperationSetting = () => {
               submitConfig("general").then();
             }}
           >
-            SaveGeneral settings
+            {t('setting.operation.general.buttons.save')}
           </Button>
         </Stack>
       </SubCard>
-      <SubCard title="LogsSettings">
+      <SubCard title={t('setting.operation.log.title')}>
         <Stack
           direction="column"
           justifyContent="flex-start"
@@ -305,7 +307,7 @@ const OperationSetting = () => {
           spacing={2}
         >
           <FormControlLabel
-            label="EnableLogsUsage"
+            label={t('setting.operation.log.enable_consume')}
             control={
               <Checkbox
                 checked={inputs.LogConsumeEnabled === "true"}
@@ -321,8 +323,8 @@ const OperationSetting = () => {
               adapterLocale={"zh-cn"}
             >
               <DateTimePicker
-                label="Logs清理Time"
-                placeholder="Logs清理Time"
+                label={t('setting.operation.log.target_time')}
+                placeholder={t('setting.operation.log.target_time')}
                 ampm={false}
                 name="historyTimestamp"
                 value={
@@ -350,11 +352,11 @@ const OperationSetting = () => {
               deleteHistoryLogs().then();
             }}
           >
-            清理历史Logs
+            {t('setting.operation.log.buttons.clean')}
           </Button>
         </Stack>
       </SubCard>
-      <SubCard title="监控Settings">
+      <SubCard title={t('setting.operation.monitor.title')}>
         <Stack justifyContent="flex-start" alignItems="flex-start" spacing={2}>
           <Stack
             direction={{ sm: "column", md: "row" }}
@@ -362,7 +364,7 @@ const OperationSetting = () => {
           >
             <FormControl fullWidth>
               <InputLabel htmlFor="ChannelDisableThreshold">
-                最长ResponseTime
+                {t('setting.operation.monitor.max_response_time')}
               </InputLabel>
               <OutlinedInput
                 id="ChannelDisableThreshold"
@@ -370,14 +372,14 @@ const OperationSetting = () => {
                 type="number"
                 value={inputs.ChannelDisableThreshold}
                 onChange={handleInputChange}
-                label="最长ResponseTime"
-                placeholder="单位秒，当运行ChannelAllTest时，超过此Time将Auto DisabledChannel"
+                label={t('setting.operation.monitor.max_response_time')}
+                placeholder={t('setting.operation.monitor.max_response_time_placeholder')}
                 disabled={loading}
               />
             </FormControl>
             <FormControl fullWidth>
               <InputLabel htmlFor="QuotaRemindThreshold">
-                Quota提醒阈值
+                {t('setting.operation.monitor.quota_reminder')}
               </InputLabel>
               <OutlinedInput
                 id="QuotaRemindThreshold"
@@ -385,14 +387,14 @@ const OperationSetting = () => {
                 type="number"
                 value={inputs.QuotaRemindThreshold}
                 onChange={handleInputChange}
-                label="Quota提醒阈值"
-                placeholder="低于此Quota时将发送邮件提醒User"
+                label={t('setting.operation.monitor.quota_reminder')}
+                placeholder={t('setting.operation.monitor.quota_reminder_placeholder')}
                 disabled={loading}
               />
             </FormControl>
           </Stack>
           <FormControlLabel
-            label="Failed时Auto DisabledChannel"
+            label={t('setting.operation.monitor.auto_disable')}
             control={
               <Checkbox
                 checked={inputs.AutomaticDisableChannelEnabled === "true"}
@@ -402,7 +404,7 @@ const OperationSetting = () => {
             }
           />
           <FormControlLabel
-            label="Success时自动EnableChannel"
+            label={t('setting.operation.monitor.auto_enable')}
             control={
               <Checkbox
                 checked={inputs.AutomaticEnableChannelEnabled === "true"}
@@ -417,51 +419,51 @@ const OperationSetting = () => {
               submitConfig("monitor").then();
             }}
           >
-            Save监控Settings
+            {t('setting.operation.monitor.buttons.save')}
           </Button>
         </Stack>
       </SubCard>
-      <SubCard title="QuotaSettings">
+      <SubCard title={t('setting.operation.quota.title')}>
         <Stack justifyContent="flex-start" alignItems="flex-start" spacing={2}>
           <Stack
             direction={{ sm: "column", md: "row" }}
             spacing={{ xs: 3, sm: 2, md: 4 }}
           >
             <FormControl fullWidth>
-              <InputLabel htmlFor="QuotaForNewUser">新User初始Quota</InputLabel>
+              <InputLabel htmlFor="QuotaForNewUser">{t('setting.operation.quota.new_user')}</InputLabel>
               <OutlinedInput
                 id="QuotaForNewUser"
                 name="QuotaForNewUser"
                 type="number"
                 value={inputs.QuotaForNewUser}
                 onChange={handleInputChange}
-                label="新User初始Quota"
+                label={t('setting.operation.quota.new_user')}
                 placeholder="例如：100"
                 disabled={loading}
               />
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel htmlFor="PreConsumedQuota">Request预扣费Quota</InputLabel>
+              <InputLabel htmlFor="PreConsumedQuota">{t('setting.operation.quota.pre_consume')}</InputLabel>
               <OutlinedInput
                 id="PreConsumedQuota"
                 name="PreConsumedQuota"
                 type="number"
                 value={inputs.PreConsumedQuota}
                 onChange={handleInputChange}
-                label="Request预扣费Quota"
-                placeholder="Request结束后多退少补"
+                label={t('setting.operation.quota.pre_consume')}
+                placeholder={t('setting.operation.quota.pre_consume_placeholder')}
                 disabled={loading}
               />
             </FormControl>
             <FormControl fullWidth>
               <InputLabel htmlFor="QuotaForInviter">
-                Invite新User奖励Quota
+                {t('setting.operation.quota.inviter_reward')}
               </InputLabel>
               <OutlinedInput
                 id="QuotaForInviter"
                 name="QuotaForInviter"
                 type="number"
-                label="Invite新User奖励Quota"
+                label={t('setting.operation.quota.inviter_reward')}
                 value={inputs.QuotaForInviter}
                 onChange={handleInputChange}
                 placeholder="例如：2000"
@@ -470,13 +472,13 @@ const OperationSetting = () => {
             </FormControl>
             <FormControl fullWidth>
               <InputLabel htmlFor="QuotaForInvitee">
-                新User使用Invite码奖励Quota
+                {t('setting.operation.quota.invitee_reward')}
               </InputLabel>
               <OutlinedInput
                 id="QuotaForInvitee"
                 name="QuotaForInvitee"
                 type="number"
-                label="新User使用Invite码奖励Quota"
+                label={t('setting.operation.quota.invitee_reward')}
                 value={inputs.QuotaForInvitee}
                 onChange={handleInputChange}
                 autoComplete="new-password"
@@ -491,18 +493,18 @@ const OperationSetting = () => {
               submitConfig("quota").then();
             }}
           >
-            SaveQuotaSettings
+            {t('setting.operation.quota.buttons.save')}
           </Button>
         </Stack>
       </SubCard>
-      <SubCard title="倍率Settings">
+      <SubCard title={t('setting.operation.ratio.title')}>
         <Stack justifyContent="flex-start" alignItems="flex-start" spacing={2}>
           <FormControl fullWidth>
             <TextField
               multiline
               maxRows={15}
               id="channel-ModelRatio-label"
-              label="Model倍率"
+              label={t('setting.operation.ratio.model.title')}
               value={inputs.ModelRatio}
               name="ModelRatio"
               onChange={handleInputChange}
@@ -516,7 +518,7 @@ const OperationSetting = () => {
               multiline
               maxRows={15}
               id="channel-CompletionRatio-label"
-              label="补全倍率"
+              label={t('setting.operation.ratio.completion.title')}
               value={inputs.CompletionRatio}
               name="CompletionRatio"
               onChange={handleInputChange}
@@ -530,7 +532,7 @@ const OperationSetting = () => {
               multiline
               maxRows={15}
               id="channel-GroupRatio-label"
-              label="Group倍率"
+              label={t('setting.operation.ratio.group.title')}
               value={inputs.GroupRatio}
               name="GroupRatio"
               onChange={handleInputChange}
@@ -545,7 +547,7 @@ const OperationSetting = () => {
               submitConfig("ratio").then();
             }}
           >
-            Save倍率Settings
+            {t('setting.operation.ratio.buttons.save')}
           </Button>
         </Stack>
       </SubCard>

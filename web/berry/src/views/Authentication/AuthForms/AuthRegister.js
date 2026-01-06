@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import useRegister from 'hooks/useRegister';
 import Turnstile from 'react-turnstile';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 // import { useSelector } from 'react-redux';
 
 // material-ui
@@ -37,6 +38,7 @@ import { showError, showInfo } from 'utils/common';
 
 const RegisterForm = ({ ...others }) => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const { register, sendVerificationCode } = useRegister();
   const siteInfo = useSelector((state) => state.siteInfo);
   const [showPassword, setShowPassword] = useState(false);
@@ -66,11 +68,11 @@ const RegisterForm = ({ ...others }) => {
 
   const handleSendCode = async (email) => {
     if (email === '') {
-      showError('Please enter email');
+      showError(t('auth.register.email_required'));
       return;
     }
     if (turnstileEnabled && turnstileToken === '') {
-      showError('Please wait a few seconds, Turnstile is checking user environment！');
+      showError(t('auth.register.turnstile_check'));
       return;
     }
 
@@ -116,7 +118,7 @@ const RegisterForm = ({ ...others }) => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           if (turnstileEnabled && turnstileToken === '') {
-            showInfo('Please wait a few seconds, Turnstile is checking user environment！');
+            showInfo(t('auth.register.turnstile_check'));
             setSubmitting(false);
             return;
           }
@@ -135,7 +137,7 @@ const RegisterForm = ({ ...others }) => {
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
             <FormControl fullWidth error={Boolean(touched.username && errors.username)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-username-register">User名</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-username-register">{t('auth.register.username')}</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-username-register"
                 type="text"
@@ -153,13 +155,13 @@ const RegisterForm = ({ ...others }) => {
             </FormControl>
 
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-password-register">Password</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-password-register">{t('auth.register.password')}</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password-register"
                 type={showPassword ? 'text' : 'password'}
                 value={values.password}
                 name="password"
-                label="Password"
+                label={t('auth.register.password')}
                 onBlur={handleBlur}
                 onChange={(e) => {
                   handleChange(e);
@@ -192,13 +194,13 @@ const RegisterForm = ({ ...others }) => {
               error={Boolean(touched.confirmPassword && errors.confirmPassword)}
               sx={{ ...theme.typography.customInput }}
             >
-              <InputLabel htmlFor="outlined-adornment-confirm-password-register">ConfirmPassword</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-confirm-password-register">{t('auth.register.confirm_password')}</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-confirm-password-register"
                 type={showPassword ? 'text' : 'password'}
                 value={values.confirmPassword}
                 name="confirmPassword"
-                label="Confirm Password"
+                label={t('auth.register.confirm_password')}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 inputProps={{}}
@@ -230,7 +232,7 @@ const RegisterForm = ({ ...others }) => {
             {showEmailVerification && (
               <>
                 <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                  <InputLabel htmlFor="outlined-adornment-email-register">Email</InputLabel>
+                  <InputLabel htmlFor="outlined-adornment-email-register">{t('auth.register.email')}</InputLabel>
                   <OutlinedInput
                     id="outlined-adornment-email-register"
                     type="text"
@@ -241,7 +243,7 @@ const RegisterForm = ({ ...others }) => {
                     endAdornment={
                       <InputAdornment position="end">
                         <Button variant="contained" color="primary" onClick={() => handleSendCode(values.email)}>
-                          发送Verification code
+                          {t('auth.register.get_code')}
                         </Button>
                       </InputAdornment>
                     }
@@ -258,7 +260,7 @@ const RegisterForm = ({ ...others }) => {
                   error={Boolean(touched.verification_code && errors.verification_code)}
                   sx={{ ...theme.typography.customInput }}
                 >
-                  <InputLabel htmlFor="outlined-adornment-verification_code-register">Verification code</InputLabel>
+                  <InputLabel htmlFor="outlined-adornment-verification_code-register">{t('auth.register.verification_code')}</InputLabel>
                   <OutlinedInput
                     id="outlined-adornment-verification_code-register"
                     type="text"
@@ -296,7 +298,7 @@ const RegisterForm = ({ ...others }) => {
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                  Register
+                  {t('auth.register.button')}
                 </Button>
               </AnimateButton>
             </Box>

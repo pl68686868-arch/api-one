@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SubCard from 'ui-component/cards/SubCard';
 import {
   Stack,
@@ -24,6 +25,7 @@ import { createFilterOptions } from '@mui/material/Autocomplete';
 
 const filter = createFilterOptions();
 const SystemSetting = () => {
+  const { t } = useTranslation();
   let [inputs, setInputs] = useState({
     PasswordLoginEnabled: '',
     PasswordRegisterEnabled: '',
@@ -157,8 +159,7 @@ const SystemSetting = () => {
       name === 'OidcAuthorizationEndpoint' ||
       name === 'OidcTokenEndpoint' ||
       name === 'OidcUserinfoEndpoint'
-    )
-    {
+    ) {
       setInputs((inputs) => ({ ...inputs, [name]: value }));
     } else {
       await updateOption(name, value);
@@ -243,7 +244,7 @@ const SystemSetting = () => {
   const submitOidc = async () => {
     if (inputs.OidcWellKnown !== '') {
       if (!inputs.OidcWellKnown.startsWith('http://') && !inputs.OidcWellKnown.startsWith('https://')) {
-        showError('Well-Known URL Must以 http:// 或 https:// 开头');
+        showError(t('setting.system.oidc.url_error'));
         return;
       }
       try {
@@ -251,9 +252,9 @@ const SystemSetting = () => {
         inputs.OidcAuthorizationEndpoint = res.data['authorization_endpoint'];
         inputs.OidcTokenEndpoint = res.data['token_endpoint'];
         inputs.OidcUserinfoEndpoint = res.data['userinfo_endpoint'];
-        showSuccess('获取 OIDC 配置Success！');
+        showSuccess(t('setting.system.oidc.fetch_success'));
       } catch (err) {
-        showError("获取 OIDC 配置Failed，请检查网络状况和 Well-Known URL 是否正确");
+        showError(t('setting.system.oidc.fetch_failed'));
       }
     }
 
@@ -284,13 +285,13 @@ const SystemSetting = () => {
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="ServerAddress">服务器地址</InputLabel>
+                <InputLabel htmlFor="ServerAddress">{t('setting.system.general.server_address')}</InputLabel>
                 <OutlinedInput
                   id="ServerAddress"
                   name="ServerAddress"
                   value={inputs.ServerAddress || ''}
                   onChange={handleInputChange}
-                  label="服务器地址"
+                  label={t('setting.system.general.server_address')}
                   placeholder="例如：https://yourdomain.com"
                   disabled={loading}
                 />
@@ -298,16 +299,16 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitServerAddress}>
-                Update服务器地址
+                {t('setting.system.general.buttons.update')}
               </Button>
             </Grid>
           </Grid>
         </SubCard>
-        <SubCard title="配置LoginRegister">
+        <SubCard title={t('setting.system.login.title')}>
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过Password进行Login"
+                label={t('setting.system.login.password_login')}
                 control={
                   <Checkbox checked={inputs.PasswordLoginEnabled === 'true'} onChange={handleInputChange} name="PasswordLoginEnabled" />
                 }
@@ -315,7 +316,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过Password进行Register"
+                label={t('setting.system.login.password_register')}
                 control={
                   <Checkbox
                     checked={inputs.PasswordRegisterEnabled === 'true'}
@@ -327,7 +328,7 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="通过PasswordRegister时需要进行邮箱验证"
+                label={t('setting.system.login.email_verification')}
                 control={
                   <Checkbox
                     checked={inputs.EmailVerificationEnabled === 'true'}
@@ -339,31 +340,31 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过 GitHub 账户Login & Register"
+                label={t('setting.system.login.github_oauth')}
                 control={<Checkbox checked={inputs.GitHubOAuthEnabled === 'true'} onChange={handleInputChange} name="GitHubOAuthEnabled" />}
               />
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过 OIDC Login & Register"
+                label={t('setting.system.login.oidc_login')}
                 control={<Checkbox checked={inputs.OidcEnabled === 'true'} onChange={handleInputChange} name="OidcEnabled" />}
               />
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许通过微信Login & Register"
+                label={t('setting.system.login.wechat_login')}
                 control={<Checkbox checked={inputs.WeChatAuthEnabled === 'true'} onChange={handleInputChange} name="WeChatAuthEnabled" />}
               />
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="允许新UserRegister（此项为否时，新User将无法以任何方式进行Register）"
+                label={t('setting.system.login.registration')}
                 control={<Checkbox checked={inputs.RegisterEnabled === 'true'} onChange={handleInputChange} name="RegisterEnabled" />}
               />
             </Grid>
             <Grid xs={12} md={3}>
               <FormControlLabel
-                label="Enable Turnstile User校验"
+                label={t('setting.system.login.turnstile')}
                 control={
                   <Checkbox checked={inputs.TurnstileCheckEnabled === 'true'} onChange={handleInputChange} name="TurnstileCheckEnabled" />
                 }
@@ -371,11 +372,11 @@ const SystemSetting = () => {
             </Grid>
           </Grid>
         </SubCard>
-        <SubCard title="配置邮箱域名白名单" subTitle="用以防止恶意User利用临时邮箱批量Register">
+        <SubCard title={t('setting.system.email_restriction.title')} subTitle={t('setting.system.email_restriction.subtitle')}>
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12}>
               <FormControlLabel
-                label="Enable邮箱域名白名单"
+                label={t('setting.system.email_restriction.enable')}
                 control={
                   <Checkbox
                     checked={inputs.EmailDomainRestrictionEnabled === 'true'}
@@ -403,7 +404,7 @@ const SystemSetting = () => {
                     handleInputChange(event);
                   }}
                   filterSelectedOptions
-                  renderInput={(params) => <TextField {...params} name="EmailDomainWhitelist" label="允许的邮箱域名" />}
+                  renderInput={(params) => <TextField {...params} name="EmailDomainWhitelist" label={t('setting.system.email_restriction.allowed_domains')} />}
                   filterOptions={(options, params) => {
                     const filtered = filter(options, params);
                     const { inputValue } = params;
@@ -418,22 +419,22 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitEmailDomainWhitelist}>
-                Save邮箱域名白名单Settings
+                {t('setting.system.email_restriction.buttons.save')}
               </Button>
             </Grid>
           </Grid>
         </SubCard>
-        <SubCard title="配置 SMTP" subTitle="用以支持System的邮件发送">
+        <SubCard title={t('setting.system.smtp.title')} subTitle={t('setting.system.smtp.subtitle')}>
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="SMTPServer">SMTP 服务器地址</InputLabel>
+                <InputLabel htmlFor="SMTPServer">{t('setting.system.smtp.server')}</InputLabel>
                 <OutlinedInput
                   id="SMTPServer"
                   name="SMTPServer"
                   value={inputs.SMTPServer || ''}
                   onChange={handleInputChange}
-                  label="SMTP 服务器地址"
+                  label={t('setting.system.smtp.server')}
                   placeholder="例如：smtp.qq.com"
                   disabled={loading}
                 />
@@ -441,13 +442,13 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="SMTPPort">SMTP 端口</InputLabel>
+                <InputLabel htmlFor="SMTPPort">{t('setting.system.smtp.port')}</InputLabel>
                 <OutlinedInput
                   id="SMTPPort"
                   name="SMTPPort"
                   value={inputs.SMTPPort || ''}
                   onChange={handleInputChange}
-                  label="SMTP 端口"
+                  label={t('setting.system.smtp.port')}
                   placeholder="默认: 587"
                   disabled={loading}
                 />
@@ -455,13 +456,13 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="SMTPAccount">SMTP 账户</InputLabel>
+                <InputLabel htmlFor="SMTPAccount">{t('setting.system.smtp.account')}</InputLabel>
                 <OutlinedInput
                   id="SMTPAccount"
                   name="SMTPAccount"
                   value={inputs.SMTPAccount || ''}
                   onChange={handleInputChange}
-                  label="SMTP 账户"
+                  label={t('setting.system.smtp.account')}
                   placeholder="通常是邮箱地址"
                   disabled={loading}
                 />
@@ -469,13 +470,13 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="SMTPFrom">SMTP 发送者邮箱</InputLabel>
+                <InputLabel htmlFor="SMTPFrom">{t('setting.system.smtp.from')}</InputLabel>
                 <OutlinedInput
                   id="SMTPFrom"
                   name="SMTPFrom"
                   value={inputs.SMTPFrom || ''}
                   onChange={handleInputChange}
-                  label="SMTP 发送者邮箱"
+                  label={t('setting.system.smtp.from')}
                   placeholder="通常和邮箱地址保持一致"
                   disabled={loading}
                 />
@@ -483,13 +484,13 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="SMTPToken">SMTP 访问凭证</InputLabel>
+                <InputLabel htmlFor="SMTPToken">{t('setting.system.smtp.token')}</InputLabel>
                 <OutlinedInput
                   id="SMTPToken"
                   name="SMTPToken"
                   value={inputs.SMTPToken || ''}
                   onChange={handleInputChange}
-                  label="SMTP 访问凭证"
+                  label={t('setting.system.smtp.token')}
                   placeholder="敏感信息不会发送到前端显示"
                   disabled={loading}
                 />
@@ -497,21 +498,21 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitSMTP}>
-                Save SMTP Settings
+                {t('setting.system.smtp.buttons.save')}
               </Button>
             </Grid>
           </Grid>
         </SubCard>
         <SubCard
-          title="配置 GitHub OAuth App"
+          title={t('setting.system.github.title')}
           subTitle={
             <span>
               {' '}
-              用以支持通过 GitHub 进行LoginRegister，
+              {t('setting.system.github.subtitle')}，
               <a href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer">
                 点击此处
               </a>
-              Management你的 GitHub OAuth App
+              {t('setting.system.github.manage_text')}
             </span>
           }
         >
@@ -552,21 +553,21 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitGitHubOAuth}>
-                Save GitHub OAuth Settings
+                {t('setting.system.github.buttons.save')}
               </Button>
             </Grid>
           </Grid>
         </SubCard>
         <SubCard
-          title="配置飞书授权Login"
+          title={t('setting.system.lark.title')}
           subTitle={
             <span>
               {' '}
-              用以支持通过飞书进行LoginRegister，
+              {t('setting.system.lark.subtitle')}，
               <a href="https://open.feishu.cn/app" target="_blank" rel="noreferrer">
                 点击此处
               </a>
-              Management你的飞书应用
+              {t('setting.system.lark.manage_text')}
             </span>
           }
         >
@@ -607,16 +608,16 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitLarkOAuth}>
-                Save飞书 OAuth Settings
+                {t('setting.system.lark.buttons.save')}
               </Button>
             </Grid>
           </Grid>
         </SubCard>
         <SubCard
-          title="配置 WeChat Server"
+          title={t('setting.system.wechat.title')}
           subTitle={
             <span>
-              用以支持通过微信进行LoginRegister，
+              {t('setting.system.wechat.subtitle')}，
               <a href="https://github.com/songquanpeng/wechat-server" target="_blank" rel="noopener noreferrer">
                 点击此处
               </a>
@@ -627,13 +628,13 @@ const SystemSetting = () => {
           <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="WeChatServerAddress">WeChat Server 服务器地址</InputLabel>
+                <InputLabel htmlFor="WeChatServerAddress">{t('setting.system.wechat.server_address')}</InputLabel>
                 <OutlinedInput
                   id="WeChatServerAddress"
                   name="WeChatServerAddress"
                   value={inputs.WeChatServerAddress || ''}
                   onChange={handleInputChange}
-                  label="WeChat Server 服务器地址"
+                  label={t('setting.system.wechat.server_address')}
                   placeholder="例如：https://yourdomain.com"
                   disabled={loading}
                 />
@@ -641,13 +642,13 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="WeChatServerToken">WeChat Server 访问凭证</InputLabel>
+                <InputLabel htmlFor="WeChatServerToken">{t('setting.system.wechat.token')}</InputLabel>
                 <OutlinedInput
                   id="WeChatServerToken"
                   name="WeChatServerToken"
                   value={inputs.WeChatServerToken || ''}
                   onChange={handleInputChange}
-                  label="WeChat Server 访问凭证"
+                  label={t('setting.system.wechat.token')}
                   placeholder="敏感信息不会发送到前端显示"
                   disabled={loading}
                 />
@@ -655,13 +656,13 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12} md={4}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="WeChatAccountQRCodeImageURL">微信公众号QR code图片链接</InputLabel>
+                <InputLabel htmlFor="WeChatAccountQRCodeImageURL">{t('setting.system.wechat.qrcode')}</InputLabel>
                 <OutlinedInput
                   id="WeChatAccountQRCodeImageURL"
                   name="WeChatAccountQRCodeImageURL"
                   value={inputs.WeChatAccountQRCodeImageURL || ''}
                   onChange={handleInputChange}
-                  label="微信公众号QR code图片链接"
+                  label={t('setting.system.wechat.qrcode')}
                   placeholder="输入一个图片链接"
                   disabled={loading}
                 />
@@ -669,221 +670,218 @@ const SystemSetting = () => {
             </Grid>
             <Grid xs={12}>
               <Button variant="contained" onClick={submitWeChat}>
-                Save WeChat Server Settings
+                {t('setting.system.wechat.buttons.save')}
               </Button>
             </Grid>
           </Grid>
         </SubCard>
 
         <SubCard
-          title="配置 OIDC"
+          title={t('setting.system.oidc.title')}
           subTitle={
             <span>
-              用以支持通过 OIDC Login，例如 Okta、Auth0 等兼容 OIDC 协议的 IdP
+              {t('setting.system.oidc.subtitle')}
             </span>
           }
         >
-          <Grid container spacing={ { xs: 3, sm: 2, md: 4 } }>
-            <Grid xs={ 12 } md={ 12 }>
-              <Alert severity="info" sx={ { wordWrap: 'break-word' } }>
-                Home链接填 <code>{ inputs.ServerAddress }</code>
-                ，重定向 URL 填 <code>{ `${ inputs.ServerAddress }/oauth/oidc` }</code>
+          <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
+            <Grid xs={12} md={12}>
+              <Alert severity="info" sx={{ wordWrap: 'break-word' }}>
+                {t('setting.system.oidc.notice.url_info', { server_url: inputs.ServerAddress, callback_url: `${inputs.ServerAddress}/oauth/oidc` })}
               </Alert> <br />
-              <Alert severity="info" sx={ { wordWrap: 'break-word' } }>
-                若你的 OIDC Provider 支持 Discovery Endpoint，你可以仅填写 OIDC Well-Known URL，System会自动获取 OIDC 配置
+              <Alert severity="info" sx={{ wordWrap: 'break-word' }}>
+                {t('setting.system.oidc.notice.discovery')}
               </Alert>
             </Grid>
-            <Grid xs={ 12 } md={ 6 }>
+            <Grid xs={12} md={6}>
               <FormControl fullWidth>
                 <InputLabel htmlFor="OidcClientId">Client ID</InputLabel>
                 <OutlinedInput
                   id="OidcClientId"
                   name="OidcClientId"
-                  value={ inputs.OidcClientId || '' }
-                  onChange={ handleInputChange }
+                  value={inputs.OidcClientId || ''}
+                  onChange={handleInputChange}
                   label="Client ID"
                   placeholder="输入 OIDC 的 Client ID"
-                  disabled={ loading }
+                  disabled={loading}
                 />
               </FormControl>
             </Grid>
-            <Grid xs={ 12 } md={ 6 }>
+            <Grid xs={12} md={6}>
               <FormControl fullWidth>
                 <InputLabel htmlFor="OidcClientSecret">Client Secret</InputLabel>
                 <OutlinedInput
                   id="OidcClientSecret"
                   name="OidcClientSecret"
-                  value={ inputs.OidcClientSecret || '' }
-                  onChange={ handleInputChange }
+                  value={inputs.OidcClientSecret || ''}
+                  onChange={handleInputChange}
                   label="Client Secret"
                   placeholder="敏感信息不会发送到前端显示"
-                  disabled={ loading }
+                  disabled={loading}
                 />
               </FormControl>
             </Grid>
-            <Grid xs={ 12 } md={ 6 }>
+            <Grid xs={12} md={6}>
               <FormControl fullWidth>
                 <InputLabel htmlFor="OidcWellKnown">Well-Known URL</InputLabel>
                 <OutlinedInput
                   id="OidcWellKnown"
                   name="OidcWellKnown"
-                  value={ inputs.OidcWellKnown || '' }
-                  onChange={ handleInputChange }
+                  value={inputs.OidcWellKnown || ''}
+                  onChange={handleInputChange}
                   label="Well-Known URL"
-                  placeholder="Please enter OIDC 的 Well-Known URL"
-                  disabled={ loading }
+                  placeholder={t('setting.system.oidc.well_known_placeholder')}
+                  disabled={loading}
                 />
               </FormControl>
             </Grid>
-            <Grid xs={ 12 } md={ 6 }>
+            <Grid xs={12} md={6}>
               <FormControl fullWidth>
                 <InputLabel htmlFor="OidcAuthorizationEndpoint">Authorization Endpoint</InputLabel>
                 <OutlinedInput
                   id="OidcAuthorizationEndpoint"
                   name="OidcAuthorizationEndpoint"
-                  value={ inputs.OidcAuthorizationEndpoint || '' }
-                  onChange={ handleInputChange }
+                  value={inputs.OidcAuthorizationEndpoint || ''}
+                  onChange={handleInputChange}
                   label="Authorization Endpoint"
                   placeholder="输入 OIDC 的 Authorization Endpoint"
-                  disabled={ loading }
+                  disabled={loading}
                 />
               </FormControl>
             </Grid>
-            <Grid xs={ 12 } md={ 6 }>
+            <Grid xs={12} md={6}>
               <FormControl fullWidth>
                 <InputLabel htmlFor="OidcTokenEndpoint">Token Endpoint</InputLabel>
                 <OutlinedInput
                   id="OidcTokenEndpoint"
                   name="OidcTokenEndpoint"
-                  value={ inputs.OidcTokenEndpoint || '' }
-                  onChange={ handleInputChange }
+                  value={inputs.OidcTokenEndpoint || ''}
+                  onChange={handleInputChange}
                   label="Token Endpoint"
                   placeholder="输入 OIDC 的 Token Endpoint"
-                  disabled={ loading }
+                  disabled={loading}
                 />
               </FormControl>
             </Grid>
-            <Grid xs={ 12 } md={ 6 }>
+            <Grid xs={12} md={6}>
               <FormControl fullWidth>
                 <InputLabel htmlFor="OidcUserinfoEndpoint">Userinfo Endpoint</InputLabel>
                 <OutlinedInput
                   id="OidcUserinfoEndpoint"
                   name="OidcUserinfoEndpoint"
-                  value={ inputs.OidcUserinfoEndpoint || '' }
-                  onChange={ handleInputChange }
+                  value={inputs.OidcUserinfoEndpoint || ''}
+                  onChange={handleInputChange}
                   label="Userinfo Endpoint"
                   placeholder="输入 OIDC 的 Userinfo Endpoint"
-                  disabled={ loading }
+                  disabled={loading}
                 />
               </FormControl>
             </Grid>
-            <Grid xs={ 12 }>
-              <Button variant="contained" onClick={ submitOidc }>
-                Save OIDC Settings
+            <Grid xs={12}>
+              <Button variant="contained" onClick={submitOidc}>
+                {t('setting.system.oidc.buttons.save')}
               </Button>
             </Grid>
           </Grid>
         </SubCard>
 
         <SubCard
-          title="配置 Message Pusher"
-          subTitle={
             <span>
-              用以推送报警信息，
-              <a href="https://github.com/songquanpeng/message-pusher" target="_blank" rel="noreferrer">
-                点击此处
-              </a>
-              了解 Message Pusher
-            </span>
+          {t('setting.system.message_pusher.subtitle')}，
+          <a href="https://github.com/songquanpeng/message-pusher" target="_blank" rel="noreferrer">
+            点击此处
+          </a>
+          了解 Message Pusher
+        </span>
           }
         >
-          <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
-            <Grid xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="MessagePusherAddress">Message Pusher 推送地址</InputLabel>
-                <OutlinedInput
-                  id="MessagePusherAddress"
-                  name="MessagePusherAddress"
-                  value={inputs.MessagePusherAddress || ''}
-                  onChange={handleInputChange}
-                  label="Message Pusher 推送地址"
-                  placeholder="例如：https://msgpusher.com/push/your_username"
-                  disabled={loading}
-                />
-              </FormControl>
-            </Grid>
-            <Grid xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="MessagePusherToken">Message Pusher 访问凭证</InputLabel>
-                <OutlinedInput
-                  id="MessagePusherToken"
-                  name="MessagePusherToken"
-                  type="password"
-                  value={inputs.MessagePusherToken || ''}
-                  onChange={handleInputChange}
-                  label="Message Pusher 访问凭证"
-                  placeholder="敏感信息不会发送到前端显示"
-                  disabled={loading}
-                />
-              </FormControl>
-            </Grid>
-            <Grid xs={12}>
-              <Button variant="contained" onClick={submitMessagePusher}>
-                Save Message Pusher Settings
-              </Button>
-            </Grid>
+        <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
+          <Grid xs={12} md={6}>
+            <FormControl fullWidth>
+              <InputLabel htmlFor="MessagePusherAddress">Message Pusher 推送地址</InputLabel>
+              <OutlinedInput
+                id="MessagePusherAddress"
+                name="MessagePusherAddress"
+                value={inputs.MessagePusherAddress || ''}
+                onChange={handleInputChange}
+                label="Message Pusher 推送地址"
+                placeholder="例如：https://msgpusher.com/push/your_username"
+                disabled={loading}
+              />
+            </FormControl>
           </Grid>
-        </SubCard>
-        <SubCard
-          title="配置 Turnstile"
-          subTitle={
-            <span>
-              用以支持User校验，
-              <a href="https://dash.cloudflare.com/" target="_blank" rel="noopener noreferrer">
-                点击此处
-              </a>
-              Management你的 Turnstile Sites，推荐选择 Invisible Widget Type
-            </span>
-          }
-        >
-          <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
-            <Grid xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="TurnstileSiteKey">Turnstile Site Key</InputLabel>
-                <OutlinedInput
-                  id="TurnstileSiteKey"
-                  name="TurnstileSiteKey"
-                  value={inputs.TurnstileSiteKey || ''}
-                  onChange={handleInputChange}
-                  label="Turnstile Site Key"
-                  placeholder="输入你Register的 Turnstile Site Key"
-                  disabled={loading}
-                />
-              </FormControl>
-            </Grid>
-            <Grid xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="TurnstileSecretKey">Turnstile Secret Key</InputLabel>
-                <OutlinedInput
-                  id="TurnstileSecretKey"
-                  name="TurnstileSecretKey"
-                  type="password"
-                  value={inputs.TurnstileSecretKey || ''}
-                  onChange={handleInputChange}
-                  label="Turnstile Secret Key"
-                  placeholder="敏感信息不会发送到前端显示"
-                  disabled={loading}
-                />
-              </FormControl>
-            </Grid>
-            <Grid xs={12}>
-              <Button variant="contained" onClick={submitTurnstile}>
-                Save Turnstile Settings
-              </Button>
-            </Grid>
+          <Grid xs={12} md={6}>
+            <FormControl fullWidth>
+              <InputLabel htmlFor="MessagePusherToken">Message Pusher 访问凭证</InputLabel>
+              <OutlinedInput
+                id="MessagePusherToken"
+                name="MessagePusherToken"
+                type="password"
+                value={inputs.MessagePusherToken || ''}
+                onChange={handleInputChange}
+                label="Message Pusher 访问凭证"
+                placeholder="敏感信息不会发送到前端显示"
+                disabled={loading}
+              />
+            </FormControl>
           </Grid>
-        </SubCard>
-      </Stack>
+          <Grid xs={12}>
+            <Button variant="contained" onClick={submitMessagePusher}>
+              Save Message Pusher Settings
+            </Button>
+          </Grid>
+        </Grid>
+      </SubCard>
+      <SubCard
+        title="配置 Turnstile"
+        subTitle={
+          <span>
+            用以支持User校验，
+            <a href="https://dash.cloudflare.com/" target="_blank" rel="noopener noreferrer">
+              点击此处
+            </a>
+            Management你的 Turnstile Sites，推荐选择 Invisible Widget Type
+          </span>
+        }
+      >
+        <Grid container spacing={{ xs: 3, sm: 2, md: 4 }}>
+          <Grid xs={12} md={6}>
+            <FormControl fullWidth>
+              <InputLabel htmlFor="TurnstileSiteKey">Turnstile Site Key</InputLabel>
+              <OutlinedInput
+                id="TurnstileSiteKey"
+                name="TurnstileSiteKey"
+                value={inputs.TurnstileSiteKey || ''}
+                onChange={handleInputChange}
+                label="Turnstile Site Key"
+                placeholder="输入你Register的 Turnstile Site Key"
+                disabled={loading}
+              />
+            </FormControl>
+          </Grid>
+          <Grid xs={12} md={6}>
+            <FormControl fullWidth>
+              <InputLabel htmlFor="TurnstileSecretKey">Turnstile Secret Key</InputLabel>
+              <OutlinedInput
+                id="TurnstileSecretKey"
+                name="TurnstileSecretKey"
+                type="password"
+                value={inputs.TurnstileSecretKey || ''}
+                onChange={handleInputChange}
+                label="Turnstile Secret Key"
+                placeholder="敏感信息不会发送到前端显示"
+                disabled={loading}
+              />
+            </FormControl>
+          </Grid>
+          <Grid xs={12}>
+            <Button variant="contained" onClick={submitTurnstile}>
+              Save Turnstile Settings
+            </Button>
+          </Grid>
+        </Grid>
+      </SubCard>
+    </Stack >
       <Dialog open={showPasswordWarningModal} onClose={() => setShowPasswordWarningModal(false)} maxWidth={'md'}>
         <DialogTitle sx={{ margin: '0px', fontWeight: 700, lineHeight: '1.55556', padding: '24px', fontSize: '1.125rem' }}>
           Warning

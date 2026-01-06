@@ -6,6 +6,7 @@
     "redemption": "兑换",
     "topup": "充值",
     "user": "用户",
+    "profile": "我的",
     "dashboard": "总览",
     "log": "日志",
     "setting": "设置",
@@ -37,6 +38,7 @@
   },
   "channel": {
     "title": "管理渠道",
+    "subtitle": "管理您的 AI 服务渠道",
     "search": "搜索渠道的 ID，名称和密钥 ...",
     "balance_notice": "OpenAI 渠道已经不再支持通过 key 获取余额，因此余额显示为 0。对于支持的渠道类型，请点击余额进行刷新。",
     "test_notice": "渠道测试仅支持 chat 模型，优先使用 gpt-3.5-turbo，如果该模型不可用则使用你所配置的模型列表中的第一个模型。",
@@ -79,7 +81,9 @@
       "confirm_delete_disabled": "确认删除",
       "refresh": "刷新",
       "show_detail": "详情",
-      "hide_detail": "隐藏详情"
+      "hide_detail": "隐藏详情",
+      "update_balance": "更新所有余额",
+      "delete_disabled_count": "删除 {{count}} 个已禁用渠道"
     },
     "messages": {
       "test_success": "渠道 {{name}} 测试成功，模型 {{model}}，耗时 {{time}} 秒，模型输出：{{message}}",
@@ -504,7 +508,8 @@
         "github_oauth": "允许通过 GitHub 账户登录 & 注册",
         "wechat_login": "允许通过微信登录 & 注册",
         "registration": "允许新用户注册（此项为否时，新用户将无法以任何方式进行注册）",
-        "turnstile": "启用 Turnstile 用户校验"
+        "turnstile": "启用 Turnstile 用户校验",
+        "oidc_login": "允许通过 OIDC 进行登录 & 注册"
       },
       "email_restriction": {
         "title": "配置邮箱域名白名单",
@@ -588,6 +593,33 @@
         "secret_key_placeholder": "敏感信息不会发送到前端显示",
         "buttons": {
           "save": "保存 Turnstile 设置"
+        }
+      },
+      "oidc": {
+        "title": "OIDC 设置",
+        "subtitle": "用以支持通过 OIDC 进行登录注册",
+        "well_known_placeholder": "输入 Well-Known URL",
+        "notice": {
+          "discovery": "系统会自动尝试通过 Well-Known URL 进行发现，但手动配置的优先级更高。",
+          "url_info": "Home链接填 <code>{{server_url}}</code>，重定向 URL 填 <code>{{callback_url}}</code>"
+        },
+        "buttons": {
+          "save": "保存 OIDC 设置"
+        },
+        "url_error": "Well-Known URL Must以 http:// 或 https:// 开头",
+        "fetch_success": "获取 OIDC 配置Success！",
+        "fetch_failed": "获取 OIDC 配置Failed，请检查网络状况和 Well-Known URL 是否正确"
+      },
+      "message_pusher": {
+        "title": "Message Pusher 设置",
+        "subtitle": "用以推送报警信息",
+        "learn_more": "了解 Message Pusher",
+        "address": "Message Pusher 地址",
+        "address_placeholder": "例如：https://msgpusher.com/push/your_username",
+        "token": "Message Pusher Token",
+        "token_placeholder": "敏感信息不会发送到前端显示",
+        "buttons": {
+          "save": "保存 Message Pusher 设置"
         }
       },
       "password_login": {
@@ -769,14 +801,22 @@
       "username": "用户名 / 邮箱地址",
       "password": "密码",
       "button": "登录",
+      "github_login": "使用 GitHub 登录",
+      "wechat_login": "使用微信登录",
+      "lark_login": "使用飞书登录",
+      "oidc_login": "使用 OIDC 登录",
+      "or": "OR",
       "forgot_password": "忘记密码？",
       "reset_password": "点击重置",
       "no_account": "没有账户？",
       "register": "点击注册",
       "other_methods": "使用其他方式登录",
       "wechat": {
-        "scan_tip": "微信扫码关注公众号，输入「验证码」获取验证码（三分钟内有效）",
-        "code_placeholder": "验证码"
+        "title": "微信验证码登录",
+        "instructions": "请使用微信扫描QR code关注公众号，输入「验证码」获取验证码（三分钟内有效）",
+        "verification_code": "验证码",
+        "code_required": "验证码不能为空",
+        "submit": "提交"
       }
     },
     "register": {
@@ -788,6 +828,8 @@
       "verification_code": "输入验证码",
       "get_code": "获取验证码",
       "get_code_retry": "重试 ({{countdown}})",
+      "turnstile_check": "请稍候，Turnstile 正在检查用户环境！",
+      "email_required": "请输入邮箱",
       "button": "注册",
       "has_account": "已有账户？",
       "login": "点击登录"

@@ -22,7 +22,7 @@ const panel = {
   children: [
     {
       id: 'dashboard',
-      title: 'Dashboard',
+      title: 'header.dashboard',
       type: 'item',
       url: '/panel/dashboard',
       icon: icons.IconDashboard,
@@ -31,7 +31,7 @@ const panel = {
     },
     {
       id: 'channel',
-      title: 'Channel',
+      title: 'header.channel',
       type: 'item',
       url: '/panel/channel',
       icon: icons.IconSitemap,
@@ -40,7 +40,7 @@ const panel = {
     },
     {
       id: 'token',
-      title: 'Token',
+      title: 'header.token',
       type: 'item',
       url: '/panel/token',
       icon: icons.IconKey,
@@ -48,7 +48,7 @@ const panel = {
     },
     {
       id: 'log',
-      title: 'Logs',
+      title: 'header.log',
       type: 'item',
       url: '/panel/log',
       icon: icons.IconArticle,
@@ -56,7 +56,7 @@ const panel = {
     },
     {
       id: 'redemption',
-      title: '兑换',
+      title: 'header.redemption',
       type: 'item',
       url: '/panel/redemption',
       icon: icons.IconCoin,
@@ -65,7 +65,7 @@ const panel = {
     },
     {
       id: 'topup',
-      title: 'Topup',
+      title: 'header.topup',
       type: 'item',
       url: '/panel/topup',
       icon: icons.IconGardenCart,
@@ -73,7 +73,7 @@ const panel = {
     },
     {
       id: 'user',
-      title: 'User',
+      title: 'header.user',
       type: 'item',
       url: '/panel/user',
       icon: icons.IconUser,
@@ -82,7 +82,7 @@ const panel = {
     },
     {
       id: 'profile',
-      title: 'My',
+      title: 'header.profile',
       type: 'item',
       url: '/panel/profile',
       icon: icons.IconUserScan,
@@ -91,7 +91,7 @@ const panel = {
     },
     {
       id: 'setting',
-      title: 'Settings',
+      title: 'header.setting',
       type: 'item',
       url: '/panel/setting',
       icon: icons.IconAdjustments,
