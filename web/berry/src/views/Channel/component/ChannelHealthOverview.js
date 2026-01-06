@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Box, Card, Grid, Typography, Skeleton } from '@mui/material';
 import { IconServer, IconServerOff, IconCash, IconActivity } from '@tabler/icons-react';
-import { alpha } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 
 const StatCard = ({ icon: Icon, label, value, color, isLoading }) => (
@@ -99,6 +99,7 @@ const StatCard = ({ icon: Icon, label, value, color, isLoading }) => (
 );
 
 const ChannelHealthOverview = ({ channels, isLoading }) => {
+    const theme = useTheme();
     const { t } = useTranslation();
     const activeCount = channels.filter(c => c.status === 1).length;
     const disabledCount = channels.filter(c => c.status !== 1).length;
@@ -120,7 +121,7 @@ const ChannelHealthOverview = ({ channels, isLoading }) => {
         : 0;
 
     return (
-        <Card className="glass-card" sx={{ mb: 3, p: 2.5, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+        <Card className={theme.palette.mode === 'dark' ? 'glass-card-dark' : 'glass-card'} sx={{ mb: 3, p: 2.5, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
                 {t('channel.overview.title')}
             </Typography>
