@@ -2,7 +2,7 @@ package router
 
 import (
 	"strings"
-	
+
 	"github.com/songquanpeng/one-api/controller"
 	"github.com/songquanpeng/one-api/middleware"
 
@@ -12,7 +12,7 @@ import (
 func SetRelayRouter(router *gin.Engine) {
 	router.Use(middleware.CORS())
 	router.Use(middleware.GzipDecodeMiddleware())
-	
+
 	// Middleware to handle /v1/v1/* duplication
 	// Supports both configs: localhost:3000 and localhost:3000/v1
 	router.Use(func(c *gin.Context) {
@@ -43,6 +43,7 @@ func SetRelayRouter(router *gin.Engine) {
 		relayV1Router.POST("/audio/transcriptions", controller.Relay)
 		relayV1Router.POST("/audio/translations", controller.Relay)
 		relayV1Router.POST("/audio/speech", controller.Relay)
+		relayV1Router.POST("/responses", controller.Relay)
 		relayV1Router.GET("/files", controller.RelayNotImplemented)
 		relayV1Router.POST("/files", controller.RelayNotImplemented)
 		relayV1Router.DELETE("/files/:id", controller.RelayNotImplemented)
@@ -82,7 +83,7 @@ func SetRelayRouter(router *gin.Engine) {
 		relayV1Router.GET("/threads/:id/runs/:runsId/steps/:stepId", controller.RelayNotImplemented)
 		relayV1Router.GET("/threads/:id/runs/:runsId/steps", controller.RelayNotImplemented)
 	}
-	
+
 	// Add root-level routes for OpenAI API compatibility
 	// This allows clients to configure base URL as "http://your-server/v1" (like api.openai.com/v1)
 	// without creating duplicate /v1/v1 paths
@@ -92,19 +93,20 @@ func SetRelayRouter(router *gin.Engine) {
 		// Models endpoints
 		relayRootRouter.GET("/models", controller.ListModels)
 		relayRootRouter.GET("/models/:model", controller.RetrieveModel)
-		
+
 		// Core completion endpoints
 		relayRootRouter.POST("/completions", controller.Relay)
 		relayRootRouter.POST("/chat/completions", controller.Relay)
 		relayRootRouter.POST("/embeddings", controller.Relay)
 		relayRootRouter.POST("/moderations", controller.Relay)
-		
+
 		// Image generation
 		relayRootRouter.POST("/images/generations", controller.Relay)
-		
+
 		// Audio endpoints
 		relayRootRouter.POST("/audio/transcriptions", controller.Relay)
 		relayRootRouter.POST("/audio/translations", controller.Relay)
 		relayRootRouter.POST("/audio/speech", controller.Relay)
+		relayRootRouter.POST("/responses", controller.Relay)
 	}
 }
